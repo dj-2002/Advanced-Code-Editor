@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".EditorFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        >
+
+        <HorizontalScrollView
+            android:id="@+id/horizontal_scroller"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        <com.nbow.advanceeditor.MyEditText
+            android:id="@+id/editText"
+            android:layout_width="match_parent"
+            android:imeOptions="flagNoExtractUi"
+            android:minWidth="350dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="7dp"
+            android:background="@android:color/transparent"
+            android:lastBaselineToBottomHeight="500dp"
+            android:inputType="textMultiLine|textNoSuggestions"
+            android:singleLine="false"
+            android:textSize="14sp"
+            android:paddingLeft="50dp"
+        />
+        </HorizontalScrollView>
+        <Button
+            android:id="@+id/prev"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/prev"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="-450dp"
+            android:layout_below="@+id/horizontal_scroller"/>
+        <Button
+            android:id="@+id/next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            android:layout_alignParentEnd="true"
+            android:text="@string/next"
+            android:layout_marginTop="-450dp"
+            android:layout_below="@+id/horizontal_scroller"/>/>
+    </RelativeLayout>
+</ScrollView>

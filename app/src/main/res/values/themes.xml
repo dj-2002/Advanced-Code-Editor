@@ -1,0 +1,90 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Base application theme. -->
+    <style name="AppMaterialTheme" parent="superMaterialTheme">
+        <!--    Customise for only lollipop and above versions features. -->
+    </style>
+
+    <style name="ButtonColor" parent="@android:style/Widget.Button">
+        <item name="android:textColor">@color/btnTextColor</item>
+    </style>
+
+    <style name="superMaterialTheme" parent="Theme.AppCompat.Light.NoActionBar">
+
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <!--        <item name="colorPrimaryVariant">@color/colorPrimaryDark</item>-->
+        <!--        <item name="colorOnPrimary">@color/colorAccent</item>-->
+        <!--        &lt;!&ndash; Secondary brand color. &ndash;&gt;-->
+        <item name="colorSecondary">@color/colorSecondary</item>
+        <item name="colorSecondaryVariant">@color/colorSecondaryDark</item>
+        <!--        <item name="colorOnSecondary">@color/colorAccent</item>-->
+        <!--    Customise for only lollipop and above versions features. -->
+        <item name="colorAccent">@color/colorAccent</item>
+
+        <item name="colorButtonNormal">@color/colorBtn</item>
+        <item name="android:buttonStyle">@style/ButtonColor</item>
+
+        <item name="android:windowBackground">@color/windowBackground</item>
+
+        <!--        <item name="navigationIconTint">@color/colorAccent</item>-->
+
+        <!--        it set color in overflow menu of action bar icon -->
+        <item name="iconTint">@color/colorAccent</item>
+
+        <!--        it set color in our app for bottom nav icon tint and popup menu icon tint-->
+        <item name="android:tint">@color/colorAccent</item>
+
+        <!--        item icon tint can use in our application in navigation drawer icon color-->
+        <item name="itemIconTint">@color/colorAccent</item>
+
+        <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeStyle">@style/MyActionMode</item>
+
+    </style>
+
+    <style name="MyActionMode" parent="@style/Widget.AppCompat.ActionMode">
+
+        <item name="background">@color/contextualBackground</item>
+        <!--        <item name="titleTextStyle">@style/MyContextualTextStyle</item>-->
+
+        <!--        <item name="actionModeCloseDrawable"></item>-->
+    </style>
+
+    <!--    <style name="MyContextualTextStyle" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">-->
+    <!--        <item name="android:textColor">@color/white</item>-->
+    <!--    </style>-->
+
+    <style name="ToolbarTheme" parent="ThemeOverlay.AppCompat.Light">
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:textColorPrimary">@android:color/black</item>
+        <item name="android:textColorSecondary">@color/black</item>
+        <!--        <item name="android:tint">@color/colorAccent</item>-->
+        <!--    Customise for only lollipop and above versions features. -->
+    </style>
+
+    <style name="ToolbarPopUpTheme" parent="ThemeOverlay.AppCompat.Light">
+        <item name="android:background">@color/white</item>
+        <item name="background">@color/white</item>
+        <item name="android:textColorPrimary">@android:color/black</item>
+        <item name="android:textColorSecondary">@color/black</item>
+        <!--        <item name="iconTint">@color/colorAccent</item>-->
+        <!--        <item name="itemIconTint">@color/colorAccent</item>-->
+        <!--        <item name="android:tint">@color/colorAccent</item>-->
+
+
+    </style>
+
+    <style name="BottomNavTheme" parent="ThemeOverlay.AppCompat.Light">
+        <item name="android:background">@color/colorSecondaryDark</item>
+        <item name="backgroundTint">@color/colorSecondaryDark</item>
+        <item name="itemTextColor">@color/black</item>
+        <!--        <item name="android:textColorPrimary">@color/colorAccent</item>-->
+        <!--        <item name="android:textColorSecondary"></item>-->
+        <!--        <item name="itemIconTint">@color/colorPrimary</item>-->
+        <!--        <item name="android:tint">@color/colorPrimary</item>-->
+        <!--        <item name="textBackground">@android:color/transparent</item>-->
+    </style>
+
+
+</resources>

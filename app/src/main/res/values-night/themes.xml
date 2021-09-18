@@ -1,0 +1,98 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Base application theme. -->
+    <style name="AppMaterialTheme" parent="superMaterialThemeNight">
+        <!--    Customise for only lollipop and above versions features. -->
+    </style>
+
+    <style name="ButtonColorNight" parent="@android:style/Widget.Button">
+        <item name="android:textColor">@color/btnTextColorNight</item>
+    </style>
+
+    <style name="superMaterialThemeNight" parent="Theme.AppCompat.NoActionBar">
+
+        <item name="colorPrimary">@color/colorPrimaryNight</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkNight</item>
+        <item name="colorOnPrimary">@color/colorAccentNight</item>
+
+        <!--        can be used in tab layout background-->
+        <item name="colorPrimaryVariant">@color/colorPrimaryDarkNight</item>
+
+        <item name="colorButtonNormal">@color/colorBtnNight</item>
+        <item name="android:buttonStyle">@style/ButtonColorNight</item>
+        <!--        <item name="navigationIconTint">@color/colorAccentNight</item>-->
+
+        <!-- Secondary brand color. -->
+        <!--         can be used anywhere fro ?attr reference -->
+        <item name="colorSecondary">@color/colorSecondaryNight</item>
+        <item name="colorSecondaryVariant">@color/colorSecondaryDarkNight</item>
+        <item name="colorOnSecondary">@color/colorAccentNight</item>
+
+        <!--    Customise for only lollipop and above versions features. -->
+        <item name="colorAccent">@color/colorAccentNight</item>
+
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:textColorSecondary">@android:color/white</item>
+
+
+        <!--        it set color in overflow menu of action bar icon -->
+        <item name="iconTint">@color/colorAccentNight</item>
+
+        <!--        it set color in our app for bottom nav icon tint and popup menu icon tint-->
+        <item name="android:tint">@color/colorAccentNight</item>
+
+        <!--        TODO : item icon tint can use in our application in navigation drawer icon color-->
+        <item name="itemIconTint">@color/colorAccentNight</item>
+
+        <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeStyle">@style/MyActionModeNight</item>
+    </style>
+
+    <style name="MyActionModeNight" parent="@style/Widget.AppCompat.ActionMode">
+
+        <item name="background">@color/contextualBackgroundNight</item>
+        <!--        <item name="titleTextStyle">@style/MyContextualTextStyleNight</item>-->
+
+        <!--        <item name="actionModeCloseDrawable"></item>-->
+
+    </style>
+
+    <!--    <style name="MyContextualTextStyleNight" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">-->
+    <!--        <item name="android:textColor">@color/white</item>-->
+    <!--    </style>-->
+
+
+    <style name="ToolbarTheme" parent="ThemeOverlay.AppCompat">
+        <item name="android:background">@color/colorPrimaryNight</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:textColorSecondary">@android:color/white</item>
+
+
+    </style>
+
+    <style name="ToolbarPopUpTheme" parent="ThemeOverlay.AppCompat">
+        <item name="android:background">#504F4F</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+
+    </style>
+
+    <style name="BottomNavTheme" parent="ThemeOverlay.AppCompat">
+        <item name="android:background">@color/colorSecondaryDarkNight</item>
+        <item name="backgroundTint">@color/colorSecondaryDarkNight</item>
+        <item name="itemTextColor">@color/white</item>
+
+        <!--        <item name="android:textColorPrimary">@color/colorAccent</item>-->
+        <!--        <item name="android:textColorSecondary"></item>-->
+        <!--        <item name="itemIconTint">@color/colorPrimaryNight</item>-->
+        <!--        <item name="itemBackground">@android:color/transparent</item>-->
+
+
+        <!--        <item name="android:tint">@color/colorPrimaryNight</item>-->
+
+
+    </style>
+
+
+
+
+</resources>

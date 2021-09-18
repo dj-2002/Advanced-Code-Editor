@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+
+
+    <color name="colorPrimary">#E3E3E3</color>
+    <color name="colorPrimaryDark">#BFBDBD</color>
+
+    <color name="windowBackground">#FAFAFA</color>
+
+    <!--  TODO : Imp ->  this color for tab layout background light theme-->
+    <!--    <color name="colorSecondary">#CCF0E1</color>-->
+    <color name="colorSecondary">@color/colorPrimaryDark</color>
+
+    <!--  TODO : Imp ->  this color for bottom nav background light theme-->
+    <!--    <color name="colorSecondaryDark">#018786</color>-->
+    <color name="colorSecondaryDark">@color/colorPrimaryDark</color>
+
+    <color name="colorAccent">#064ACB</color>
+
+    <color name="colorBtn">@color/colorAccent</color>
+    <color name="colorBtnNight">@color/colorAccentNight</color>
+
+    <color name="btnTextColor">@color/white</color>
+    <color name="btnTextColorNight">@color/white</color>
+
+
+    <color name="over_flow_bg">@android:color/background_light</color>
+    <color name="over_flow_text_color">@android:color/black</color>
+
+    <color name="colorPrimaryNight">#607D8B</color>
+    <color name="colorPrimaryDarkNight">#37474F</color>
+    <!--    <color name="colorSecondaryNight">#90A4AE</color>-->
+
+    <!--  TODO : Imp ->  this color for tab layout background dark theme-->
+    <color name="colorSecondaryNight">@color/colorSecondaryDarkNight</color>
+
+    <!--  TODO : Imp ->  this color for bottom nav background dark theme-->
+    <color name="colorSecondaryDarkNight">#37474F</color>
+
+
+    <color name="colorAccentNight">#F7B633</color>
+
+    <color name="contextualBackground">@color/colorPrimary</color>
+    <color name="contextualBackgroundNight">@color/colorPrimaryNight</color>
+
+
+</resources>

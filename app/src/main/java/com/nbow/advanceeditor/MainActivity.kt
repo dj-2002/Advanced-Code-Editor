@@ -6,12 +6,10 @@ import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.provider.OpenableColumns
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
-import android.util.AttributeSet
 import android.util.Log
 import android.view.*
 import android.widget.*
@@ -38,7 +36,6 @@ import com.google.android.play.core.review.ReviewManagerFactory
 import com.google.android.play.core.review.testing.FakeReviewManager
 import com.nbow.advanceeditor.data.RecentFile
 import com.nbow.advanceeditor.databinding.ActivityMainBinding
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -110,7 +107,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if (intent != null && savedInstanceState == null) {
             val uri: Uri? = intent.data
             if (uri !== null) {
-                readFileUsingUri(uri, true)
+                readFileUsingUri(uri,true)
             }
         }
 
@@ -118,10 +115,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
     private fun init() {
-        val isOuterIntentFile = (intent != null && intent.data != null)
+
 
         model =
-            ViewModelProvider(this, MyViewModelFactory(this.application, isOuterIntentFile)).get(
+            ViewModelProvider(this, MyViewModelFactory(this.application)).get(
                 MyViewModel::class.java
             )
         helper = Utils(this)
@@ -158,8 +155,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
         setSupportActionBar(toolbar)
-
-
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 changeNoTabLayout()
@@ -411,7 +406,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
         //performing cancel action
         builder.setNeutralButton("Cancel") { dialogInterface, which ->
-            Toast.makeText(applicationContext, "operation cancel", Toast.LENGTH_LONG).show()
+            //Toast.makeText(applicationContext, "operation cancel", Toast.LENGTH_LONG).show()
             dialogInterface.dismiss()
         }
 
@@ -595,7 +590,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun onDestroy() {
+
+        // saving all files to databse
         model.setFragmentList(adapter.fragmentList)
+
+        // saving current tab
         if (adapter.fragmentList.size > 0)
             model.currentTab = binding.pager2.currentItem
         super.onDestroy()
@@ -760,7 +759,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
 
-    private fun readFileUsingUri(uri: Uri, isOuterFile: Boolean = false) {
+    private fun readFileUsingUri(uri: Uri,isOuterFile : Boolean = false) {
 
         try {
             val takeFlags: Int =
@@ -809,6 +808,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         val fileName: String = queryName(contentResolver, uri)
 
+
         val dataFile = DataFile(
             fileName = fileName,
             filePath = uri.path!!,
@@ -823,7 +823,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             setCustomTabLayout(tabCount - 1, fileName)
             adapter.notifyItemInserted(tabCount - 1)
             selectTab(getTabAt(tabCount - 1))
-            if (isOuterFile) {
+            if(isOuterFile) {
                 model.getFragmentList().value?.add(fragment)
                 model.currentTab = tabCount - 1
             }
@@ -1105,7 +1105,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
         //performing cancel action
         builder.setNeutralButton("Cancel") { dialogInterface, which ->
-            Toast.makeText(applicationContext, "operation cancel", Toast.LENGTH_LONG).show()
+            //Toast.makeText(applicationContext, "operation cancel", Toast.LENGTH_LONG).show()
             dialogInterface.dismiss()
         }
 
@@ -1202,7 +1202,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
         //performing cancel action
         builder.setNeutralButton("Cancel") { dialogInterface, which ->
-            Toast.makeText(applicationContext, "operation cancel", Toast.LENGTH_LONG).show()
+            //Toast.makeText(applicationContext, "operation cancel", Toast.LENGTH_LONG).show()
             dialogInterface.dismiss()
         }
 
@@ -1237,9 +1237,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         clipboardManager.setPrimaryClip(clipData)
     }
 
-
-
-
     fun feedback()
     {
         try {
@@ -1269,7 +1266,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         editor.commit()
         val gotFeedback = sharedPreferences.getBoolean(key_got_feedback,false)
 
-        Log.e("e","opened $num times")
+        Log.e(TAG,"opened $num times")
         if(num>10 && !gotFeedback) {
             editor.putInt(opened,0)
             editor.commit()

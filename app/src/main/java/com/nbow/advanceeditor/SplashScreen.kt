@@ -10,6 +10,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import javax.security.auth.login.LoginException
 
 class SplashScreen : AppCompatActivity() {
 
@@ -17,18 +18,12 @@ class SplashScreen : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_splash_screen)
-        if(savedInstanceState==null) {
-            lifecycleScope.launch(Main){
 
-                val intent = Intent(this@SplashScreen, MainActivity::class.java)
-                delay(500)
-                Log.e(TAG, "onCreate: above start main Activity")
-                startActivity(intent)
-                Log.e(TAG, "onCreate: below start main Activity")
-                finish()
-            }
-        }
+        Log.e(TAG, "onCreate :starting ", )
+        val intent=Intent(this@SplashScreen, MainActivity::class.java)
+        startActivity(intent)
+        Log.e(TAG, "onCreate: finishing", )
+        finish()
 
     }
 }

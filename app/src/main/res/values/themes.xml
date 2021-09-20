@@ -9,6 +9,13 @@
         <item name="android:textColor">@color/btnTextColor</item>
     </style>
 
+    <style name="SplashTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_screen</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
     <style name="superMaterialTheme" parent="Theme.AppCompat.Light.NoActionBar">
 
         <item name="colorPrimary">@color/colorPrimary</item>
@@ -85,6 +92,8 @@
         <!--        <item name="android:tint">@color/colorPrimary</item>-->
         <!--        <item name="textBackground">@android:color/transparent</item>-->
     </style>
+
+
 
 
 </resources>

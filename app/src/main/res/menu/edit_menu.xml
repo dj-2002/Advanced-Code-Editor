@@ -25,4 +25,11 @@
         android:icon="@drawable/ic_goto_line"
         app:showAsAction="never"
         />
+
+    <item
+        android:id="@+id/reload"
+        android:title="@string/find_amp_replace"
+        android:icon="@drawable/ic_reload"
+        app:showAsAction="never"></item>
+
 </menu>

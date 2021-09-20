@@ -96,6 +96,10 @@ class MyEditText : AppCompatEditText {
             private var endOfLine = -1
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+
+                Log.e(TAG, "beforeTextChanged: start : $start  count : $count after : $after")
+
+
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {

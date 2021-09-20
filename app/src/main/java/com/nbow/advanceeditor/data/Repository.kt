@@ -28,7 +28,7 @@ class Repository(application: Application) {
         var listOfHistory:MutableList<HistoryWithPages> = arrayListOf()
 
         listOfHistory = historyDao.getHistoryWithPages()
-        Log.e("e","${listOfHistory.size}")
+        Log.e(TAG,"${listOfHistory.size}")
         Log.e(TAG, "getHistory: history ${listOfHistory.toString()}")
         return  listOfHistory
     }
@@ -36,7 +36,7 @@ class Repository(application: Application) {
     @Transaction
     suspend fun  addHistory(history:History,pages:MutableList<Page>)
     {
-        Log.e(TAG, "addHistory: size of page : ${pages.size}")
+        Log.e(TAG, "addFile to database: size of page : ${pages.size}")
         val beforeHistory = historyDao.getHistoryByUriString(history.uriString)
 //        Log.e(TAG, "addHistory: ${history.fileName} -> history : $history")
         if(beforeHistory!=null){
@@ -61,7 +61,7 @@ class Repository(application: Application) {
     suspend fun deleteAllHistory() {
         historyDao.deleteAllHistories()
         historyDao.deleteAllPages()
-        Log.e("e","Deleting all")
+        Log.e(TAG,"Deleting all files from database")
     }
 
     suspend fun getRecentFileList():MutableList<RecentFile>{
@@ -83,7 +83,7 @@ class Repository(application: Application) {
     suspend fun saveToRecentFile(vararg  recentFile: RecentFile)
     {
         recentFileDao.insertAll(*recentFile)
-        Log.e("e","saving recent file")
+        Log.e(TAG,"saving recent file")
     }
     suspend fun deleteRecentFile(recentFile: RecentFile)
     {

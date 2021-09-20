@@ -13,14 +13,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:menu="@menu/recent_file_menu"></androidx.appcompat.widget.Toolbar>
+        app:menu="@menu/recent_file_menu"
+        android:theme="@style/ToolbarTheme"
+        app:popupTheme="@style/ToolbarPopUpTheme"/>
 
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@android:color/darker_gray"
         android:padding="4dp"
         android:scrollbars="vertical"
         app:layout_constraintEnd_toEndOf="parent"

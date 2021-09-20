@@ -9,6 +9,14 @@
         <item name="android:textColor">@color/btnTextColorNight</item>
     </style>
 
+    <style name="SplashTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_screen</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+
     <style name="superMaterialThemeNight" parent="Theme.AppCompat.NoActionBar">
 
         <item name="colorPrimary">@color/colorPrimaryNight</item>

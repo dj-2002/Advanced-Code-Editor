@@ -12,7 +12,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import java.util.*
 
-class MyViewModel(application: Application, private val isOuterIntentFile : Boolean = false) : AndroidViewModel(application) {
+class MyViewModel(application: Application) : AndroidViewModel(application) {
     private val fragmentList = MutableLiveData<MutableList<Fragment>>(arrayListOf())
 
     private val repository : Repository = Repository(application)
@@ -25,8 +25,8 @@ class MyViewModel(application: Application, private val isOuterIntentFile : Bool
     private val TAG = "MyViewModel"
 
     init {
-        if(!isOuterIntentFile)
-            loadHistory()
+
+        loadHistory()
         loadRecentFile()
         val preferences = PreferenceManager.getDefaultSharedPreferences(application)
         isWrap = preferences.getBoolean("word_wrap",false)
@@ -47,21 +47,19 @@ class MyViewModel(application: Application, private val isOuterIntentFile : Bool
 
 
     fun addHistories(){
-        if(isOuterIntentFile)return
-
 
         viewModelScope.launch(Dispatchers.IO) {
             repository.deleteAllHistory()
             for(frag : Fragment in fragmentList.value!!){
                 val editorFragment = frag as EditorFragment
-                Log.e(TAG, "addHistories: ${editorFragment.getFileName()} => hasUnsavedChanges ${editorFragment.hasUnsavedChanges.value}", )
+                Log.e(TAG, "saving new file to database: ${editorFragment.getFileName()} => hasUnsavedChanges ${editorFragment.hasUnsavedChanges.value}", )
                 val history = History(0,editorFragment.getFileName(),editorFragment.getUri().toString(),editorFragment.hasUnsavedChanges.value?:true, Calendar.getInstance().time.toString())
                 // TODO : list of pages to made
-                Log.e(TAG, "addHistories: history id ${history.historyId}")
+                Log.e(TAG, "saving new file to databse: file id ${history.historyId}")
                 val pages = mutableListOf<Page>()
                 for(data : String in editorFragment.getListOfPages()){
                     val page = Page(0,history.historyId,data)
-                    Log.e(TAG, "addHistories: page-> history id ${page.id_History}")
+                    Log.e(TAG, "saving new file to database: page-> page id ${page.id_History}")
                     pages.add(page)
                 }
                 repository.addHistory(history,pages)
@@ -79,7 +77,7 @@ class MyViewModel(application: Application, private val isOuterIntentFile : Bool
             for(historyWithPages in historyList){
                 val uri : Uri = Uri.parse(historyWithPages.history.uriString)
                 val listOfPages:MutableList<String>  = arrayListOf()
-                Log.e(TAG, "loadHistory: size of pages : ${historyWithPages.pages.size}" )
+                Log.e(TAG, "loading files: size of pages : ${historyWithPages.pages.size}" )
                 for(page in historyWithPages.pages){
 //                    Log.e(TAG, "loadHistory: page data : ${page.data}" )
                     listOfPages.add(page.data)

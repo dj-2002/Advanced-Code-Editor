@@ -29,8 +29,8 @@
         <!--    Customise for only lollipop and above versions features. -->
         <item name="colorAccent">@color/colorAccent</item>
 
-        <item name="colorButtonNormal">@color/colorBtn</item>
-        <item name="android:buttonStyle">@style/ButtonColor</item>
+<!--        <item name="android:buttonStyle">@style/ButtonColor</item>-->
+<!--        <item name="colorButtonNormal">@color/colorBtn</item>-->
 
         <item name="android:windowBackground">@color/windowBackground</item>
 
@@ -48,6 +48,7 @@
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeStyle">@style/MyActionMode</item>
 
+        <item name="alertDialogTheme">@style/AlertDialogTheme</item>
     </style>
 
     <style name="MyActionMode" parent="@style/Widget.AppCompat.ActionMode">
@@ -75,6 +76,8 @@
         <item name="background">@color/white</item>
         <item name="android:textColorPrimary">@android:color/black</item>
         <item name="android:textColorSecondary">@color/black</item>
+        <item name="android:textColor">@color/black</item>
+
         <!--        <item name="iconTint">@color/colorAccent</item>-->
         <!--        <item name="itemIconTint">@color/colorAccent</item>-->
         <!--        <item name="android:tint">@color/colorAccent</item>-->
@@ -93,7 +96,22 @@
         <!--        <item name="textBackground">@android:color/transparent</item>-->
     </style>
 
+    <style name="AlertDialogTheme" parent="ThemeOverlay.AppCompat.Dialog.Alert">
+        <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
+        <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
+        <item name="buttonBarNeutralButtonStyle">@style/NeutralButtonStyle</item>
+    </style>
 
+    <style name="NegativeButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">?attr/colorAccent</item>
+    </style>
 
+    <style name="PositiveButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">?attr/colorAccent</item>
+    </style>
+
+    <style name="NeutralButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">?attr/colorAccent</item>
+    </style>
 
 </resources>

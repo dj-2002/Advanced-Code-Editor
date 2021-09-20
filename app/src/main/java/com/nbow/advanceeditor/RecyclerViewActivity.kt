@@ -29,6 +29,7 @@ class RecyclerViewActivity : AppCompatActivity() {
         val toolbar:Toolbar = findViewById(R.id.toolbar)
         toolbar.setTitle("Recent File")
         setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         buildRecyclerView()
 
         model = ViewModelProvider(this,MyViewModelFactory(this.application)).get(MyViewModel::class.java)

@@ -130,7 +130,7 @@ class EditorFragment : Fragment {
             next.visibility = View.GONE
         }
         prev.setOnClickListener(View.OnClickListener {
-            Toast.makeText(context, "prev clicked", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(context, "prev clicked", Toast.LENGTH_SHORT).show()
             if(currentPageIndex>0 && currentPageIndex < dataFile!!.listOfPageData.size && editText!=null){
                 saveDataToPage()
                 next.isEnabled = true
@@ -138,7 +138,7 @@ class EditorFragment : Fragment {
                 if(currentPageIndex==0){
                     prev.isEnabled = false
                 }
-                Toast.makeText(context, "page $currentPageIndex", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(context, "page $currentPageIndex", Toast.LENGTH_SHORT).show()
                 editText!!.setIsPrev(true)
                 editText!!.setText(dataFile!!.listOfPageData.get(currentPageIndex))
 //                Log.e(TAG, "onCreateView: starting index $startingIndexOfCurrentPage")
@@ -154,7 +154,7 @@ class EditorFragment : Fragment {
                 if(currentPageIndex==dataFile!!.listOfPageData.size-1){
                     next.isEnabled = false
                 }
-                Toast.makeText(context, "page $currentPageIndex", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(context, "page $currentPageIndex", Toast.LENGTH_SHORT).show()
                 val startingIndexOfCurrentPage = editText!!.getStartingIndex()+editText!!.lineCount
                 editText!!.setStartIndex(startingIndexOfCurrentPage)
                 editText!!.setText(dataFile!!.listOfPageData.get(currentPageIndex))

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -35,6 +34,8 @@
             android:text="@string/prev"
             android:layout_marginStart="12dp"
             android:layout_marginTop="-450dp"
+            android:backgroundTint="?attr/colorAccent"
+            android:textColor="@color/white"
             android:layout_below="@+id/editText"/>
         <Button
             android:id="@+id/next"
@@ -44,6 +45,8 @@
             android:layout_alignParentEnd="true"
             android:text="@string/next"
             android:layout_marginTop="-450dp"
+            android:backgroundTint="?attr/colorAccent"
+            android:textColor="@color/white"
             android:layout_below="@+id/editText"/>
     </RelativeLayout>
 </ScrollView>

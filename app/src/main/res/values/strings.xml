@@ -69,6 +69,7 @@
     <string name="enter_linenumber_btwn">Enter line number between</string>
     <string name="clear_history">Clear History</string>
     <string name="feedback">FeedBack</string>
+    <string name="reload_file">"Reload "</string>
 
     <!-- Preference Titles -->
 </resources>

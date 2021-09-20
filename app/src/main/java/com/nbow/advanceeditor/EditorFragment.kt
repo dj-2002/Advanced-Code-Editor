@@ -23,6 +23,10 @@ class EditorFragment : Fragment {
 
     private var dataFile : DataFile? = null
 
+    fun setDataFile(dataFile: DataFile){
+        this.dataFile = dataFile
+    }
+
     fun getEditTextData():StringBuilder{
         val temp = StringBuilder("")
         saveDataToPage()

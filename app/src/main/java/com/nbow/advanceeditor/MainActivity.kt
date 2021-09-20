@@ -689,6 +689,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     }
 
                 }
+
+                R.id.reload ->{
+                    if(currentFragment!=null)
+                        reloadFile(currentFragment)
+                }
+
                 R.id.copy -> {
                     if (currentFragment !== null) {
                         val selectedData = currentFragment.getSelectedData()
@@ -747,6 +753,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         popup.show()
     }
 
+    private fun reloadFile(currentFragment: EditorFragment) {
+            val uri = currentFragment.getUri()
+            if(uri!=null)
+                readFileUsingUri(uri,false,true)
+
+    }
+
     val resLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -759,7 +772,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
 
-    private fun readFileUsingUri(uri: Uri,isOuterFile : Boolean = false) {
+    private fun readFileUsingUri(uri: Uri,isOuterFile : Boolean = false,isReload : Boolean = false) {
 
         try {
             val takeFlags: Int =
@@ -768,85 +781,91 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 applicationContext.contentResolver.takePersistableUriPermission(uri, takeFlags)
         } catch (e: Exception) {
             e.printStackTrace()
-            Toast.makeText(
-                applicationContext,
-                "please open file from storage manager",
-                Toast.LENGTH_LONG
-            ).show()
         }
 
-        val inputStream: InputStream? = contentResolver.openInputStream(uri)
-        val fileSize: Int = inputStream!!.available()
-        val bufferedReader = BufferedReader(InputStreamReader(inputStream, "UTF-8"))
+        try {
+            val inputStream: InputStream? = contentResolver.openInputStream(uri)
+            val fileSize: Int = inputStream!!.available()
+            val bufferedReader = BufferedReader(InputStreamReader(inputStream, "UTF-8"))
+            val listOfLines: MutableList<String> = arrayListOf()
+            val listOfPageData: MutableList<String> = arrayListOf()
 
-
-        val listOfLines: MutableList<String> = arrayListOf()
-        val listOfPageData: MutableList<String> = arrayListOf()
-
-        bufferedReader.forEachLine {
-            listOfLines.add(it)
-        }
-
-        val temp = StringBuilder("")
-        var count = 0
-        for (line in listOfLines) {
-            temp.append(line)
-            count++
-            if (count >= 3000 || temp.length >= 500000) { // 500kb
-//                Log.e(TAG, "readFileUsingUri: temp : at $count : $temp")
-                listOfPageData.add(temp.toString())
-                temp.clear()
-                count = 0
-            } else temp.append("\n")
-        }
-        if (temp.length > 0) {
-            listOfPageData.add(temp.toString())
-        }
-        if (listOfLines.size == 0) {
-            listOfPageData.add(temp.toString())
-        }
-
-        val fileName: String = queryName(contentResolver, uri)
-
-
-        val dataFile = DataFile(
-            fileName = fileName,
-            filePath = uri.path!!,
-            uri = uri,
-            listOfPageData = listOfPageData
-        )
-        val fragment = EditorFragment(dataFile)
-
-        adapter.addFragment(fragment)
-        binding.tabLayout.apply {
-            addTab(newTab())
-            setCustomTabLayout(tabCount - 1, fileName)
-            adapter.notifyItemInserted(tabCount - 1)
-            selectTab(getTabAt(tabCount - 1))
-            if(isOuterFile) {
-                model.getFragmentList().value?.add(fragment)
-                model.currentTab = tabCount - 1
+            bufferedReader.forEachLine {
+                listOfLines.add(it)
             }
-        }
 
-        model.addRecentFile(
-            RecentFile(
-                0,
-                uri.toString(),
-                fileName,
-                Calendar.getInstance().time.toString(),
-                fileSize
+            val temp = StringBuilder("")
+            var count = 0
+            for (line in listOfLines) {
+                temp.append(line)
+                count++
+                if (count >= 3000 || temp.length >= 500000) { // 500kb
+//                Log.e(TAG, "readFileUsingUri: temp : at $count : $temp")
+                    listOfPageData.add(temp.toString())
+                    temp.clear()
+                    count = 0
+                } else temp.append("\n")
+            }
+            if (temp.length > 0) {
+                listOfPageData.add(temp.toString())
+            }
+            if (listOfLines.size == 0) {
+                listOfPageData.add(temp.toString())
+            }
+
+            val fileName: String = queryName(contentResolver, uri)
+            val dataFile = DataFile(
+                fileName = fileName,
+                filePath = uri.path!!,
+                uri = uri,
+                listOfPageData = listOfPageData
             )
-        )
+            val fragment = EditorFragment(dataFile)
 
-        fragment.hasUnsavedChanges.observe(this) {
-            if (it)
-                setCustomTabLayout(binding.tabLayout.selectedTabPosition, "*$fileName")
+            if (isReload && isValidTab()) {
+                val position = binding.tabLayout.selectedTabPosition
+                adapter.fragmentList.removeAt(position)
+                adapter.fragmentList.add(position, fragment)
+                setCustomTabLayout(position, "$fileName")
+                adapter.notifyDataSetChanged()
+
+            } else {
+                adapter.addFragment(fragment)
+                binding.tabLayout.apply {
+                    addTab(newTab())
+                    setCustomTabLayout(tabCount - 1, fileName)
+                    adapter.notifyItemInserted(tabCount - 1)
+                    selectTab(getTabAt(tabCount - 1))
+                    if (isOuterFile) {
+                        model.getFragmentList().value?.add(fragment)
+                        model.currentTab = tabCount - 1
+                    }
+                }
+
+                model.addRecentFile(
+                    RecentFile(
+                        0,
+                        uri.toString(),
+                        fileName,
+                        Calendar.getInstance().time.toString(),
+                        fileSize
+                    )
+                )
+            }
+            fragment.hasUnsavedChanges.observe(this) {
+                if (it)
+                    setCustomTabLayout(binding.tabLayout.selectedTabPosition, "*$fileName")
+                else setCustomTabLayout(binding.tabLayout.selectedTabPosition, "$fileName")
+            }
+            Log.e(
+                TAG,
+                "readFileUsingUri : tab layout selected position : ${binding.tabLayout.selectedTabPosition}"
+            )
         }
-        Log.e(
-            TAG,
-            "readFileUsingUri : tab layout selected position : ${binding.tabLayout.selectedTabPosition}"
-        )
+        catch (e:Exception)
+        {
+            Toast.makeText(applicationContext,"${e.message.toString()}",Toast.LENGTH_SHORT).show()
+        }
 
     }
 

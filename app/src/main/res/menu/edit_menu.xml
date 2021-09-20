@@ -28,7 +28,7 @@
 
     <item
         android:id="@+id/reload"
-        android:title="@string/find_amp_replace"
+        android:title="@string/reload_file"
         android:icon="@drawable/ic_reload"
         app:showAsAction="never"></item>
 

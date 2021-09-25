@@ -267,12 +267,21 @@ class EditorFragment : Fragment {
         return dataFile?.listOfPageData!!
     }
 
+
     fun insertSpecialChar(specialChar : String){
         if(editText!=null && editText!!.isFocused){
             editText!!.apply {
-                text?.replace(selectionStart,selectionEnd,specialChar)
+                    text?.replace(selectionStart,selectionEnd,specialChar)
             }
         }
+    }
+    fun selectionPrevPosition(){
+        if(editText!=null && editText!!.isFocused){
+            editText!!.apply {
+                editText!!.setSelection(selectionEnd-1)
+            }
+        }
+
     }
 
     fun getSelectedData(): String? {

@@ -330,19 +330,24 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         currentFragment!!.insertSpecialChar("    ")
                     }
                     R.id.roundOpen -> {
-                        currentFragment!!.insertSpecialChar("(")
+                        currentFragment!!.insertSpecialChar("()")
+                        currentFragment!!.selectionPrevPosition()
+
                     }
                     R.id.roundClose -> {
                         currentFragment!!.insertSpecialChar(")")
                     }
                     R.id.breaketOpen -> {
-                        currentFragment!!.insertSpecialChar("[")
+                        currentFragment!!.insertSpecialChar("[]")
+                        currentFragment!!.selectionPrevPosition()
                     }
                     R.id.breaketClose -> {
                         currentFragment!!.insertSpecialChar("]")
                     }
                     R.id.curlyOpen -> {
-                        currentFragment!!.insertSpecialChar("{")
+                        currentFragment!!.insertSpecialChar("{}")
+                        currentFragment!!.selectionPrevPosition()
+
                     }
                     R.id.curlyClose -> {
                         currentFragment!!.insertSpecialChar("}")
@@ -420,7 +425,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Create the AlertDialog
         val alertDialog: AlertDialog = builder.create()
         // Set other dialog properties
-        alertDialog.setCancelable(false)
+        alertDialog.setCancelable(true)
         alertDialog.show()
 
 
@@ -496,8 +501,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun setDefaultToolbarTitle() {
         toolbar.apply {
-            setTitle("Home")
-            setSubtitle("World Of Editor")
+            setTitle(R.string.greet_line)
             changeNoTabLayout()
         }
     }
@@ -516,7 +520,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         //lifecycleScope.launch(Dispatchers.Main){
             val preferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
 
-            val wrap = preferences.getBoolean("word_wrap", false)
+            val wrap = preferences.getBoolean("word_wrap", true)
             val keyIsThemeChanged = "is_theme_changed_setting"
             val isThemeChangedFromSetting = preferences.getBoolean(keyIsThemeChanged, false)
             if (wrap != model.isWrap) {
@@ -690,8 +694,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                 }
 
-                R.id.reload ->{
-                    if(currentFragment!=null)
+                R.id.reload -> {
+                    if (currentFragment != null)
                         reloadFile(currentFragment)
                 }
 
@@ -735,6 +739,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     }
 
                 }
+
+
 
             }
             false
@@ -1027,7 +1033,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Create the AlertDialog
         val alertDialog: AlertDialog = builder.create()
         // Set other dialog properties
-        alertDialog.setCancelable(false)
+        alertDialog.setCancelable(true)
         alertDialog.show()
 
 
@@ -1131,7 +1137,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Create the AlertDialog
         val alertDialog: AlertDialog = builder.create()
         // Set other dialog properties
-        alertDialog.setCancelable(false)
+        alertDialog.setCancelable(true)
         alertDialog.show()
         if (TextUtils.isEmpty(findEditText.text)) {
             alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = false
@@ -1228,7 +1234,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Create the AlertDialog
         val alertDialog: AlertDialog = builder.create()
         // Set other dialog properties
-        alertDialog.setCancelable(false)
+        alertDialog.setCancelable(true)
         alertDialog.show()
         if (TextUtils.isEmpty(lineNumberEditText.text)) {
             alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = false

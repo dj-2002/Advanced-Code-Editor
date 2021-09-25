@@ -38,9 +38,10 @@ class MyEditText : AppCompatEditText {
     private var rect : Rect
     private var paint : Paint
     private var startIndex : Int = 1
+
     private var isPrev : Boolean = false
     private var hashMap:HashMap<String,Array<Int>>? = HashMap()
-    private var textWatcher : TextWatcher = initTextWatcher()
+    var textWatcher : TextWatcher = initTextWatcher()
     var hasUnsavedChanges = MutableLiveData<Boolean>(false)
     var extension : String = ""
     private lateinit var lifecycleOwner : LifecycleOwner
@@ -54,6 +55,7 @@ class MyEditText : AppCompatEditText {
     }
 
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs){
+
     }
 
     constructor(context: Context) : super(context)
@@ -67,7 +69,6 @@ class MyEditText : AppCompatEditText {
         val dp = 14f
         val fpixels = metrics.density * dp
         paint.setTextSize(fpixels)
-
         this.addTextChangedListener(textWatcher)
     }
 
@@ -91,6 +92,7 @@ class MyEditText : AppCompatEditText {
 
     private fun initTextWatcher() : TextWatcher {
         return object : TextWatcher{
+
             private var job : Job? = null
             private var startOfLine = -1
             private var endOfLine = -1
@@ -103,41 +105,46 @@ class MyEditText : AppCompatEditText {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                Log.e(TAG, "onTextChanged: start : $start before : $before count : $count")
-                if(job?.isActive==true)job!!.cancel()
-                Log.e(TAG, "onTextChanged: job : $job ${job?.isActive}")
 
-                if(s==null)return
-                hasUnsavedChanges.value = true
 
-                //                Log.e(TAG, "onTextChanged: startOfLine : $startOfLine endOfLine : $endOfLine change : $change")
+                    Log.e(TAG, "onTextChanged: start : $start before : $before count : $count")
+
+                    if (job?.isActive == true) job!!.cancel()
+                    Log.e(TAG, "onTextChanged: job : $job ${job?.isActive}")
+
+                    if (s == null) return
+                    hasUnsavedChanges.value = true
+
+                    //                Log.e(TAG, "onTextChanged: startOfLine : $startOfLine endOfLine : $endOfLine change : $change")
 //
-                job = lifecycleOwner.lifecycleScope.launch(Dispatchers.Main){
+                    job = lifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
 
-                    delay(400)
-                    if(isActive) {
+                        delay(400)
+                        if (isActive) {
 
-                        var startOfLine = newLineBeforePosition(s, start - 1)
-                        if(startOfLine==-1){
-                            if(start==0) startOfLine = 0
-                            else this.cancel()
+                            var startOfLine = newLineBeforePosition(s, start - 1)
+                            if (startOfLine == -1) {
+                                if (start == 0) startOfLine = 0
+                                else this.cancel()
+                            }
+
+                            var endOfLine = s.indexOf('\n', start + count)
+                            if (endOfLine != -1 && endOfLine + 1 < s.length) {
+                                endOfLine = s.indexOf('\n', endOfLine + 1)
+                            }
+                            if (endOfLine == -1) {
+                                endOfLine = s.length
+                            }
+                            if (startOfLine == -1) this.cancel()
+
+                            var change: String = s.substring(startOfLine, endOfLine)
+
+                            if (isActive)
+                                setSpannableString(change, startOfLine)
                         }
 
-                        var endOfLine = s.indexOf('\n', start+count)
-                        if (endOfLine != -1 && endOfLine + 1 < s.length) {
-                            endOfLine = s.indexOf('\n', endOfLine + 1)
-                        }
-                        if (endOfLine == -1) {
-                            endOfLine = s.length
-                        }
-                        if (startOfLine == -1) this.cancel()
 
-                        var change: String = s.substring(startOfLine,endOfLine)
-                        if(isActive)
-                            setSpannableString(change,startOfLine)
-                    }
                 }
-
 
             }
             override fun afterTextChanged(s: Editable?) {
@@ -187,156 +194,179 @@ class MyEditText : AppCompatEditText {
 
 
     private fun setSpannableString(textString:String,start:Int = 0){
-        var spannableStringBuilder = SpannableStringBuilder(textString)
-        var color = ForegroundColorSpan(Color.BLACK)
-        if(PreferenceManager.getDefaultSharedPreferences(context).getBoolean("night_mode_preference",true))
-            color = ForegroundColorSpan(Color.WHITE)
 
-        text?.setSpan(color,start,start+textString.length,0)
+        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+        val syntaxColor:Boolean = preferences.getBoolean("syntax_color",false)
+        Log.e(TAG, ":$syntaxColor ", )
+        if(syntaxColor) {
 
-        if(hashMap == null)return
+            var spannableStringBuilder = SpannableStringBuilder(textString)
+            var color = ForegroundColorSpan(Color.BLACK)
+            if (PreferenceManager.getDefaultSharedPreferences(context)
+                    .getBoolean("night_mode_preference", true)
+            )
+                color = ForegroundColorSpan(Color.WHITE)
 
-        var index=0
+            text?.setSpan(color, start, start + textString.length, 0)
 
-        if((extension == ".html" || extension == ".htm" || extension == ".xml")){
-            for (line in spannableStringBuilder.split('\n')) {
-                var isString = false
-                var startingQuoteIndex = -1
-                var endingQuoteIndex = -1
+            if (hashMap == null) return
 
-                for (word in line.split(
-                    ' ',
-                    '\t',
-                    '(',
-                    ',',
-                    ')',
-                    '.',
-                    '=',
-                    '\"',
-                    '>',
-                    '<'
-                )) {
-                    if (index + word.length < spannableStringBuilder.length) {
-                        if (spannableStringBuilder.get(index + word.length) == '\"') {
-                            if (!isString) {
-                                isString = true
-                                startingQuoteIndex = start + index + word.length
-                            } else {
-                                endingQuoteIndex = start + index + word.length + 1
-                            }
-                        } else if(  spannableStringBuilder.get(index+word.length) == '<'){
-                            val firstWordLastCharIndex = getFirstWord(spannableStringBuilder.toString(),index+word.length)
-                            if(firstWordLastCharIndex!=-1 && firstWordLastCharIndex>index+word.length){
+            var index = 0
+
+            if ((extension == ".html" || extension == ".htm" || extension == ".xml")) {
+                for (line in spannableStringBuilder.split('\n')) {
+                    var isString = false
+                    var startingQuoteIndex = -1
+                    var endingQuoteIndex = -1
+
+                    for (word in line.split(
+                        ' ',
+                        '\t',
+                        '(',
+                        ',',
+                        ')',
+                        '.',
+                        '=',
+                        '\"',
+                        '>',
+                        '<'
+                    )) {
+                        if (index + word.length < spannableStringBuilder.length) {
+                            if (spannableStringBuilder.get(index + word.length) == '\"') {
+                                if (!isString) {
+                                    isString = true
+                                    startingQuoteIndex = start + index + word.length
+                                } else {
+                                    endingQuoteIndex = start + index + word.length + 1
+                                }
+                            } else if (spannableStringBuilder.get(index + word.length) == '<') {
+                                val firstWordLastCharIndex =
+                                    getFirstWord(
+                                        spannableStringBuilder.toString(),
+                                        index + word.length
+                                    )
+                                if (firstWordLastCharIndex != -1 && firstWordLastCharIndex > index + word.length) {
+                                    text?.setSpan(
+                                        ForegroundColorSpan(Color.rgb(255, 128, 0)),
+                                        start + index + word.length,
+                                        start + firstWordLastCharIndex,
+                                        0
+                                    )
+                                }
+                            } else if (spannableStringBuilder.get(index + word.length) == '>') {
                                 text?.setSpan(
-                                    ForegroundColorSpan(Color.rgb(255,128,0)), start+index+word.length, start+firstWordLastCharIndex, 0
+                                    ForegroundColorSpan(Color.rgb(255, 128, 0)),
+                                    start + index + word.length,
+                                    start + index + word.length + 1,
+                                    0
                                 )
                             }
-                        }else if(spannableStringBuilder.get(index+word.length) == '>'){
+
+                        }
+
+                        if (startingQuoteIndex != -1 && endingQuoteIndex != -1) {
                             text?.setSpan(
-                                ForegroundColorSpan(Color.rgb(255,128,0)), start+index+word.length, start+index+word.length+1, 0
+                                ForegroundColorSpan(Color.rgb(0, 200, 100)),
+                                startingQuoteIndex,
+                                endingQuoteIndex,
+                                0
+                            )
+                            isString = false
+                            startingQuoteIndex = -1
+                            endingQuoteIndex = -1
+                        }
+                        index += word.length + 1
+                    }
+
+
+                }
+
+            } else {
+
+                for (line in spannableStringBuilder.split('\n')) {
+                    var isString = false
+                    var startingQuoteIndex = -1
+                    var endingQuoteIndex = -1
+                    var startingSingleLineCommentIndex = -1
+
+                    for (word in line.split(
+                        ' ',
+                        '\t',
+                        '(',
+                        ',',
+                        ')',
+                        '.',
+                        '=',
+                        ';',
+                        '{',
+                        '}',
+                        '+',
+                        '-',
+                        '\"',
+                        '/',
+                        '*',
+                        '>',
+                        '<',
+                        '#'
+                    )) {
+                        if (index + word.length < spannableStringBuilder.length) {
+                            if (spannableStringBuilder.get(index + word.length) == '\"') {
+                                if (!isString) {
+                                    isString = true
+                                    startingQuoteIndex = start + index + word.length
+                                } else {
+                                    endingQuoteIndex = start + index + word.length + 1
+
+                                }
+                            } else if (extension != ".php" && startingSingleLineCommentIndex == -1 && spannableStringBuilder.get(
+                                    index + word.length
+                                ) == '/' && index + word.length + 1 < spannableStringBuilder.length && spannableStringBuilder.get(
+                                    index + word.length + 1
+                                ) == '/'
+                            ) {
+                                startingSingleLineCommentIndex = start + index + word.length
+                            } else if (extension == ".php" && startingSingleLineCommentIndex == -1 && spannableStringBuilder.get(
+                                    index + word.length
+                                ) == '#'
+                            ) {
+                                startingSingleLineCommentIndex = start + index + word.length
+                            }
+
+                        }
+
+                        if (startingSingleLineCommentIndex == -1 && hashMap!!.containsKey(word)) {
+                            text?.setSpan(
+                                ForegroundColorSpan(
+                                    Color.rgb(
+                                        hashMap!!.get(word)!!.get(0),
+                                        hashMap!!.get(word)!!.get(1),
+                                        hashMap!!.get(word)!!.get(2)
+                                    )
+                                ), start + index, start + index + word.length, 0
                             )
                         }
-
-                    }
-
-                    if (startingQuoteIndex != -1 && endingQuoteIndex != -1) {
-                        text?.setSpan(
-                            ForegroundColorSpan(Color.rgb(0,200,100)),
-                            startingQuoteIndex,
-                            endingQuoteIndex,
-                            0
-                        )
-                        isString = false
-                        startingQuoteIndex = -1
-                        endingQuoteIndex = -1
-                    }
-                    index += word.length + 1
-                }
-
-            }
-
-        }else {
-
-            for (line in spannableStringBuilder.split('\n')) {
-                var isString = false
-                var startingQuoteIndex = -1
-                var endingQuoteIndex = -1
-                var startingSingleLineCommentIndex = -1
-
-                for (word in line.split(
-                    ' ',
-                    '\t',
-                    '(',
-                    ',',
-                    ')',
-                    '.',
-                    '=',
-                    ';',
-                    '{',
-                    '}',
-                    '+',
-                    '-',
-                    '\"',
-                    '/',
-                    '*',
-                    '>',
-                    '<',
-                    '#'
-                )) {
-                    if (index + word.length < spannableStringBuilder.length) {
-                        if (spannableStringBuilder.get(index + word.length) == '\"') {
-                            if (!isString) {
-                                isString = true
-                                startingQuoteIndex = start + index + word.length
-                            } else {
-                                endingQuoteIndex = start + index + word.length + 1
-
-                            }
-                        } else if (extension!=".php" &&startingSingleLineCommentIndex == -1 && spannableStringBuilder.get(
-                                index + word.length
-                            ) == '/' && index + word.length + 1 < spannableStringBuilder.length && spannableStringBuilder.get(
-                                index + word.length + 1
-                            ) == '/'
-                        ) {
-                            startingSingleLineCommentIndex = start + index + word.length
-                        }else if (extension==".php" && startingSingleLineCommentIndex == -1 && spannableStringBuilder.get(index + word.length) == '#') {
-                            startingSingleLineCommentIndex = start + index + word.length
+                        if (startingQuoteIndex != -1 && endingQuoteIndex != -1) {
+                            text?.setSpan(
+                                ForegroundColorSpan(Color.rgb(0, 200, 100)),
+                                startingQuoteIndex,
+                                endingQuoteIndex,
+                                0
+                            )
+                            isString = false
+                            startingQuoteIndex = -1
+                            endingQuoteIndex = -1
                         }
-
+                        index += word.length + 1
                     }
 
-                    if (startingSingleLineCommentIndex == -1 && hashMap!!.containsKey(word)) {
+                    if (startingSingleLineCommentIndex != -1) {
                         text?.setSpan(
-                            ForegroundColorSpan(
-                                Color.rgb(
-                                    hashMap!!.get(word)!!.get(0),
-                                    hashMap!!.get(word)!!.get(1),
-                                    hashMap!!.get(word)!!.get(2)
-                                )
-                            ), start + index, start + index + word.length, 0
-                        )
-                    }
-                    if (startingQuoteIndex != -1 && endingQuoteIndex != -1) {
-                        text?.setSpan(
-                            ForegroundColorSpan(Color.rgb(0,200,100)),
-                            startingQuoteIndex,
-                            endingQuoteIndex,
+                            ForegroundColorSpan(Color.rgb(144, 144, 144)),
+                            startingSingleLineCommentIndex,
+                            start + index - 1,
                             0
                         )
-                        isString = false
-                        startingQuoteIndex = -1
-                        endingQuoteIndex = -1
                     }
-                    index += word.length + 1
-                }
-
-                if (startingSingleLineCommentIndex != -1) {
-                    text?.setSpan(
-                        ForegroundColorSpan(Color.rgb(144, 144, 144)),
-                        startingSingleLineCommentIndex,
-                        start + index - 1,
-                        0
-                    )
                 }
             }
         }
@@ -345,6 +375,7 @@ class MyEditText : AppCompatEditText {
 
 
     override fun setText(text: CharSequence?, type: BufferType?) {
+        Log.e(TAG,"set Text called")
         if(textWatcher!=null)
             removeTextChangedListener(textWatcher)
         super.setText(text?.toSpannable(), BufferType.SPANNABLE)

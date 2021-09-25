@@ -35,7 +35,7 @@
     <string name="line_number">Line Number</string>
     <string name="saved_successfully">Saved Successfully</string>
     <string name="ignore_case">Ignore Case</string>
-    <string name="tab">tab</string>
+    <string name="tab" translatable="false">tab</string>
     <string name="replace_all">Replace All</string>
     <string name="replace">Replace</string>
     <string name="up">Up</string>
@@ -61,7 +61,7 @@
     <string name="cancel">Cancel</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-    <string name="greet_line">Hello</string>
+    <string name="greet_line">Hello!</string>
     <string name="file_doesnot_saved">File Doesn\'t Saved</string>
     <string name="file_havenot_permission_to_write">Doesn\'t have valid permission to write</string>
     <string name="search_and_replace">Search and Replace</string>

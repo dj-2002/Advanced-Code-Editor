@@ -19,17 +19,16 @@ class MyViewModel(application: Application) : AndroidViewModel(application) {
     private  var recentFileList = MutableLiveData(mutableListOf<RecentFile>())
 
     var currentTab : Int = -1
-    var isWrap = false
+    var isWrap = true
     var isHistoryLoaded = MutableLiveData(false)
 
     private val TAG = "MyViewModel"
 
     init {
-
         loadHistory()
         loadRecentFile()
         val preferences = PreferenceManager.getDefaultSharedPreferences(application)
-        isWrap = preferences.getBoolean("word_wrap",false)
+        isWrap = preferences.getBoolean("word_wrap",true)
 
     }
 

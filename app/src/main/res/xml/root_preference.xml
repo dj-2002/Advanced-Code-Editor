@@ -18,6 +18,13 @@
             android:switchTextOff="Light"
             android:title="Night Mode"/>
 
+        <SwitchPreference
+            android:key="syntax_color"
+            android:icon="@drawable/ic_color"
+            android:defaultValue="true"
+            android:summary="restart app to enable effect"
+            android:title="Syntax Color"/>
+
         <SeekBarPreference
             android:key="TEXT_SIZE_PREFERENCE"
             android:icon="@drawable/ic_textsize"
@@ -25,13 +32,13 @@
             app:min="8"
             android:max="30"
             app:showSeekBarValue="true"
-            android:defaultValue="15" />
+            android:defaultValue="17" />
 
         <SwitchPreference
             android:key="word_wrap"
             android:icon="@drawable/ic_wrap_content"
             android:title="Word Wrap"
-            android:defaultValue="false"
+            android:defaultValue="true"
             app:summary="Enable Line break to fit screen width"
             />
 
@@ -42,7 +49,7 @@
 
         <Preference
             app:title="Version"
-            app:summary="1.1" />
+            app:summary="1.2.2" />
 
         <Preference
             app:title="Developer"

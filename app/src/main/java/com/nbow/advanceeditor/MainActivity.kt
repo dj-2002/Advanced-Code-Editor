@@ -131,12 +131,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         binding.pager2.isUserInputEnabled = false
         val v:View  = binding.noTabLayout.cl1
         v.setOnClickListener({
-            val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
-                addCategory(Intent.CATEGORY_OPENABLE)
-                type = "*/*"
-                putExtra(Intent.EXTRA_TITLE, "new.txt")
+            try {
+                val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+                    addCategory(Intent.CATEGORY_OPENABLE)
+                    type = "*/*"
+                    putExtra(Intent.EXTRA_TITLE, "new.txt")
+                }
+                newFileLauncher.launch(intent)
             }
-            newFileLauncher.launch(intent)
+            catch (e:Exception)
+            {
+                Toast.makeText(applicationContext, "${e.message.toString()}", Toast.LENGTH_SHORT).show()
+                Log.e(TAG, "newFileLauncher: ${e.toString()}.", )
+            }
 
         })
         val v2:View = binding.noTabLayout.cl2
@@ -210,8 +217,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             search(currentFragment, false)
                             true
                         }
-                        R.id.search_replace -> {
-                            search(currentFragment, true)
+                        R.id.open -> {
+                            if (!helper.isStoragePermissionGranted()) helper.takePermission()
+                            if (helper.isStoragePermissionGranted()) chooseFile()
                             true
                         }
                         R.id.close -> {
@@ -677,12 +685,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
                 R.id.new_file -> {
                     //TODO : remaining ....
-                    val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
-                        addCategory(Intent.CATEGORY_OPENABLE)
-                        type = "*/*"
-                        putExtra(Intent.EXTRA_TITLE, "new.txt")
+                    try {
+
+
+                        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+                            addCategory(Intent.CATEGORY_OPENABLE)
+                            type = "*/*"
+                            putExtra(Intent.EXTRA_TITLE, "new.txt")
+                        }
+                        newFileLauncher.launch(intent)
                     }
-                    newFileLauncher.launch(intent)
+                    catch (e:Exception)
+                    {
+                        Toast.makeText(applicationContext, "${e.message.toString()}", Toast.LENGTH_SHORT).show()
+                        Log.e(TAG, "newFileLauncher: ${e.toString()}.", )
+                    }
                 }
                 R.id.paste -> {
                     val clipboardManager =
@@ -739,7 +756,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     }
 
                 }
+                R.id.undo_change -> {
+                    if(currentFragment!=null)
+                    {
+                        currentFragment.undoChanges()
+                    }
+                }
+                R.id.redo_change->{
 
+                    if(currentFragment!=null)
+                    {
+                        currentFragment.redoChanges()
+                    }
+
+                }
 
 
             }
@@ -1042,14 +1072,24 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun saveAsIntent(currentFragment: EditorFragment?) {
         if (currentFragment != null) {
 
-            val fileExtension = currentFragment.getFileExtension()
-            val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
-                addCategory(Intent.CATEGORY_OPENABLE)
-                type = "*/*"
-                putExtra(Intent.EXTRA_TITLE, "untitled${fileExtension}")
+            try {
+                if (currentFragment != null) {
 
+                    val fileExtension = currentFragment.getFileExtension()
+                    val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+                        addCategory(Intent.CATEGORY_OPENABLE)
+                        type = "*/*"
+                        putExtra(Intent.EXTRA_TITLE, "untitled${fileExtension}")
+
+                    }
+                    saveAsSystemPickerLauncher.launch(intent)
+                }
             }
-            saveAsSystemPickerLauncher.launch(intent)
+            catch (e:Exception)
+            {
+                Toast.makeText(applicationContext, "${e.message.toString()}", Toast.LENGTH_SHORT).show()
+                Log.e(TAG, "saveAsIntent: ${e.toString()}.", )
+            }
         }
     }
 
@@ -1200,6 +1240,69 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             actionMode = null
         }
     }
+
+    private val actionModeCallbackUndoRedo = object : ActionMode.Callback {
+
+
+
+
+        // Called when the action mode is created; startActionMode() was called
+        override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
+            // Inflate a menu resource providing context menu items
+            val inflater: MenuInflater = mode.menuInflater
+            inflater.inflate(R.menu.undo_redo_menu, menu)
+
+            return true
+        }
+
+        // Called each time the action mode is shown. Always called after onCreateActionMode, but
+        // may be called multiple times if the mode is invalidated.
+        override fun onPrepareActionMode(mode: ActionMode, menu: Menu): Boolean {
+            mode.setTitle("Undo & Redo")
+            return false // Return false if nothing is done
+        }
+
+        // Called when the user selects a contextual menu item
+        override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
+
+
+            var currentFragment: EditorFragment? = null
+
+            if (isValidTab()) {
+                currentFragment =
+                    adapter.fragmentList.get(binding.tabLayout.selectedTabPosition) as EditorFragment
+            }
+
+            return when (item.itemId) {
+
+
+                R.id.undo_change -> {
+                    if(currentFragment!=null)
+                    {
+                        currentFragment.undoChanges()
+                    }
+                    true
+                }
+                R.id.redo_change->{
+
+                    if(currentFragment!=null)
+                    {
+                        currentFragment.redoChanges()
+                    }
+                    true
+                }
+                else -> false
+            }
+        }
+
+        // Called when the user exits the action mode
+        override fun onDestroyActionMode(mode: ActionMode) {
+            binding.bottomNavigation.visibility = View.VISIBLE
+            binding.contextualBottomNavigation.visibility = View.GONE
+            actionMode = null
+        }
+    }
+
 
     private fun gotoLine() {
 

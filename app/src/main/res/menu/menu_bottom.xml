@@ -25,10 +25,10 @@
         app:showAsAction="always"
         />
     <item
-        android:id="@+id/search_replace"
+        android:id="@+id/open"
         android:enabled="true"
-        android:title="@string/find_amp_replace"
-        android:icon="@drawable/ic_find_replace"
+        android:title="@string/open"
+        android:icon="@drawable/ic_folder_open"
         app:showAsAction="always"
         />
 

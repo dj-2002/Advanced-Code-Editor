@@ -1,5 +1,6 @@
 package com.nbow.advanceeditor
 
+import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -19,6 +20,7 @@ class EditorFragment : Fragment {
     private var editText : MyEditText? = null
     private var currentPageIndex : Int = 0
     var hasUnsavedChanges = MutableLiveData(false)
+    private var undoRedo=TextViewUndoRedo()
 //    private var listOfPageData : MutableList<String> = arrayListOf()
 
     private var dataFile : DataFile? = null
@@ -65,7 +67,9 @@ class EditorFragment : Fragment {
 
         // data initializing to edit text first time when attach to view
         if(dataFile!=null && currentPageIndex>=0 && currentPageIndex<dataFile!!.listOfPageData.size){
+            undoRedo.mIsUndoOrRedo = true
             editText!!.setText(dataFile!!.listOfPageData.get(currentPageIndex))
+            undoRedo.mIsUndoOrRedo = false
             Log.e(TAG, "onViewStateRestored: size : ${dataFile!!.listOfPageData.get(0).length}")
             Log.e(TAG, "onViewStateRestored: number of page : ${dataFile!!.listOfPageData.size}")
 
@@ -85,6 +89,19 @@ class EditorFragment : Fragment {
         var myTextSize:Int = preference.getInt(KEY_TEXT_SIZE,14)
 
         editText?.setTextSize(myTextSize.toFloat())
+
+
+        val  f=(preference.getString("font_family","DEFAULT"))
+        if(f=="DEFAULT_BOLD")
+            editText?.typeface= Typeface.DEFAULT_BOLD
+        else if(f=="MONOSPACE")
+            editText?.typeface= Typeface.MONOSPACE
+        else if(f=="SANS_SARIF")
+            editText?.typeface= Typeface.SANS_SERIF
+        else if(f=="SERIF")
+            editText?.typeface= Typeface.SERIF
+
+
         super.onResume()
     }
 
@@ -162,9 +179,28 @@ class EditorFragment : Fragment {
         })
 
 //        editText.setHorizontallyScrolling(false)
-
+        if(editText!=null) {
+            undoRedo = TextViewUndoRedo(editText,viewLifecycleOwner)
+        }
         return view
     }
+
+    fun undoChanges()
+    {
+        var before = undoRedo.undo()
+        while(before!=null && before.length>0 && before[0]!=' ' ) {
+            before =  undoRedo.undo()
+        }
+
+    }
+    fun redoChanges()
+    {
+        var after=undoRedo.redo()
+        while(after!=null && after.length>0 && after.last()!=' ' ) {
+            after =  undoRedo.redo()
+        }
+    }
+
 
     fun saveDataToPage() {
         if(editText!=null) {

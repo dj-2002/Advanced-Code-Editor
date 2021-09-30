@@ -8,8 +8,6 @@
         android:key="appreance">
         >
 
-
-
         <SwitchPreference
             android:key="night_mode_preference"
             android:icon="@drawable/baseline_dark_mode_24"
@@ -22,7 +20,7 @@
             android:key="syntax_color"
             android:icon="@drawable/ic_color"
             android:defaultValue="true"
-            android:summary="restart app to enable effect"
+            android:summary="Please restart app to enable effect on opened file"
             android:title="Syntax Color"/>
 
         <SeekBarPreference
@@ -34,6 +32,16 @@
             app:showSeekBarValue="true"
             android:defaultValue="17" />
 
+        <ListPreference
+            android:key="font_family"
+            android:title="Select Font"
+            android:entries="@array/font_style_array"
+            app:entryValues="@array/font_style_array"
+            android:defaultValue="DEFAULT"
+            android:icon="@drawable/ic_font"
+            />
+
+
         <SwitchPreference
             android:key="word_wrap"
             android:icon="@drawable/ic_wrap_content"
@@ -41,7 +49,6 @@
             android:defaultValue="true"
             app:summary="Enable Line break to fit screen width"
             />
-
 
     </PreferenceCategory>
 
@@ -61,7 +68,7 @@
             android:key="feedback_preference"
             app:title="Send Feedback"
             android:defaultValue="@string/feedback"
-            app:summary="Report a bug " />
+            app:summary="Report a bug: If you found any bug or crash please report here " />
 
     </PreferenceCategory>
 

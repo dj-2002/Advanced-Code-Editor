@@ -196,7 +196,7 @@ class MyEditText : AppCompatEditText {
     private fun setSpannableString(textString:String,start:Int = 0){
 
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-        val syntaxColor:Boolean = preferences.getBoolean("syntax_color",false)
+        val syntaxColor:Boolean = preferences.getBoolean("syntax_color",true)
         Log.e(TAG, ":$syntaxColor ", )
         if(syntaxColor) {
 

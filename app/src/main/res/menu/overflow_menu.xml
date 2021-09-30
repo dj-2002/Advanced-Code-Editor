@@ -22,6 +22,19 @@
         app:showAsAction="never"
         />
 
+    <item
+        android:id="@+id/undo_change"
+        android:title="Undo"
+        android:icon="@drawable/ic_undo"
+        app:showAsAction="ifRoom"/>
+
+
+    <item
+        android:id="@+id/redo_change"
+        android:title="Redo"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_redo">
+    </item>
 
 
 

@@ -31,7 +31,7 @@
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
-
+                <category android:name="android.intent.category.DEFAULT" />
                 <action android:name="android.intent.action.SEND" />
 
             </intent-filter>

@@ -1164,13 +1164,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 replaceText = replaceEditText.text.toString()
                 ignoreCase = ignoreCaseCheckBox.isChecked
 
-                Toast.makeText(
-                    applicationContext,
-                    "Find clicked with search : ${findEditText.text} replce : ${replaceEditText.text}",
-                    Toast.LENGTH_LONG
-                ).show()
 
                 actionMode = startActionMode(actionModeCallback)
+
+                actionMode.apply {
+                    if(hasReplace)
+                        this?.title=" "+findText+" --> "+replaceText
+                    else
+                        this?.title = "Search : "+findText
+                }
                 binding.specialCharLayout.root.visibility = View.GONE
 
                 if (!hasReplace)

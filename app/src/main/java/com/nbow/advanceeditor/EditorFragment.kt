@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
@@ -14,12 +15,21 @@ import androidx.lifecycle.MutableLiveData
 import androidx.preference.PreferenceManager
 import kotlinx.coroutines.*
 
+import android.content.ClipData
+import android.content.Context
+
+import android.view.View.OnLongClickListener
+
+
+
+
 class EditorFragment : Fragment {
 
     private val TAG = "EditorFragment"
     private var editText : MyEditText? = null
     private var currentPageIndex : Int = 0
     var hasUnsavedChanges = MutableLiveData(false)
+    var hasLongPress = MutableLiveData<Boolean>(false)
     private var undoRedo=TextViewUndoRedo()
 //    private var listOfPageData : MutableList<String> = arrayListOf()
 
@@ -77,6 +87,11 @@ class EditorFragment : Fragment {
         }
         Log.e(TAG, "onViewStateRestored: current index of page : $currentPageIndex")
 
+        editText?.setOnLongClickListener(OnLongClickListener {
+            hasLongPress.value = true
+            false
+        })
+
 
         super.onViewStateRestored(savedInstanceState)
     }
@@ -92,16 +107,16 @@ class EditorFragment : Fragment {
 
 
         val  f=(preference.getString("font_family","DEFAULT"))
-        if(f=="DEFAULT_BOLD")
-            editText?.typeface= Typeface.DEFAULT_BOLD
-        else if(f=="MONOSPACE")
-            editText?.typeface= Typeface.MONOSPACE
-        else if(f=="SANS_SARIF")
-            editText?.typeface= Typeface.SANS_SERIF
-        else if(f=="SERIF")
-            editText?.typeface= Typeface.SERIF
-
-
+        if(f!="DEFAULT"){
+            if(f=="DEFAULT_BOLD")
+                editText?.typeface= Typeface.DEFAULT_BOLD
+            else if(f=="MONOSPACE")
+                editText?.typeface= Typeface.MONOSPACE
+            else if(f=="SANS_SARIF")
+                editText?.typeface= Typeface.SANS_SERIF
+            else if(f=="SERIF")
+                editText?.typeface= Typeface.SERIF
+        }
         super.onResume()
     }
 
@@ -187,14 +202,21 @@ class EditorFragment : Fragment {
 
     fun undoChanges()
     {
+        if(!undoRedo.canUndo){
+            Toast.makeText(this.context, "no more Undo", Toast.LENGTH_SHORT).show()
+        }
         var before = undoRedo.undo()
         while(before!=null && before.length>0 && before[0]!=' ' ) {
             before =  undoRedo.undo()
         }
 
+
     }
     fun redoChanges()
     {
+        if(!undoRedo.canRedo){
+            Toast.makeText(this.context, "no more Redo", Toast.LENGTH_SHORT).show()
+        }
         var after=undoRedo.redo()
         while(after!=null && after.length>0 && after.last()!=' ' ) {
             after =  undoRedo.redo()

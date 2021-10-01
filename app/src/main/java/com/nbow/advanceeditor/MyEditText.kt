@@ -164,6 +164,7 @@ class MyEditText : AppCompatEditText {
             startIndex -= lineCount
             isPrev = false
         }
+
         for (i in 0 until lineCount) {
 
             baseline = getLineBounds(i, null)

@@ -30,7 +30,7 @@
             app:min="8"
             android:max="30"
             app:showSeekBarValue="true"
-            android:defaultValue="17" />
+            android:defaultValue="16" />
 
         <ListPreference
             android:key="font_family"
@@ -46,7 +46,7 @@
             android:key="word_wrap"
             android:icon="@drawable/ic_wrap_content"
             android:title="Word Wrap"
-            android:defaultValue="true"
+            android:defaultValue="false"
             app:summary="Enable Line break to fit screen width"
             />
 

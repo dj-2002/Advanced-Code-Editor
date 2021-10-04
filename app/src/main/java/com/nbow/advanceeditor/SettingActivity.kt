@@ -24,6 +24,8 @@ class SettingActivity : AppCompatActivity() {
         model = ViewModelProvider(this,MyViewModelFactory(this.application)).get(MyViewModel::class.java)
 
 
+
+
         if (savedInstanceState == null) {
             supportFragmentManager
                 .beginTransaction()

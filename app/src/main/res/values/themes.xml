@@ -29,8 +29,8 @@
         <!--    Customise for only lollipop and above versions features. -->
         <item name="colorAccent">@color/colorAccent</item>
 
-<!--        <item name="android:buttonStyle">@style/ButtonColor</item>-->
-<!--        <item name="colorButtonNormal">@color/colorBtn</item>-->
+        <!--        <item name="android:buttonStyle">@style/ButtonColor</item>-->
+        <!--        <item name="colorButtonNormal">@color/colorBtn</item>-->
 
         <item name="android:windowBackground">@color/windowBackground</item>
 
@@ -113,5 +113,14 @@
     <style name="NeutralButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
         <item name="android:textColor">?attr/colorAccent</item>
     </style>
+
+    <style name="AppMaterialTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppMaterialTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppMaterialTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 </resources>

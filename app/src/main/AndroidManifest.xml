@@ -18,14 +18,24 @@
         android:supportsRtl="true"
         android:theme="@style/AppMaterialTheme">
         <activity
-            android:name=".SplashScreen"
-            android:noHistory="true"
-            android:theme="@style/SplashTheme"
+            android:name=".FormatActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize"
             >
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".WebViewActivity"
+            android:exported="true"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".SplashScreen"
+            android:noHistory="true"
+            android:theme="@style/SplashTheme">
         </activity>
         <activity
             android:name=".MainActivity"
@@ -33,7 +43,6 @@
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
                 <action android:name="android.intent.action.SEND" />
-
             </intent-filter>
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
@@ -43,8 +52,10 @@
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.EDIT" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data android:mimeType="text/*" />
                 <data android:mimeType="application/java" />
                 <data android:mimeType="application/sql" />

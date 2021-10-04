@@ -97,11 +97,12 @@ class EditorFragment : Fragment {
     }
 
 
+
     override fun onResume() {
 //        val PREFERENCE_NAME="myPreference"
         val KEY_TEXT_SIZE = "TEXT_SIZE_PREFERENCE"
         val preference= PreferenceManager.getDefaultSharedPreferences(context)
-        var myTextSize:Int = preference.getInt(KEY_TEXT_SIZE,14)
+        var myTextSize:Int = preference.getInt(KEY_TEXT_SIZE,16)
 
         editText?.setTextSize(myTextSize.toFloat())
 

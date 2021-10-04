@@ -45,4 +45,8 @@
         app:showAsAction="never"
         android:checked="false"/>
 
+    <item
+        android:id="@+id/run"
+        android:title="Run HTML(BETA)"></item>
+
 </menu>

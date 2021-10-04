@@ -528,7 +528,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         //lifecycleScope.launch(Dispatchers.Main){
             val preferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
 
-            val wrap = preferences.getBoolean("word_wrap", true)
+            val wrap = preferences.getBoolean("word_wrap", false)
             val keyIsThemeChanged = "is_theme_changed_setting"
             val isThemeChangedFromSetting = preferences.getBoolean(keyIsThemeChanged, false)
             if (wrap != model.isWrap) {
@@ -736,6 +736,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     //TODO : remaining ...
                     if (currentFragment != null) {
                         currentFragment.selectAll()
+                        actionMode=startActionMode(actionModeCallbackCopyPaste)
                     }
                 }
                 R.id.go_to_line -> {
@@ -750,6 +751,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 R.id.search_replace -> {
                     if (currentFragment != null)
                         search(currentFragment, true)
+                }
+                R.id.run->{
+                    val intent:Intent = Intent(this,WebViewActivity::class.java)
+                    if(currentFragment!=null) {
+                        intent.putExtra("data", currentFragment.getEditTextData().toString())
+                        startActivity(intent)
+                    }
+
                 }
                 R.id.settings -> {
                     Log.e(TAG, "onNavigationItemSelected: clicked")
@@ -1128,7 +1137,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         alertDialogGlobal.show()
 
         lifecycleScope.launch(Dispatchers.Main) {
-            delay(1000)
+            delay(400)
             alertDialogGlobal.dismiss()
             if (isCloseFlag) {
                 closeTab()
@@ -1294,7 +1303,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             return when (item.itemId) {
 
-
+                // actioMode
                 R.id.undo_change -> {
                     if(currentFragment!=null)
                     {
@@ -1303,6 +1312,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     }
                     true
                 }
+                // actioMode
                 R.id.redo_change->{
 
                     if(currentFragment!=null)
@@ -1359,7 +1369,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             return when (item.itemId) {
 
-
+                    // actioMode
                 R.id.paste -> {
                     val clipboardManager =
                         getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
@@ -1370,7 +1380,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     true
                 }
 
-
+                // actioMode
                 R.id.copy -> {
                     if (currentFragment !== null) {
                         val selectedData = currentFragment.getSelectedData()
@@ -1378,10 +1388,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     }
                     true
                 }
+
+                // actioMode
                 R.id.select_all -> {
                     //TODO : remaining ...
                     if (currentFragment != null) {
                         currentFragment.selectAll()
+
                     }
                     true
                 }

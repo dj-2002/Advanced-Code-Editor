@@ -19,7 +19,7 @@ class MyViewModel(application: Application) : AndroidViewModel(application) {
     private  var recentFileList = MutableLiveData(mutableListOf<RecentFile>())
 
     var currentTab : Int = -1
-    var isWrap = true
+    var isWrap = false
     var isHistoryLoaded = MutableLiveData(false)
 
     private val TAG = "MyViewModel"

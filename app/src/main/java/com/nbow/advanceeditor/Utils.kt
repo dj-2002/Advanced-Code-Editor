@@ -2,9 +2,11 @@ package com.nbow.advanceeditor
 
 import android.Manifest
 import android.app.Activity
+import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
@@ -39,6 +41,14 @@ class Utils {
         }
     }
 
+    fun queryName(resolver: ContentResolver, uri: Uri?): String {
+        val returnCursor: Cursor = uri?.let { resolver.query(it, null, null, null, null) }!!
+        val nameIndex: Int = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+        returnCursor.moveToFirst()
+        val name: String = returnCursor.getString(nameIndex)
+        returnCursor.close()
+        return name
+    }
 
     fun takePermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {

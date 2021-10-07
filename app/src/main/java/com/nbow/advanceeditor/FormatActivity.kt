@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.widget.Toolbar
 import com.nbow.advanceeditor.databinding.ActivityFormatBinding
-import com.nbow.advanceeditor.databinding.ActivityMainBinding
 
 import android.graphics.Typeface
 
@@ -21,22 +20,35 @@ import androidx.core.content.res.ResourcesCompat
 import top.defaults.colorpicker.ColorPickerPopup
 import android.R.layout
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.Dialog
+import android.content.ClipboardManager
+import android.content.Context
+import android.net.Uri
 import android.os.Build
 import android.text.*
 import android.text.style.*
 import android.view.*
 import android.widget.PopupWindow
+import android.widget.RadioGroup
 
 import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.FontRes
 import androidx.annotation.RequiresApi
 
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.app.ShareCompat
+import androidx.core.text.HtmlCompat
 import androidx.preference.PreferenceManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.nbow.advanceeditor.data.RecentFile
 import kotlinx.coroutines.selects.select
+import java.io.*
+import java.net.URLConnection
+import java.util.*
 
 
 class FormatActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelectedListener {
@@ -53,11 +65,26 @@ class FormatActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelect
     private var isAlignLeftEnabled = true
     private var isAlignRightEnabled = false
 
+    private lateinit var helper : Utils
+
+    val mimeType =
+        "text/*"
+
+    val TEXT = "text/*"
+
+    private var supportedMimeTypes = arrayOf(TEXT)
+
+    private var currentUri : Uri? = null
+
     val flag = Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityFormatBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        helper  = Utils(this)
+        if (!helper.isStoragePermissionGranted()) helper.takePermission()
+
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         toolbar.setTitle("Format Mode (BETA VERSION)")
         setSupportActionBar(toolbar)
@@ -80,40 +107,25 @@ class FormatActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelect
         binding.editText.doOnTextChanged{
             text, start, before, count ->
             run {
-                Log.e(TAG, "onCreate: $text $start $before $count ")
+                Log.e(TAG, "onCreate: ${text?.subSequence(start,start+count)} $start $before $count ")
+                binding.editText.text.apply {
+                    if (before<count) { // adding new text
+                        if (isBoldEnabled)
+                            this.setSpan(StyleSpan(Typeface.BOLD), start, start + count, flag)
+                        if (isItalicEnabled)
+                            this.setSpan(StyleSpan(Typeface.ITALIC), start, start + count, flag)
 
-                if(isBoldEnabled)
-                    binding.editText.text.apply {
-                        this.setSpan(StyleSpan(Typeface.BOLD), start,start+count,flag)
-                    }
-                if(isItalicEnabled)
-                    binding.editText.text.apply {
-                        this.setSpan(StyleSpan(Typeface.ITALIC), start,start+count,flag)
-                    }
-                if(isUnderlineEnabled)
-                    binding.editText.text.apply {
-                        this.setSpan(UnderlineSpan(), start,start+count,flag)
-                    }
-                if(isStrikethroughEnabled)
-                    binding.editText.text.apply {
-                        this.setSpan(StrikethroughSpan(), start,start+count,flag)
-                    }
-//                binding.editText.apply {
-//                    var startIndex = selectionStart-1
-//                    var endIndex = this.text.indexOf('\n',selectionEnd-1)
-//                    while(startIndex>0 && this.text[startIndex]!='\n'){
-//                        startIndex--
-//                    }
-//                    if(endIndex==-1) endIndex = this.text.length-1
-//
-//
-//                    if(isAlignCenterEnabled) this.text.setSpan(AlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER),startIndex,endIndex,flag)
-//                    else if(isAlignLeftEnabled) this.text.setSpan(AlignmentSpan.Standard(Layout.Alignment.ALIGN_NORMAL),startIndex,endIndex,flag)
-//                    else if(isAlignRightEnabled) this.text.setSpan(AlignmentSpan.Standard(Layout.Alignment.ALIGN_OPPOSITE),startIndex,endIndex,flag)
-//                }
+                        if (isUnderlineEnabled)
+                            this.setSpan(UnderlineSpan(), start, start + count, flag)
 
-                val typeface = Typeface.create(ResourcesCompat.getFont(applicationContext,selectedFont),Typeface.NORMAL)
-                binding.editText.text.apply { this.setSpan(CustomTypefaceSpan(typeface),start,start+count,flag) }
+                        if (isStrikethroughEnabled)
+                            this.setSpan(StrikethroughSpan(), start, start + count, flag)
+
+
+                    val typeface = Typeface.create(ResourcesCompat.getFont(applicationContext,selectedFont),Typeface.NORMAL)
+                    this.setSpan(CustomTypefaceSpan(typeface),start,start+count,flag)
+                    }
+                }
             }
 
         }
@@ -152,9 +164,7 @@ class FormatActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelect
                     else setBackgroundColor(Color.GRAY)
                 }
                 changeSelectedTextStyle(underline = true)
-//                binding.editText.apply {
-//                    text.setSpan(UnderlineSpan(), selectionStart,selectionEnd , flag)
-//                }
+
             })
             strikethrough.setOnClickListener({
                 isStrikethroughEnabled = !isStrikethroughEnabled
@@ -163,40 +173,23 @@ class FormatActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelect
                     else setBackgroundColor(Color.GRAY)
                 }
                 changeSelectedTextStyle(strikethrough = true)
-//                binding.editText.apply {
-//                    text.setSpan(StrikethroughSpan(), selectionStart,selectionEnd , flag)
-//                }
             })
             alignCenter.setOnClickListener({
                 changeAlignmentValue(center = true)
                 changeParagraphStyle(alignCenter = true)
-                binding.editText.apply {
 
-                }
             })
 
             alignLeft.setOnClickListener({
                 changeAlignmentValue(left = true)
                 changeParagraphStyle(alignLeft = true)
-                isAlignLeftEnabled = !isAlignLeftEnabled
             })
             alignRight.setOnClickListener({
                 changeAlignmentValue(right = true)
                 changeParagraphStyle(alignRight = true)
-                isAlignRightEnabled = !isAlignRightEnabled
             })
             colorText.setOnClickListener({
-//                isColorTextEnabled = !isColorTextEnabled
-//                binding.textEditorBottam.colorText.apply {
-//                    if(isColorTextEnabled) setBackgroundColor(Color.GREEN)
-//                    else setBackgroundColor(Color.GRAY)
-//                }
-//                changeSelectedTextStyle(colorText = true)
-
                 pickColor()
-//                binding.editText.apply {
-//                    text.setSpan(ForegroundColorSpan(Color.BLUE), selectionStart,selectionEnd , flag)
-//                }
             })
             textFont.setOnClickListener({
                 binding.editText.apply {
@@ -229,13 +222,13 @@ class FormatActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelect
         return -1;
     }
 
-    fun changeSelectedTextStyle(bold : Boolean = false,italic: Boolean = false,underline : Boolean = false,strikethrough : Boolean = false,colorText : Boolean = false){
+    fun changeSelectedTextStyle(bold : Boolean = false,italic: Boolean = false,underline : Boolean = false,strikethrough : Boolean = false){
         binding.editText.apply {
 
 
             if(selectionEnd != selectionStart) {
 
-                if((bold && !isBoldEnabled) || (italic && !isItalicEnabled) || (strikethrough && !isStrikethroughEnabled) || (colorText && !isColorTextEnabled) || (underline && !isUnderlineEnabled)) {
+                if((bold && !isBoldEnabled) || (italic && !isItalicEnabled) || (strikethrough && !isStrikethroughEnabled)  || (underline && !isUnderlineEnabled)) {
                     var next: Int
 
                     var i = selectionStart
@@ -252,7 +245,7 @@ class FormatActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelect
                                 val spn = span as StyleSpan
                                 if ((spn.style == Typeface.BOLD && bold) || (spn.style == Typeface.ITALIC && italic))
                                     text.removeSpan(spn)
-                            }else if((span is UnderlineSpan && underline) || (span is StrikethroughSpan && strikethrough) || (span is ForegroundColorSpan && colorText)){
+                            }else if((span is UnderlineSpan && underline) || (span is StrikethroughSpan && strikethrough)){
                                 text.removeSpan(span)
                             }
                         }
@@ -267,8 +260,7 @@ class FormatActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelect
                     text.setSpan(UnderlineSpan(), selectionStart, selectionEnd, flag)
                 else if(strikethrough)
                     text.setSpan(StrikethroughSpan(), selectionStart, selectionEnd, flag)
-                else if(colorText)
-                    text.setSpan(ForegroundColorSpan(Color.BLUE), selectionStart,selectionEnd , flag)
+                
 
             }
         }
@@ -309,12 +301,9 @@ class FormatActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelect
                 var end = this.layout.getLineEnd(endLine)
                 Log.e(TAG, "changeParagraphStyle: $start $end" )
                 if(end==-1) end = binding.editText.text.length
-                if(alignCenter) {
-                    text.setSpan(AlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER),start,end,flag)
-                }
+                if(alignCenter) text.setSpan(AlignmentSpan.Standard(Layout.Alignment.ALIGN_CENTER),start,end,flag)
                 else if(alignLeft) text.setSpan(AlignmentSpan.Standard(Layout.Alignment.ALIGN_NORMAL),start,end,flag)
                 else if(alignRight) text.setSpan(AlignmentSpan.Standard(Layout.Alignment.ALIGN_OPPOSITE),start,end,flag)
-            
             }
         }
     }
@@ -396,11 +385,486 @@ class FormatActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelect
 
         }
     }
+    
+//    private fun save(){
+//
+//    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        when (item.itemId) {
+            R.id.open -> showPopupMenu(item, R.menu.open_file_menu)
+            R.id.edit -> showPopupMenu(item, R.menu.edit_menu)
+            R.id.overflow_menu -> showPopupMenu(item, R.menu.overflow_menu)
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun chooseFile() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            val intent: Intent = Intent(Intent.ACTION_OPEN_DOCUMENT).setType("*/*")
+            intent.putExtra(Intent.EXTRA_MIME_TYPES, supportedMimeTypes)
+            resLauncher.launch(intent)
+        } else {
+            val intent: Intent = Intent(Intent.ACTION_GET_CONTENT).setType(mimeType)
+            resLauncher.launch(intent)
+        }
+    }
+
+    val resLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val intent: Intent? = result.data
+                var uri = intent?.data
+                this.currentUri = uri
+                if (uri !== null) readFileUsingUri(uri)
+
+            }
+        }
+
+    private fun readFileUsingUri(uri: Uri,isOuterFile : Boolean = false,isReload : Boolean = false) {
+
+        try {
+            val takeFlags: Int =
+                Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+                applicationContext.contentResolver.takePersistableUriPermission(uri, takeFlags)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        try {
+            val inputStream: InputStream? = contentResolver.openInputStream(uri)
+            val fileSize: Int = inputStream!!.available()
+            val bufferedReader = BufferedReader(InputStreamReader(inputStream, "UTF-8"))
+            val listOfLines: MutableList<String> = arrayListOf()
+            val listOfPageData: MutableList<String> = arrayListOf()
+
+            bufferedReader.forEachLine {
+                listOfLines.add(it)
+            }
+
+            val temp = StringBuilder("")
+            var count = 0
+            for (line in listOfLines) {
+                temp.append(line)
+                count++
+                if (count >= 3000 || temp.length >= 500000) { // 500kb
+//                Log.e(TAG, "readFileUsingUri: temp : at $count : $temp")
+                    listOfPageData.add(temp.toString())
+                    temp.clear()
+                    count = 0
+                } else temp.append("\n")
+            }
+            if (temp.length > 0) {
+                listOfPageData.add(temp.toString())
+            }
+            if (listOfLines.size == 0) {
+                listOfPageData.add(temp.toString())
+            }
+
+            val fileName: String = helper.queryName(contentResolver, uri)
+            binding.editText.apply {
+//                Log.e(TAG, "readFileUsingUri: page 1 : ${listOfPageData[0]}")
+                if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.N)
+                    setText(Html.fromHtml(listOfPageData[0],Html.FROM_HTML_MODE_LEGACY))
+                else
+                    setText(HtmlCompat.fromHtml(listOfPageData[0],HtmlCompat.FROM_HTML_MODE_LEGACY))
+            }
+
+//            val dataFile = DataFile(
+//                fileName = fileName,
+//                filePath = uri.path!!,
+//                uri = uri,
+//                listOfPageData = listOfPageData
+//            )
+//            val fragment = EditorFragment(dataFile)
+
+//            if (isReload && isValidTab()) {
+//                val position = binding.tabLayout.selectedTabPosition
+//                adapter.fragmentList.removeAt(position)
+//                adapter.fragmentList.add(position, fragment)
+//                setCustomTabLayout(position, "$fileName")
+//                adapter.notifyDataSetChanged()
+//
+//            } else {
+//                adapter.addFragment(fragment)
+//                binding.tabLayout.apply {
+//                    addTab(newTab())
+//                    setCustomTabLayout(tabCount - 1, fileName)
+//                    adapter.notifyItemInserted(tabCount - 1)
+//                    selectTab(getTabAt(tabCount - 1))
+//                    if (isOuterFile) {
+//                        model.getFragmentList().value?.add(fragment)
+//                        model.currentTab = tabCount - 1
+//                    }
+//                }
+//
+//                model.addRecentFile(
+//                    RecentFile(
+//                        0,
+//                        uri.toString(),
+//                        fileName,
+//                        Calendar.getInstance().time.toString(),
+//                        fileSize
+//                    )
+//                )
+//            }
+//            fragment.hasUnsavedChanges.observe(this) {
+//                if (it)
+//                    setCustomTabLayout(binding.tabLayout.selectedTabPosition, "*$fileName")
+//                else setCustomTabLayout(binding.tabLayout.selectedTabPosition, "$fileName")
+//            }
+//            fragment.hasLongPress.observe(this@MainActivity){
+//                if(it) {
+//                    startActionMode(actionModeCallbackCopyPaste)
+//                    fragment.hasLongPress.value = false
+//                }
+//            }
+//            Log.e(
+//                TAG,
+//                "readFileUsingUri : tab layout selected position : ${binding.tabLayout.selectedTabPosition}"
+//            )
+        }
+        catch (e:Exception)
+        {
+            Toast.makeText(applicationContext,"${e.message.toString()}",Toast.LENGTH_SHORT).show()
+        }
+
+    }
+
+    private fun showPopupMenu(item: MenuItem, menuResourceId: Int) {
+        val view = findViewById<View>(item.itemId)
+        val popup = PopupMenu(this, view)
+
+        popup.inflate(menuResourceId)
+
+        val preference = PreferenceManager.getDefaultSharedPreferences(this)
+        val isWrap = preference.getBoolean("word_wrap", false)
+
+        val item = popup.menu.findItem(R.id.go_to_line)
+        if (item != null) {
+            item.setVisible(!isWrap)
+        }
+        popup.setOnMenuItemClickListener { item -> //TODO : list all action for menu popup
+//            Log.e(TAG, "onMenuItemClick: " + item.title)
+//            var currentFragment: EditorFragment? = null
+//
+//            if (isValidTab()) {
+//                currentFragment =
+//                    adapter.fragmentList[binding.tabLayout.selectedTabPosition] as EditorFragment
+//            }
+
+            when (item.itemId) {
+
+                R.id.open -> {
+
+                    if (!helper.isStoragePermissionGranted()) helper.takePermission()
+
+                    if (helper.isStoragePermissionGranted()) chooseFile()
+//                    Log.e(TAG, "showPopupMenu: open called")
+                }
+                R.id.save_as -> {
+                    saveAsDialog()
+                }
+                R.id.save -> {
+                    if(currentUri!=null) saveFile(currentUri)
+                    else Toast.makeText(this, "current uri null", Toast.LENGTH_SHORT).show()
+//                    if (currentFragment != null) {
+//                        if (currentFragment.hasUnsavedChanges.value != false)
+//                            saveFile(currentFragment, currentFragment.getUri())
+//                        else
+//                            Toast.makeText(this, "No Changes Found", Toast.LENGTH_SHORT).show()
+//                    }
+                }
+                R.id.close -> {
+//                    if (currentFragment != null) {
+//                        if (currentFragment.hasUnsavedChanges.value ?: false) {
+//                            showUnsavedDialog(currentFragment)
+//                        } else {
+//                            closeTab()
+//                        }
+//                    }
+                }
+                R.id.new_file -> {
+//                    try {
+//
+//
+//                        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+//                            addCategory(Intent.CATEGORY_OPENABLE)
+//                            type = "*/*"
+//                            putExtra(Intent.EXTRA_TITLE, "new.txt")
+//                        }
+//                        newFileLauncher.launch(intent)
+//                    }
+//                    catch (e:Exception)
+//                    {
+//                        Toast.makeText(applicationContext, "${e.message.toString()}", Toast.LENGTH_SHORT).show()
+//                        Log.e(TAG, "newFileLauncher: ${e.toString()}.", )
+//                    }
+                }
+                R.id.paste -> {
+//                    val clipboardManager =
+//                        getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+//                    val dataToPaste = clipboardManager.primaryClip?.getItemAt(0)?.text
+//                    if (currentFragment !== null) {
+//                        currentFragment.insertSpecialChar(dataToPaste.toString())
+//                    }
+
+                }
+
+                R.id.reload -> {
+//                    if (currentFragment != null)
+//                        reloadFile(currentFragment)
+                }
+
+                R.id.copy -> {
+//                    if (currentFragment !== null) {
+//                        val selectedData = currentFragment.getSelectedData()
+//                        if (selectedData != null) copy(selectedData)
+//                    }
+
+                }
+                R.id.select_all -> {
+//                    if (currentFragment != null) {
+//                        currentFragment.selectAll()
+//                        actionMode=startActionMode(actionModeCallbackCopyPaste)
+//                    }
+                }
+                R.id.go_to_line -> {
+//                    gotoLine()
+                }
+                R.id.search -> {
+//                    if (currentFragment != null)
+//                        search(currentFragment, false)
+
+                }
+                R.id.search_replace -> {
+//                    if (currentFragment != null)
+//                        search(currentFragment, true)
+                }
+                R.id.run->{
+//                    val intent:Intent = Intent(this,WebViewActivity::class.java)
+//                    if(currentFragment!=null) {
+//                        intent.putExtra("data", currentFragment.getEditTextData().toString())
+//                        startActivity(intent)
+//                    }
+
+                }
+                R.id.settings -> {
+                    Log.e(TAG, "onNavigationItemSelected: clicked")
+                    val intent: Intent = Intent(this@FormatActivity, SettingActivity::class.java)
+                    startActivity(intent)
+                }
+                R.id.share -> {
+//                    if (currentFragment != null) {
+//                        ShareCompat.IntentBuilder(this)
+//                            .setStream(currentFragment.getUri())
+//                            .setType(URLConnection.guessContentTypeFromName(currentFragment.getFileName()))
+//                            .startChooser()
+//                    }
+
+                }
+                R.id.undo_change -> {
+//                    if(currentFragment!=null)
+//                    {
+//                        currentFragment.undoChanges()
+//                        actionMode = startActionMode(actionModeCallbackUndoRedo)
+//                    }
+                }
+                R.id.redo_change->{
+
+//                    if(currentFragment!=null)
+//                    {
+//                        currentFragment.redoChanges()
+//                        actionMode = startActionMode(actionModeCallbackUndoRedo)
+//                    }
+
+                }
+
+
+            }
+            false
+        }
+        val menuHelper: Any
+        val argTypes: Array<Class<*>?>
+        try {
+            val fMenuHelper = PopupMenu::class.java.getDeclaredField("mPopup")
+            fMenuHelper.isAccessible = true
+            menuHelper = fMenuHelper[popup]
+            argTypes = arrayOf(Boolean::class.javaPrimitiveType)
+            menuHelper.javaClass.getDeclaredMethod("setForceShowIcon", *argTypes)
+                .invoke(menuHelper, true)
+        } catch (e: Exception) {
+        }
+        popup.show()
+    }
+
+    private fun saveAsIntent(fileExtension : String) {
+        try {
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+                    addCategory(Intent.CATEGORY_OPENABLE)
+                    type = "text/*" //TODO :
+                    putExtra(Intent.EXTRA_TITLE, "untitled${fileExtension}")
+                }
+                saveAsSystemPickerLauncher.launch(intent)
+            } else {
+                val intent: Intent = Intent(Intent.ACTION_GET_CONTENT).apply {
+                    addCategory(Intent.CATEGORY_OPENABLE)
+                    type = "text/*"
+                    putExtra(Intent.EXTRA_TITLE, "untitled${fileExtension}")
+                }
+                saveAsSystemPickerLauncher.launch(intent)
+            }
+
+        }
+        catch (e:Exception)
+        {
+            Toast.makeText(applicationContext, "${e.message.toString()}", Toast.LENGTH_SHORT).show()
+            Log.e(TAG, "saveAsIntent: ${e.toString()}.", )
+        }
+
+    }
+
+    val saveAsSystemPickerLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val intent: Intent? = result.data
+                val uri: Uri? = intent?.data
+                if (uri != null) {
+                    saveFile(uri, isSaveAs = true)
+                }
+            }
+        }
+
+    private fun saveFile(
+        uri: Uri?,
+        isSaveAs: Boolean = false,
+        isCloseFlag: Boolean = false
+    ) {
+        var fileExtension = ".txt" // assumption
+        if (uri !== null) {
+            try {
+                uri.path.apply {
+                    if(this!=null)
+                        fileExtension = substring(this.lastIndexOf("."));
+                }
+                val takeFlags: Int =
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+                    applicationContext.contentResolver.takePersistableUriPermission(uri, takeFlags)
+                if(fileExtension==".html") {
+                    contentResolver.openFileDescriptor(uri, "wt")?.use {
+                        FileOutputStream(it.fileDescriptor).use {
+                            it.write(
+                                HtmlCompat.toHtml(binding.editText.text,HtmlCompat.TO_HTML_PARAGRAPH_LINES_CONSECUTIVE).toByteArray()
+                            )
+                        }
+                    }
+                }else{
+                    contentResolver.openFileDescriptor(uri, "wt")?.use {
+                        FileOutputStream(it.fileDescriptor).use {
+                            it.write(
+                                binding.editText.text.toString().toByteArray()
+                            )
+//                            if (!isSaveAs)
+//                                fragment.hasUnsavedChanges.value = false
+//                            if (isValidTab()) setCustomTabLayout(
+//                                binding.tabLayout.selectedTabPosition,
+//                                fragment.getFileName()
+//                            )
+////                        Toast.makeText(applicationContext, "File Saved", Toast.LENGTH_SHORT).show()
+//
+//                            showProgressBarDialog("Saved Successfully", isCloseFlag)
+                        }
+                    }
+
+                }
+            } catch (e: FileNotFoundException) {
+                Toast.makeText(applicationContext, "File Doesn't Saved", Toast.LENGTH_SHORT).show()
+                e.printStackTrace()
+
+            } catch (e: IOException) {
+                Toast.makeText(applicationContext, "File Doesn't Saved", Toast.LENGTH_SHORT).show()
+                e.printStackTrace()
+            } catch (e: SecurityException) {
+                showSecureSaveAsDialog()
+            } catch (e: Exception) {
+                Toast.makeText(applicationContext, "File Doesn't Saved", Toast.LENGTH_SHORT).show()
+                e.printStackTrace()
+            }
+        }
+    }
+
+    private fun showSecureSaveAsDialog() {
+        val builder = AlertDialog.Builder(this)
+
+        builder.setTitle("Security Alert")
+        builder.setIcon(android.R.drawable.ic_dialog_alert)
+
+        val view = LayoutInflater.from(this).inflate(R.layout.security_alert_dialog, null, false)
+
+
+        builder.setView(view)
+
+        builder.setPositiveButton(this.getString(R.string.save_as)) { dialogInterface, which ->
+            run {
+                saveAsDialog()
+                dialogInterface.dismiss()
+            }
+        }
+        //performing cancel action
+        builder.setNeutralButton(this.getString(R.string.cancel)) { dialogInterface, which ->
+            dialogInterface.dismiss()
+        }
+
+        // Create the AlertDialog
+        val alertDialog: AlertDialog = builder.create()
+        // Set other dialog properties
+        alertDialog.setCancelable(true)
+        alertDialog.show()
+    }
+
+    private fun saveAsDialog() {
+        val builder = AlertDialog.Builder(this)
+
+        builder.setTitle("Save As")
+        builder.setIcon(R.drawable.ic_save_as)
+
+        val view = LayoutInflater.from(this).inflate(R.layout.save_as_dialog, null, false)
+        val radioGroupExtension = view.findViewById<RadioGroup>(R.id.radio_group_extension)
+
+        builder.setView(view)
+
+        builder.setPositiveButton(this.getString(R.string.save_as)) { dialogInterface, which ->
+            run {
+                //TODO : according to radio btn
+                if(radioGroupExtension.checkedRadioButtonId==R.id.radio_html)
+                    saveAsIntent(".html") //TODO : .txt.html
+                else
+                    saveAsIntent(".txt")
+                dialogInterface.dismiss()
+            }
+        }
+        //performing cancel action
+        builder.setNeutralButton(this.getString(R.string.cancel)) { dialogInterface, which ->
+            dialogInterface.dismiss()
+        }
+
+        // Create the AlertDialog
+        val alertDialog: AlertDialog = builder.create()
+        // Set other dialog properties
+        alertDialog.setCancelable(true)
+        alertDialog.show()
+
+
+    }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
         return super.onCreateOptionsMenu(menu)
-
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {

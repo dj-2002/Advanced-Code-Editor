@@ -121,7 +121,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             ViewModelProvider(this, MyViewModelFactory(this.application)).get(
                 MyViewModel::class.java
             )
-        helper = Utils(this)
+        helper  = Utils(this)
         if (!helper.isStoragePermissionGranted()) helper.takePermission()
 
         toolbar = findViewById(R.id.toolbar)
@@ -869,7 +869,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 listOfPageData.add(temp.toString())
             }
 
-            val fileName: String = queryName(contentResolver, uri)
+            val fileName: String = helper.queryName(contentResolver, uri)
             val dataFile = DataFile(
                 fileName = fileName,
                 filePath = uri.path!!,
@@ -931,14 +931,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     }
 
-    private fun queryName(resolver: ContentResolver, uri: Uri?): String {
-        val returnCursor: Cursor = uri?.let { resolver.query(it, null, null, null, null) }!!
-        val nameIndex: Int = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-        returnCursor.moveToFirst()
-        val name: String = returnCursor.getString(nameIndex)
-        returnCursor.close()
-        return name
-    }
 
     private fun chooseFile() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -1106,7 +1098,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         addCategory(Intent.CATEGORY_OPENABLE)
                         type = "*/*"
                         putExtra(Intent.EXTRA_TITLE, "untitled${fileExtension}")
-
                     }
                     saveAsSystemPickerLauncher.launch(intent)
                 }

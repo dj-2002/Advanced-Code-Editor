@@ -43,6 +43,18 @@ import java.io.*
 import java.net.URLConnection
 import java.util.*
 import android.content.Intent
+import androidx.core.content.FileProvider
+import com.google.android.gms.ads.MobileAds
+import android.widget.Toast
+
+import com.google.android.gms.ads.rewarded.RewardItem
+
+import androidx.annotation.NonNull
+import androidx.core.view.isVisible
+import androidx.transition.Visibility
+
+import com.google.android.gms.ads.OnUserEarnedRewardListener
+
 
 
 
@@ -110,6 +122,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 readFileUsingUri(uri,true)
             }
         }
+        MobileAds.initialize(this) {}
+        Admob.loadAd(applicationContext)
 
     }
 
@@ -142,7 +156,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             catch (e:Exception)
             {
                 Toast.makeText(applicationContext, "${e.message.toString()}", Toast.LENGTH_SHORT).show()
-                Log.e(TAG, "newFileLauncher: ${e.toString()}.", )
+                Log.e(TAG, "newFileLauncher: ${e.toString()}.")
             }
 
         })
@@ -447,6 +461,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 if (uri != null) readFileUsingUri(uri)
             }
         }
+    val AdViewLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+
+            }
+        }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
@@ -469,6 +489,22 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             R.id.nav_feedback -> {
                 feedback()
+            }
+            R.id.nav_ad -> {
+
+                if (Admob.rewardedAd != null) {
+                    Log.e(TAG, "onNavigationItemSelected: admob initialized", )
+                    Admob.rewardedAd!!.show(
+                        this,
+                        OnUserEarnedRewardListener { rewardItem ->
+                            Toast.makeText(
+                                this@MainActivity,
+                                "Rewarded with Thanks", Toast.LENGTH_SHORT
+                            ).show()
+                        })
+                }
+
+                Admob.loadAd(applicationContext)
             }
 
         }
@@ -526,17 +562,23 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onResume()
 
         //lifecycleScope.launch(Dispatchers.Main){
-            val preferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
 
-            val wrap = preferences.getBoolean("word_wrap", false)
-            val keyIsThemeChanged = "is_theme_changed_setting"
-            val isThemeChangedFromSetting = preferences.getBoolean(keyIsThemeChanged, false)
-            if (wrap != model.isWrap) {
-                model.isWrap = wrap
-                recreate()
-            }
-            darkTheme = preferences.getBoolean(THEME_PREFERENCE_KEY, true)
-            changeTheme()
+            //val wrap = preferences.getBoolean("word_wrap", false)
+
+        lifecycleScope.launch(Dispatchers.IO)
+        {
+            val preferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+            Utils.isLineNumber = preferences.getBoolean("line_number", true)
+        }
+
+            //val keyIsThemeChanged = "is_theme_changed_setting"
+           // val isThemeChangedFromSetting = preferences.getBoolean(keyIsThemeChanged, false)
+//            if (wrap != model.isWrap) {
+//                model.isWrap = wrap
+//                recreate()
+//            }
+            //darkTheme = preferences.getBoolean(THEME_PREFERENCE_KEY, true)
+            //changeTheme()
 
             model.isHistoryLoaded.observe(this@MainActivity) {
                 adapter.fragmentList = model.getFragmentList().value ?: arrayListOf()
@@ -549,12 +591,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 createTabsInTabLayout(adapter.fragmentList)
             }
 
-            if (binding.tabLayout.tabCount > 0 && isThemeChangedFromSetting) {
-                model.currentTab = 0
-                val editor = preferences.edit()
-                editor.putBoolean(keyIsThemeChanged, false)
-                editor.commit()
-            }
+//            if (binding.tabLayout.tabCount > 0 && isThemeChangedFromSetting) {
+//                model.currentTab = 0
+//                val editor = preferences.edit()
+//                //editor.putBoolean(keyIsThemeChanged, false)
+//                editor.apply()
+//            }
 
 
             binding.tabLayout.apply {
@@ -607,7 +649,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             val fragment = frag as EditorFragment
             fragment.saveDataToPage()
         }
-        model.addHistories()
+        model.addHistories(applicationContext)
     }
 
     override fun onDestroy() {
@@ -622,11 +664,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
 
-        this.menu = menu
+
         menuInflater.inflate(R.menu.menu_main, menu)
         return super.onCreateOptionsMenu(menu)
+
 
     }
 
@@ -707,7 +750,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     catch (e:Exception)
                     {
                         Toast.makeText(applicationContext, "${e.message.toString()}", Toast.LENGTH_SHORT).show()
-                        Log.e(TAG, "newFileLauncher: ${e.toString()}.", )
+                        Log.e(TAG, "newFileLauncher: ${e.toString()}.")
                     }
                 }
                 R.id.paste -> {
@@ -760,18 +803,65 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     }
 
                 }
+                R.id.change_editor_theme -> {
+                    if (currentFragment != null)
+                    {
+                        currentFragment.changeCodeViewTheme()
+                    }
+
+                }
+                R.id.mini_toolbar -> {
+
+                    if(binding.bottomNavigation.isVisible)
+                    {
+                        binding.bottomNavigation.visibility= View.GONE
+                        binding.specialCharLayout.root.visibility = View.GONE
+
+                    }
+                    else
+                    {
+                        binding.bottomNavigation.visibility= View.VISIBLE
+                        binding.specialCharLayout.root.visibility = View.VISIBLE
+
+
+                    }
+                }
+
+                R.id.texteditor -> {
+
+                    try{
+                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.nbow.texteditor")))
+                    }
+                    catch (e:Exception)
+                    {
+                        Toast.makeText(applicationContext, "Hello", Toast.LENGTH_SHORT).show()
+                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.nbow.texteditor")))
+                    }
+                }
                 R.id.settings -> {
                     Log.e(TAG, "onNavigationItemSelected: clicked")
                     val intent: Intent = Intent(this@MainActivity, SettingActivity::class.java)
                     startActivity(intent)
                 }
                 R.id.share -> {
-                    if (currentFragment != null) {
+                    if (currentFragment != null ) {
+
+                        val prefix= currentFragment.getFileName().substringBeforeLast('.')
+                        val suffix=currentFragment.getFileExtension()
+                        val file = File.createTempFile(prefix,suffix,applicationContext.cacheDir)
+
+                        file.bufferedWriter().use {
+
+                                it.write(currentFragment.getEditTextData().toString())
+                        }
+
                         ShareCompat.IntentBuilder(this)
-                            .setStream(currentFragment.getUri())
+                            .setStream(FileProvider.getUriForFile(applicationContext,BuildConfig.APPLICATION_ID+".provider",file))
                             .setType(URLConnection.guessContentTypeFromName(currentFragment.getFileName()))
                             .startChooser()
+
                     }
+
 
                 }
                 R.id.undo_change -> {
@@ -844,7 +934,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             val fileSize: Int = inputStream!!.available()
             val bufferedReader = BufferedReader(InputStreamReader(inputStream, "UTF-8"))
             val listOfLines: MutableList<String> = arrayListOf()
-            val listOfPageData: MutableList<String> = arrayListOf()
+            val listOfPageData: MutableList<java.lang.StringBuilder> = arrayListOf()
 
             bufferedReader.forEachLine {
                 listOfLines.add(it)
@@ -857,16 +947,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 count++
                 if (count >= 3000 || temp.length >= 500000) { // 500kb
 //                Log.e(TAG, "readFileUsingUri: temp : at $count : $temp")
-                    listOfPageData.add(temp.toString())
+                    listOfPageData.add(temp)
                     temp.clear()
                     count = 0
                 } else temp.append("\n")
             }
             if (temp.length > 0) {
-                listOfPageData.add(temp.toString())
+                listOfPageData.add(temp)
             }
             if (listOfLines.size == 0) {
-                listOfPageData.add(temp.toString())
+                listOfPageData.add(temp)
             }
 
             val fileName: String = helper.queryName(contentResolver, uri)
@@ -953,10 +1043,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             binding.tabLayout.apply {
                 list.forEach {
                     //                  Log.e(TAG, "createTabsInTabLayout: tab count inside apply $tabCount")
-
-
                     val frag = it as EditorFragment
-
                     addTab(newTab())
                     setCustomTabLayout(tabCount - 1, frag.getFileName())
                 }
@@ -1105,7 +1192,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             catch (e:Exception)
             {
                 Toast.makeText(applicationContext, "${e.message.toString()}", Toast.LENGTH_SHORT).show()
-                Log.e(TAG, "saveAsIntent: ${e.toString()}.", )
+                Log.e(TAG, "saveAsIntent: ${e.toString()}.")
             }
         }
     }
@@ -1411,7 +1498,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         else return
 
         val maxLine = fragment.getTotalLine()
-        val startIndex = fragment.getStartingIndexOfEdittext()
+        val startIndex = 0
+            //fragment.getStartingIndexOfEdittext()
         val builder = AlertDialog.Builder(this)
 
         builder.setTitle("Goto Line")

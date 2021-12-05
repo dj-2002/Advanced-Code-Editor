@@ -8,20 +8,15 @@
         android:key="appreance">
         >
 
-        <SwitchPreference
-            android:key="night_mode_preference"
-            android:icon="@drawable/baseline_dark_mode_24"
-            android:defaultValue="true"
-            android:switchTextOn="Dark"
-            android:switchTextOff="Light"
-            android:title="Night Mode"/>
+<!--        <SwitchPreference-->
+<!--            android:key="night_mode_preference"-->
+<!--            android:icon="@drawable/baseline_dark_mode_24"-->
+<!--            android:defaultValue="true"-->
+<!--            android:switchTextOn="Dark"-->
+<!--            android:switchTextOff="Light"-->
+<!--            android:title="Night Mode"/>-->
 
-        <SwitchPreference
-            android:key="syntax_color"
-            android:icon="@drawable/ic_color"
-            android:defaultValue="true"
-            android:summary="Please restart app to enable effect on opened file"
-            android:title="Syntax Color"/>
+
 
         <SeekBarPreference
             android:key="TEXT_SIZE_PREFERENCE"
@@ -48,6 +43,13 @@
             android:title="Word Wrap"
             android:defaultValue="false"
             app:summary="Enable Line break to fit screen width"
+            />
+        <SwitchPreference
+            android:key="line_number"
+            android:icon="@drawable/ic_goto_line"
+            android:title="Line Number"
+            android:defaultValue="true"
+            app:summary="Display Line Number"
             />
 
     </PreferenceCategory>

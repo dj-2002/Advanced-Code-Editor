@@ -41,6 +41,26 @@ class Utils {
         }
     }
 
+    companion object{
+
+        var isLineNumber: Boolean = true
+        var lineNumbeSize = 40F
+        var themeN  = 2;
+        val java = "JAVA"
+        val kotlin = "KOTLIN"
+        val html = "HTML"
+        val css = "CSS"
+        val go = "GO"
+        val python = "PYTHON"
+        val c = "C"
+        val cpp = "CPP"
+        val php = "PHP"
+        val javascript = "JAVASCRIPT"
+
+
+
+    }
+
     fun queryName(resolver: ContentResolver, uri: Uri?): String {
         val returnCursor: Cursor = uri?.let { resolver.query(it, null, null, null, null) }!!
         val nameIndex: Int = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)

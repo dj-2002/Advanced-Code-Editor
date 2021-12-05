@@ -28,7 +28,6 @@
         android:icon="@drawable/ic_undo"
         app:showAsAction="ifRoom"/>
 
-
     <item
         android:id="@+id/redo_change"
         android:title="Redo"
@@ -37,6 +36,16 @@
     </item>
 
 
+    <item
+        android:id="@+id/change_editor_theme"
+        android:title="Change Theme">
+    </item>
+
+    <item
+        android:id="@+id/mini_toolbar"
+        android:title="Mini Toolbar"
+        android:icon="@drawable/ic_menu_open">
+    </item>
 
     <item
         android:id="@+id/settings"
@@ -47,6 +56,15 @@
 
     <item
         android:id="@+id/run"
-        android:title="Run HTML(BETA)"></item>
+        android:icon="@drawable/ic_run"
+        android:title="Run HTML(BETA)"
+
+        />
+
+    <item
+        android:id="@+id/texteditor"
+        android:title="Plain Text Editor"
+        android:icon="@drawable/ic_textsize"
+        ></item>
 
 </menu>

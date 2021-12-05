@@ -14,7 +14,7 @@ data class History(
         val historyId: Long,             //file id
         val fileName: String,
         val uriString: String,
+        val realFileName:String,
         val hasUnsavedData : Boolean,
-        val time : String
 )
 

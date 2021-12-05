@@ -55,7 +55,7 @@ class RecyclerViewActivity : AppCompatActivity() {
         }
 
     }
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         this.menuInflater.inflate(R.menu.recent_file_menu, menu)
         return super.onCreateOptionsMenu(menu)
     }

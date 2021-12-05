@@ -19,15 +19,21 @@ import android.content.ClipData
 import android.content.Context
 
 import android.view.View.OnLongClickListener
-
-
+import android.widget.ArrayAdapter
+import com.nbow.advanceeditor.code.CodeView
+import com.nbow.advanceeditor.syntax.Language
+import com.nbow.advanceeditor.syntax.SyntaxManager
 
 
 class EditorFragment : Fragment {
 
     private val TAG = "EditorFragment"
-    private var editText : MyEditText? = null
+    private var editText : CodeView? = null
+    private var mNextThemeIndex = 2
+
     private var currentPageIndex : Int = 0
+    private var mCurrentLanguage: Language = Language.DEFAULT
+
     var hasUnsavedChanges = MutableLiveData(false)
     var hasLongPress = MutableLiveData<Boolean>(false)
     private var undoRedo=TextViewUndoRedo()
@@ -92,10 +98,99 @@ class EditorFragment : Fragment {
             false
         })
 
+        editText!!.setEnableLineNumber(Utils.isLineNumber)
+        editText!!.setLineNumberTextSize(Utils.lineNumbeSize)
+
+
+        if(dataFile!=null) {
+            Log.e(TAG, "onViewStateRestored: ${dataFile!!.fileExtension}", )
+            if (dataFile!!.fileExtension == ".cpp")
+                mCurrentLanguage = Language.CPP
+            else if (dataFile!!.fileExtension == ".c")
+                mCurrentLanguage = Language.C
+            else if (dataFile!!.fileExtension == ".html")
+                mCurrentLanguage = Language.HTML
+            else if (dataFile!!.fileExtension == ".py")
+                mCurrentLanguage = Language.PYTHON
+            else if (dataFile!!.fileExtension == ".css")
+                mCurrentLanguage = Language.CSS
+            else if (dataFile!!.fileExtension == ".js")
+                mCurrentLanguage = Language.JAVASCRIPT
+            else if (dataFile!!.fileExtension == ".php")
+                mCurrentLanguage = Language.PHP
+            else if (dataFile!!.fileExtension == ".kt")
+                mCurrentLanguage = Language.KOTLIN
+            else if (dataFile!!.fileExtension == ".java")
+                mCurrentLanguage = Language.JAVA
+        }
+        configLanguageAutoComplete()
+
+
+
+        Log.e(TAG, "onViewStateRestored: Language ${mCurrentLanguage.name}", )
+        SyntaxManager.applyMonokaiTheme(context, editText, mCurrentLanguage)
+
+
 
         super.onViewStateRestored(savedInstanceState)
     }
 
+
+     fun changeCodeViewTheme() {
+        if (mNextThemeIndex > 4) mNextThemeIndex = 1
+        loadNextTheme()
+        mNextThemeIndex = mNextThemeIndex + 1
+    }
+
+     private fun loadNextTheme() {
+        when (mNextThemeIndex) {
+            1 -> {
+                SyntaxManager.applyMonokaiTheme(context, editText, mCurrentLanguage)
+                Toast.makeText(context, "Monokai", Toast.LENGTH_SHORT).show()
+            }
+            2 -> {
+                SyntaxManager.applyNoctisWhiteTheme(context, editText, mCurrentLanguage)
+                Toast.makeText(context, "Noctis White", Toast.LENGTH_SHORT).show()
+            }
+            3 -> {
+                SyntaxManager.applyFiveColorsDarkTheme(context, editText, mCurrentLanguage)
+                Toast.makeText(context, "5 Colors Dark", Toast.LENGTH_SHORT).show()
+            }
+            else -> {
+                SyntaxManager.applyOrangeBoxTheme(context, editText, mCurrentLanguage)
+                Toast.makeText(context, "Orange Box", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+
+    private fun configLanguageAutoComplete() {
+
+        Log.e(TAG, "configLanguageAutoComplete: Language ${mCurrentLanguage.name}", )
+        
+        val languageKeywords: Array<String>
+        languageKeywords = when (mCurrentLanguage) {
+            Language.JAVA -> resources.getStringArray(R.array.java_keywords)
+            Language.PYTHON -> resources.getStringArray(R.array.python_keywords)
+            Language.C -> resources.getStringArray(R.array.c_keywords)
+            Language.CPP -> resources.getStringArray(R.array.cpp_keywords)
+            Language.JAVASCRIPT -> resources.getStringArray(R.array.javascript_keywords)
+            Language.HTML -> resources.getStringArray(R.array.html_keywords)
+            Language.GO_LANG -> resources.getStringArray(R.array.go_keywords)
+            Language.PHP -> resources.getStringArray(R.array.php_keywords)
+            else -> resources.getStringArray(R.array.blank)
+        }
+
+        //Custom list item xml layout
+        val layoutId = R.layout.suggestion_list_item
+
+        //TextView id to put suggestion on it
+        val viewId = R.id.suggestItemTextView
+        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(requireContext().applicationContext, layoutId, viewId, languageKeywords)
+
+        //Add Custom Adapter to the CodeView
+        editText!!.setAdapter(adapter)
+    }
 
 
     override fun onResume() {
@@ -127,12 +222,14 @@ class EditorFragment : Fragment {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val KEY_WRAP = "word_wrap"
-        val preference= PreferenceManager.getDefaultSharedPreferences(context)
-        val isWrap = preference.getBoolean(KEY_WRAP,false)
-        var layout = R.layout.fragment_editor
+       // val KEY_WRAP = "word_wrap"
+       // val preference= PreferenceManager.getDefaultSharedPreferences(context)
+        //val isWrap = preference.getBoolean(KEY_WRAP,false)
+        //var layout = R.layout.fragment_editor
 
-        if(!isWrap) layout = R.layout.fragment_editor_unwrap
+
+        //if(!isWrap)
+          val layout = R.layout.fragment_editor_unwrap
 
         val view = inflater.inflate(layout, container, false)
 
@@ -140,59 +237,11 @@ class EditorFragment : Fragment {
 
         currentPageIndex = 0
         editText = view.findViewById(R.id.editText)
-        editText!!.setLifeCycleOwner(viewLifecycleOwner)
-        if(dataFile!=null && editText!=null){
-            editText!!.extension = dataFile!!.fileExtension
-            editText!!.setHashMapValue()
-        }
-        editText!!.hasUnsavedChanges.value = hasUnsavedChanges.value
-        editText!!.hasUnsavedChanges.observe(viewLifecycleOwner){
-            hasUnsavedChanges.value = it
 //            Log.e(TAG, "onCreateView: observe called value of unsaved change $it ${hasUnsavedChanges.value}")
-        }
 
 //        editText?.inputType =(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS or InputType.TYPE_TEXT_FLAG_MULTI_LINE)
 //        editText?.isSingleLine = false
 
-        editText?.setStartIndex(1)
-        val prev = view.findViewById<Button>(R.id.prev)
-        val next = view.findViewById<Button>(R.id.next)
-
-        if(dataFile !=null && dataFile!!.listOfPageData.size==1){
-            prev.visibility  = View.GONE
-            next.visibility = View.GONE
-        }
-        prev.setOnClickListener(View.OnClickListener {
-//            Toast.makeText(context, "prev clicked", Toast.LENGTH_SHORT).show()
-            if(currentPageIndex>0 && currentPageIndex < dataFile!!.listOfPageData.size && editText!=null){
-                saveDataToPage()
-                next.isEnabled = true
-                currentPageIndex--
-                if(currentPageIndex==0){
-                    prev.isEnabled = false
-                }
-//                Toast.makeText(context, "page $currentPageIndex", Toast.LENGTH_SHORT).show()
-                editText!!.setIsPrev(true)
-                editText!!.setText(dataFile!!.listOfPageData.get(currentPageIndex))
-//                Log.e(TAG, "onCreateView: starting index $startingIndexOfCurrentPage")
-//                editText.setStartIndex(startingIndexOfCurrentPage)
-                //TODO : if not ....
-            }
-        })
-        next.setOnClickListener(View.OnClickListener {
-            if(currentPageIndex>=0 && currentPageIndex < dataFile!!.listOfPageData.size-1 && editText!=null){
-                prev.isEnabled = true
-                saveDataToPage()
-                currentPageIndex++
-                if(currentPageIndex==dataFile!!.listOfPageData.size-1){
-                    next.isEnabled = false
-                }
-//                Toast.makeText(context, "page $currentPageIndex", Toast.LENGTH_SHORT).show()
-                val startingIndexOfCurrentPage = editText!!.getStartingIndex()+editText!!.lineCount
-                editText!!.setStartIndex(startingIndexOfCurrentPage)
-                editText!!.setText(dataFile!!.listOfPageData.get(currentPageIndex))
-            }
-        })
 
 //        editText.setHorizontallyScrolling(false)
         if(editText!=null) {
@@ -227,7 +276,7 @@ class EditorFragment : Fragment {
 
     fun saveDataToPage() {
         if(editText!=null) {
-            val page = editText!!.text.toString()
+            val page = StringBuilder(editText!!.text.toString())
             if (dataFile != null) {
                 dataFile!!.listOfPageData.removeAt(currentPageIndex)
                 dataFile!!.listOfPageData.add(currentPageIndex, page)
@@ -318,11 +367,9 @@ class EditorFragment : Fragment {
     fun getTotalLine(): Int {
         return editText!!.lineCount
     }
-    fun getStartingIndexOfEdittext():Int{
-        return editText!!.getStartingIndex()
-    }
 
-    fun getListOfPages() : MutableList<String>{
+
+    fun getListOfPages() : MutableList<StringBuilder>{
         return dataFile?.listOfPageData!!
     }
 

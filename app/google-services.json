@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "215947630042",
+    "project_id": "code-editor-d69cf",
+    "storage_bucket": "code-editor-d69cf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:215947630042:android:6cebfe4d81da2d0cfe9ce3",
+        "android_client_info": {
+          "package_name": "com.nbow.advanceeditor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "215947630042-0vfk9rofr0di9mdkl8snb2g25341gl8l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCDqWf4a66NALa-6B8nH_BV2uh2TTyVq9Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "215947630042-0vfk9rofr0di9mdkl8snb2g25341gl8l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -17,18 +17,18 @@
 <!--            android:scrollbars="none"-->
 <!--            android:paddingEnd="3dp"-->
 <!--            android:layout_height="match_parent">-->
-            <com.nbow.advanceeditor.code.CodeView
-                android:id="@+id/editText"
-                android:layout_width="match_parent"
-                android:imeOptions="flagNoExtractUi|actionSend"
-                android:layout_height="match_parent"
-                android:inputType="textNoSuggestions|textMultiLine"
-                android:singleLine="false"
-                android:layout_marginStart="7dp"
-                android:background="@android:color/transparent"
-                android:lastBaselineToBottomHeight="300dp"
-                android:textSize="16dp"
-                android:paddingEnd="7dp"></com.nbow.advanceeditor.code.CodeView>
+    <com.nbow.advanceeditor.code.CodeView
+        android:id="@+id/editText"
+        android:layout_width="match_parent"
+        android:imeOptions="flagNoExtractUi|actionSend"
+        android:layout_height="match_parent"
+        android:dropDownWidth="200dp"
+        android:inputType="textNoSuggestions|textMultiLine"
+        android:singleLine="false"
+        android:background="@android:color/transparent"
+        android:lastBaselineToBottomHeight="300dp"
+        android:textSize="16sp"
+        android:paddingEnd="7dp" />
 
 <!--                />-->
 <!--        </HorizontalScrollView>-->

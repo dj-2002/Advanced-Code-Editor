@@ -81,7 +81,7 @@ public class CodeView extends AppCompatMultiAutoCompleteTextView {
         }
 
         setTokenizer(mAutoCompleteTokenizer);
-        setHorizontallyScrolling(true);
+//        setHorizontallyScrolling(true);
 
         setFilters(new InputFilter[]{
                 new InputFilter() {
@@ -118,11 +118,11 @@ public class CodeView extends AppCompatMultiAutoCompleteTextView {
             int lineCount = getLineCount();
             int lineNumber = 1;
 
-            for (int i = 0; i < lineCount; ++i) {
+            for (int i = 0; i < lineCount; i++) {
                 baseline = getLineBounds(i, null);
                 if (i == 0 || getText().charAt(getLayout().getLineStart(i) - 1) == '\n') {
                     canvas.drawText(String.format(Locale.ENGLISH, " %d", lineNumber), lineNumberRect.left, baseline, lineNumberPaint);
-                    ++lineNumber;
+                    lineNumber++;
                 }
             }
 

@@ -139,7 +139,7 @@ class EditorFragment : Fragment {
      fun changeCodeViewTheme() {
         if (mNextThemeIndex > 4) mNextThemeIndex = 1
         loadNextTheme()
-        mNextThemeIndex = mNextThemeIndex + 1
+         mNextThemeIndex += 1
     }
 
      private fun loadNextTheme() {
@@ -167,7 +167,7 @@ class EditorFragment : Fragment {
     private fun configLanguageAutoComplete() {
 
         Log.e(TAG, "configLanguageAutoComplete: Language ${mCurrentLanguage.name}", )
-        
+
         val languageKeywords: Array<String>
         languageKeywords = when (mCurrentLanguage) {
             Language.JAVA -> resources.getStringArray(R.array.java_keywords)
@@ -222,14 +222,14 @@ class EditorFragment : Fragment {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-       // val KEY_WRAP = "word_wrap"
-       // val preference= PreferenceManager.getDefaultSharedPreferences(context)
-        //val isWrap = preference.getBoolean(KEY_WRAP,false)
-        //var layout = R.layout.fragment_editor
+        val KEY_WRAP = "word_wrap"
+        val preference= PreferenceManager.getDefaultSharedPreferences(context)
+        val isWrap = preference.getBoolean(KEY_WRAP,false)
+        var layout = R.layout.fragment_editor
 
 
-        //if(!isWrap)
-          val layout = R.layout.fragment_editor_unwrap
+        if(!isWrap)
+          layout = R.layout.fragment_editor_unwrap
 
         val view = inflater.inflate(layout, container, false)
 

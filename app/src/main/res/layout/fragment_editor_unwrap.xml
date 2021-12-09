@@ -18,20 +18,19 @@
             android:scrollbars="none"
             android:layout_height="match_parent">
 
-
-
                 <com.nbow.advanceeditor.code.CodeView
                     android:id="@+id/editText"
                     android:layout_width="match_parent"
+                    android:dropDownWidth="200dp"
+                    android:dropDownHeight="250dp"
                     android:minWidth="800dp"
-                    android:minHeight="800dp"
                     android:layout_height="match_parent"
                     android:background="@android:color/transparent"
                     android:imeOptions="flagNoExtractUi|actionSend"
                     android:inputType="textNoSuggestions|textMultiLine"
                     android:lastBaselineToBottomHeight="550dp"
                     android:singleLine="false"
-                    android:textSize="16dp"
+                    android:textSize="16sp"
 
                     />
         </HorizontalScrollView>

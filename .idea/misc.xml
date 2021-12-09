@@ -3,10 +3,13 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Sanjay/Android Projects/ACE/app/src/main/res/layout/activity_main.xml" value="0.17028985507246377" />
+        <entry key="..\:/Sanjay/Android Projects/ACE/app/src/main/res/layout/fragment_editor.xml" value="0.1358695652173913" />
         <entry key="..\:/Sanjay/Android Projects/ACE/app/src/main/res/layout/fragment_editor_unwrap.xml" value="0.1" />
         <entry key="..\:/Sanjay/Android Projects/ACE/app/src/main/res/layout/save_as_dialog.xml" value="0.25" />
         <entry key="..\:/Sanjay/Android Projects/ACE/app/src/main/res/layout/save_successfull.xml" value="0.1203125" />
         <entry key="..\:/Sanjay/Android Projects/ACE/app/src/main/res/layout/security_alert_dialog.xml" value="0.1203125" />
+        <entry key="..\:/Sanjay/Android Projects/ACE/app/src/main/res/layout/suggestion_list_item.xml" value="0.5" />
         <entry key="..\:/Sanjay/Android Projects/ACE/app/src/main/res/layout/text_editor_bottam.xml" value="0.1693840579710145" />
         <entry key="..\:/Users/DJ/AndroidStudioProjects/ACE/app/src/main/res/layout-land/activity_main.xml" value="0.1" />
         <entry key="..\:/Users/DJ/AndroidStudioProjects/ACE/app/src/main/res/layout/example_item.xml" value="0.10625" />

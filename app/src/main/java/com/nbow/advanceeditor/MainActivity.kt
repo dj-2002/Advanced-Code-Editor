@@ -563,20 +563,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         //lifecycleScope.launch(Dispatchers.Main){
 
-            //val wrap = preferences.getBoolean("word_wrap", false)
+        val preferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        val wrap = preferences.getBoolean("word_wrap", false)
 
         lifecycleScope.launch(Dispatchers.IO)
         {
-            val preferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
             Utils.isLineNumber = preferences.getBoolean("line_number", true)
         }
 
             //val keyIsThemeChanged = "is_theme_changed_setting"
-           // val isThemeChangedFromSetting = preferences.getBoolean(keyIsThemeChanged, false)
-//            if (wrap != model.isWrap) {
-//                model.isWrap = wrap
-//                recreate()
-//            }
+            // val isThemeChangedFromSetting = preferences.getBoolean(keyIsThemeChanged, false)
+            if (wrap != model.isWrap) {
+                model.isWrap = wrap
+                recreate()
+            }
             //darkTheme = preferences.getBoolean(THEME_PREFERENCE_KEY, true)
             //changeTheme()
 
@@ -810,22 +810,22 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     }
 
                 }
-                R.id.mini_toolbar -> {
-
-                    if(binding.bottomNavigation.isVisible)
-                    {
-                        binding.bottomNavigation.visibility= View.GONE
-                        binding.specialCharLayout.root.visibility = View.GONE
-
-                    }
-                    else
-                    {
-                        binding.bottomNavigation.visibility= View.VISIBLE
-                        binding.specialCharLayout.root.visibility = View.VISIBLE
-
-
-                    }
-                }
+//                R.id.mini_toolbar -> {
+//
+//                    if(binding.bottomNavigation.isVisible)
+//                    {
+//                        binding.bottomNavigation.visibility= View.GONE
+//                        binding.specialCharLayout.root.visibility = View.GONE
+//
+//                    }
+//                    else
+//                    {
+//                        binding.bottomNavigation.visibility= View.VISIBLE
+//                        binding.specialCharLayout.root.visibility = View.VISIBLE
+//
+//
+//                    }
+//                }
 
                 R.id.texteditor -> {
 
@@ -942,16 +942,30 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             val temp = StringBuilder("")
             var count = 0
-            for (line in listOfLines) {
-                temp.append(line)
+            var index=0
+            while(index<listOfLines.size){
+                temp.append(listOfLines[index])
                 count++
                 if (count >= 3000 || temp.length >= 500000) { // 500kb
 //                Log.e(TAG, "readFileUsingUri: temp : at $count : $temp")
                     listOfPageData.add(temp)
                     temp.clear()
                     count = 0
-                } else temp.append("\n")
+                } else if(index!=listOfLines.size-1) temp.append("\n")
+
+                index++
             }
+//            for (line in listOfLines) {
+//                temp.append(line)
+//                count++
+//                if (count >= 3000 || temp.length >= 500000) { // 500kb
+////                Log.e(TAG, "readFileUsingUri: temp : at $count : $temp")
+//                    listOfPageData.add(temp)
+//                    temp.clear()
+//                    count = 0
+//                } else temp.append("\n")
+//
+//            }
             if (temp.length > 0) {
                 listOfPageData.add(temp)
             }

@@ -96,7 +96,7 @@ class MyViewModel(application: Application) : AndroidViewModel(application) {
                 context.openFileInput(history.fileName).bufferedReader().forEachLine { line ->
                     temp.append(line + "\n")
                     count++
-                    if (count >= 3000 || temp.length >= 500000) { // 500kb
+                    if (count >= 1000 || temp.length >= 50000) { // 500kb
                         mlist.add(temp)
                         temp.clear()
                         count = 0

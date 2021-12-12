@@ -24,6 +24,7 @@ import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatMultiAutoCompleteTextView;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -57,9 +58,10 @@ public class CodeView extends AppCompatMultiAutoCompleteTextView {
     private static final Pattern PATTERN_TRAILING_WHITE_SPACE = Pattern.compile("[\\t ]+$", Pattern.MULTILINE);
 
     private final SortedMap<Integer, Integer> mErrorHashSet = new TreeMap<>();
-    private final Map<Pattern, Integer> mSyntaxPatternMap = new HashMap<>();
+    //    private final Map<Pattern, Integer> mSyntaxPatternMap = new HashMap<>();
+    private final ArrayList<PatternColorMapper> mSyntaxPatternMapper = new ArrayList<>();
     private List<Character> mIndentCharacterList = Arrays.asList('{', '+', '-', '*', '/', '=');
-    
+
     public CodeView(Context context) {
         super(context);
         initEditorView();
@@ -126,7 +128,7 @@ public class CodeView extends AppCompatMultiAutoCompleteTextView {
                 }
             }
 
-            int paddingLeft = 40 + (int) (Math.log10(lineCount) + 1) * 10;
+            int paddingLeft = 40 + (int) (Math.log10(lineCount) + 1) * 16;
             setPadding(paddingLeft, getPaddingTop(), getPaddingRight(), getPaddingBottom());
         }
         super.onDraw(canvas);
@@ -189,11 +191,11 @@ public class CodeView extends AppCompatMultiAutoCompleteTextView {
     }
 
     private void highlightSyntax(Editable editable) {
-        if(mSyntaxPatternMap.isEmpty()) return;
+        if(mSyntaxPatternMapper.isEmpty()) return;
 
-        for(Pattern pattern : mSyntaxPatternMap.keySet()) {
-            int color = mSyntaxPatternMap.get(pattern);
-            for (Matcher m = pattern.matcher(editable); m.find();) {
+        for(PatternColorMapper patternColorMapper : mSyntaxPatternMapper) {
+            int color = patternColorMapper.getColor();
+            for (Matcher m = patternColorMapper.getPattern().matcher(editable); m.find();) {
                 createForegroundColorSpan(editable, m, color);
             }
         }
@@ -298,25 +300,27 @@ public class CodeView extends AppCompatMultiAutoCompleteTextView {
         }
     }
 
-    public void setSyntaxPatternsMap(Map<Pattern, Integer> syntaxPatterns) {
-        if(!mSyntaxPatternMap.isEmpty()) mSyntaxPatternMap.clear();
-        mSyntaxPatternMap.putAll(syntaxPatterns);
+    public void setSyntaxPatternsMap(List<PatternColorMapper> syntaxPatterns) {
+        if(!mSyntaxPatternMapper.isEmpty()) mSyntaxPatternMapper.clear();
+//        mSyntaxPatternMapper.putAll(syntaxPatterns);
+        mSyntaxPatternMapper.addAll(syntaxPatterns);
     }
 
-    public void addSyntaxPattern(Pattern pattern, @ColorInt int Color) {
-        mSyntaxPatternMap.put(pattern, Color);
+    public void addSyntaxPattern(Pattern pattern, @ColorInt int color) {
+//        mSyntaxPatternMap.put(pattern, Color);
+        mSyntaxPatternMapper.add(new PatternColorMapper(pattern,color));
     }
 
-    public void removeSyntaxPattern(Pattern pattern) {
-        mSyntaxPatternMap.remove(pattern);
+    public void removeSyntaxPattern(PatternColorMapper patternColorMapper) {
+        mSyntaxPatternMapper.remove(patternColorMapper);
     }
 
     public int getSyntaxPatternsSize() {
-        return mSyntaxPatternMap.size();
+        return mSyntaxPatternMapper.size();
     }
 
     public void resetSyntaxPatternList() {
-        mSyntaxPatternMap.clear();
+        mSyntaxPatternMapper.clear();
     }
 
     public void setAutoIndentCharacterList(List<Character> characterList) {
@@ -448,7 +452,7 @@ public class CodeView extends AppCompatMultiAutoCompleteTextView {
             if (!modified) return;
 
             if(highlightWhileTextChanging) {
-                if (mSyntaxPatternMap.size() > 0) {
+                if (mSyntaxPatternMapper.size() > 0) {
                     convertTabs(getEditableText(), start, count);
                     mUpdateHandler.postDelayed(mUpdateRunnable, mUpdateDelayTime);
                 }
@@ -464,7 +468,7 @@ public class CodeView extends AppCompatMultiAutoCompleteTextView {
 
                 cancelHighlighterRender();
 
-                if (mSyntaxPatternMap.size() > 0) {
+                if (mSyntaxPatternMapper.size() > 0) {
                     convertTabs(getEditableText(), start, count);
                     mUpdateHandler.postDelayed(mUpdateRunnable, mUpdateDelayTime);
                 }

@@ -197,61 +197,77 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         })
 
-        binding.bottomNavigation.setOnItemSelectedListener(object :
-            NavigationBarView.OnItemSelectedListener {
-            override fun onNavigationItemSelected(item: MenuItem): Boolean {
-                var currentFragment: EditorFragment? = null
 
-                if (isValidTab()) {
-                    currentFragment =
-                        adapter.fragmentList.get(binding.tabLayout.selectedTabPosition) as EditorFragment
-                }
-                if (item.itemId == R.id.toolbox_toggle) {
-                    binding.specialCharLayout.specialCharKeyboarLayout.apply {
-                        if (visibility == View.VISIBLE) visibility = View.GONE
-                        else visibility = View.VISIBLE
-                    }
-                    return true
-                }
+        binding.bottamBarLayout!!.apply {
 
-                if (currentFragment != null)
-                    return when (item.itemId) {
-                        R.id.save -> {
-                            if (currentFragment.hasUnsavedChanges.value != false) {
-                                saveFile(currentFragment, currentFragment.getUri())
-                            } else
-                                Toast.makeText(
-                                    this@MainActivity,
-                                    "No Changes Found",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            true
-                        }
-                        R.id.search -> {
-                            search(currentFragment, false)
-                            true
-                        }
-                        R.id.open -> {
-                            if (!helper.isStoragePermissionGranted()) helper.takePermission()
-                            if (helper.isStoragePermissionGranted()) chooseFile()
-                            true
-                        }
-                        R.id.close -> {
-                            if (currentFragment.hasUnsavedChanges.value ?: false) {
-                                showUnsavedDialog(currentFragment)
-                            } else {
-                                closeTab()
-                            }
-                            true
-                        }
+            var currentFragment: EditorFragment? = null
 
-                        else -> false
-                    }
-
-                return false
+            if (isValidTab()) {
+                currentFragment = adapter.fragmentList.get(binding.tabLayout.selectedTabPosition) as EditorFragment
             }
 
-        })
+            close.setOnClickListener {
+
+                if (currentFragment != null) {
+                    //if (currentFragment!!.hasUnsavedChanges.value ?: false) {
+                      //  showUnsavedDialog(currentFragment!!)
+                    //} else {
+                        closeTab()
+                    //}
+                }
+            }
+
+            open.setOnClickListener {
+
+                if (!helper.isStoragePermissionGranted()) helper.takePermission()
+                if (helper.isStoragePermissionGranted()) chooseFile()
+            }
+
+            save.setOnClickListener {
+                if (currentFragment != null) {
+
+                    //if (currentFragment!!.hasUnsavedChanges.value != false) {
+                        saveFile(currentFragment!!, currentFragment!!.getUri())
+                    //} else
+//                        Toast.makeText(
+//                            this@MainActivity,
+//                            "No Changes Found",
+//                            Toast.LENGTH_SHORT
+//                        ).show()
+                }
+            }
+            search.setOnClickListener {
+
+                if (currentFragment != null)
+                    search(currentFragment!!, false)
+            }
+
+            toolbox.setOnClickListener {
+                binding.specialCharLayout.specialCharKeyboarLayout.apply {
+                    if (visibility == View.VISIBLE) visibility = View.GONE
+                    else visibility = View.VISIBLE
+                }
+            }
+
+            undoChange.setOnClickListener {
+
+                if (currentFragment != null) {
+                    currentFragment!!.undoChanges()
+                }
+
+
+            }
+            redoChange.setOnClickListener {
+                if (currentFragment != null) {
+                    currentFragment!!.redoChanges()
+                }
+            }
+
+        }
+
+
+
+
 
 
         binding.contextualBottomNavigation.setOnItemSelectedListener(object :
@@ -399,6 +415,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     }
 
+    //sdfklsdflks;dlfk;sdkf;sldkf;ladskf;ldsf
+    //sadflsdkf;sdkf;lsad
+    //why call every timr
+    // asdfasd
+    //dsfsadf
+    //dsafsdfsdaf
+    //dsdsfsadf
+    ///sdfasdfasdfsa
+    ////fasdfasdfs
+    //fsadfasdfd
     private fun changeNoTabLayout() {
         binding.apply {
             if(tabLayout.tabCount==0)
@@ -587,6 +613,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         Log.e(TAG, "onResume: selectedtabposition $selectedTabPosition")
                         model.currentTab = selectedTabPosition
                     }
+                    else {
+                        makeBlankFragment("untitled")
+                    }
                 }
                 createTabsInTabLayout(adapter.fragmentList)
             }
@@ -625,6 +654,33 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         //progressBar.visibility=View.VISIBLE
       //  }
 
+    }
+
+    fun makeBlankFragment(fileName: String)
+    {
+
+        Log.e(TAG, "makeBlankFragment: " )
+        val list:MutableList<StringBuilder> = arrayListOf()
+        val dataFile = DataFile(
+            fileName = fileName,
+            filePath = "note",
+            uri = Uri.parse(""),
+            list
+        )
+        val fragment = EditorFragment(dataFile,hasUnsavedChanges = true)
+        adapter.addFragment(fragment)
+
+        binding.tabLayout.apply {
+            this.addTab(newTab())
+            setCustomTabLayout(tabCount - 1, fileName)
+            adapter.notifyItemInserted(tabCount - 1)
+            selectTab(getTabAt(tabCount - 1))
+        }
+        fragment.hasUnsavedChanges.observe(this@MainActivity) {
+            if (it) {
+                setCustomTabLayout(binding.tabLayout.tabCount-1, "*${fragment.getFileName()}")
+            }else setCustomTabLayout(binding.tabLayout.tabCount-1, fragment.getFileName())
+        }
     }
 
     private fun changeTheme() {
@@ -946,7 +1002,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             while(index<listOfLines.size){
                 temp.append(listOfLines[index])
                 count++
-                if (count >= 3000 || temp.length >= 500000) { // 500kb
+                if (count >= 1000 || temp.length >= 50000) { // 500kb
 //                Log.e(TAG, "readFileUsingUri: temp : at $count : $temp")
                     listOfPageData.add(temp)
                     temp.clear()
@@ -1049,6 +1105,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun createTabsInTabLayout(list: MutableList<Fragment>) {
 //        Log.e(TAG, "createTabsInTabLayout: called "+list.size)
+        // salkdlaskdlasdlsakd;lask sa;dk;aslkd;aslkd;aslkd;aslkd;als
         binding.tabLayout.removeAllTabs()
 
         if (binding.tabLayout.tabCount == 0) {
@@ -1323,7 +1380,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 //            val inflater: MenuInflater = mode.menuInflater
 //            inflater.inflate(R.menu.context_menu, menu)
 
-            binding.bottomNavigation.visibility = View.GONE
             binding.contextualBottomNavigation.apply {
                 visibility = View.VISIBLE
                 this.menu.findItem(R.id.replace).setVisible(true)
@@ -1355,7 +1411,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         // Called when the user exits the action mode
         override fun onDestroyActionMode(mode: ActionMode) {
-            binding.bottomNavigation.visibility = View.VISIBLE
             binding.contextualBottomNavigation.visibility = View.GONE
             actionMode = null
         }
@@ -1420,7 +1475,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         // Called when the user exits the action mode
         override fun onDestroyActionMode(mode: ActionMode) {
-            binding.bottomNavigation.visibility = View.VISIBLE
             binding.contextualBottomNavigation.visibility = View.GONE
             actionMode = null
         }
@@ -1498,7 +1552,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         // Called when the user exits the action mode
         override fun onDestroyActionMode(mode: ActionMode) {
-            binding.bottomNavigation.visibility = View.VISIBLE
             binding.contextualBottomNavigation.visibility = View.GONE
             actionMode = null
         }

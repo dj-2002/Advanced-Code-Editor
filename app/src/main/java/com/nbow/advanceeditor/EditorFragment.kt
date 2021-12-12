@@ -20,6 +20,7 @@ import android.content.Context
 
 import android.view.View.OnLongClickListener
 import android.widget.ArrayAdapter
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.nbow.advanceeditor.code.CodeView
 import com.nbow.advanceeditor.syntax.Language
 import com.nbow.advanceeditor.syntax.SyntaxManager
@@ -233,7 +234,7 @@ class EditorFragment : Fragment {
 
         val view = inflater.inflate(layout, container, false)
 
-//        createPagesFromListOfLines()
+       //createPagesFromListOfLines()
 
         currentPageIndex = 0
         editText = view.findViewById(R.id.editText)
@@ -244,10 +245,56 @@ class EditorFragment : Fragment {
 
 
 //        editText.setHorizontallyScrolling(false)
+
+
+        val fabPrev:FloatingActionButton  = view.findViewById(R.id.prev_btn);
+        val fabNext:FloatingActionButton = view.findViewById(R.id.next_btn);
+
+        fabNext.setOnClickListener({
+
+            nextPage()
+        })
+
+        fabPrev.setOnClickListener({
+
+            prevPage()
+        })
+
         if(editText!=null) {
             undoRedo = TextViewUndoRedo(editText,viewLifecycleOwner)
         }
         return view
+    }
+
+    private fun prevPage() {
+
+        Log.e(TAG, "prevPage: ", )
+        currentPageIndex--;
+        if(dataFile!=null && currentPageIndex>=0 && currentPageIndex<dataFile!!.listOfPageData.size){
+            undoRedo.mIsUndoOrRedo = true
+            editText!!.setText(dataFile!!.listOfPageData.get(currentPageIndex))
+            undoRedo.mIsUndoOrRedo = false
+            Log.e(TAG, "onViewStateRestored: size : ${dataFile!!.listOfPageData.get(0).length}")
+            Log.e(TAG, "onViewStateRestored: number of page : ${dataFile!!.listOfPageData.size}")
+        }
+
+
+    }
+
+    private fun nextPage() {
+
+        Log.e(TAG, "nextPage: ", )
+        
+        currentPageIndex++;
+        if(dataFile!=null && currentPageIndex>=0 && currentPageIndex<dataFile!!.listOfPageData.size){
+            undoRedo.mIsUndoOrRedo = true
+            editText!!.setText(dataFile!!.listOfPageData.get(currentPageIndex))
+            undoRedo.mIsUndoOrRedo = false
+            Log.e(TAG, "onViewStateRestored: size : ${dataFile!!.listOfPageData.get(0).length}")
+            Log.e(TAG, "onViewStateRestored: number of page : ${dataFile!!.listOfPageData.size}")
+        }
+
+
     }
 
     fun undoChanges()
@@ -277,7 +324,7 @@ class EditorFragment : Fragment {
     fun saveDataToPage() {
         if(editText!=null) {
             val page = StringBuilder(editText!!.text.toString())
-            if (dataFile != null) {
+            if (dataFile != null && dataFile!!.listOfPageData.size>0) {
                 dataFile!!.listOfPageData.removeAt(currentPageIndex)
                 dataFile!!.listOfPageData.add(currentPageIndex, page)
             }

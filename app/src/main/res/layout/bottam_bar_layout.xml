@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ImageButton
+        android:id="@+id/toolbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_menu_open"
+        android:layout_marginStart="4dp"
+        app:tint="@color/black"
+        android:backgroundTint="@color/colorPrimary"/>
+
+        <ImageButton
+            android:id="@+id/search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_search"
+            android:layout_marginStart="4dp"
+            app:tint="@color/black"
+            android:backgroundTint="@color/colorPrimary"/>
+
+
+        <ImageButton
+            android:id="@+id/undo_change"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_undo"
+            android:layout_marginStart="4dp"
+            app:tint="@color/black"
+            android:backgroundTint="@color/colorPrimary"
+            />
+
+
+    <ImageButton
+        android:id="@+id/redo_change"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_redo"
+        android:layout_marginStart="4dp"
+        app:tint="@color/black"
+        android:backgroundTint="@color/colorPrimary"
+        />
+
+    <ImageButton
+            android:id="@+id/save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_save"
+        app:tint="@color/black"
+        android:backgroundTint="@color/colorPrimary"
+            android:layout_marginStart="4dp"/>
+
+    <ImageButton
+        android:id="@+id/open"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_folder_open"
+        app:tint="@color/black"
+        android:backgroundTint="@color/colorPrimary"
+        android:layout_marginStart="4dp"/>
+
+
+    <ImageButton
+        android:id="@+id/change_theme"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_effect_theme"
+        app:tint="@color/black"
+        android:backgroundTint="@color/colorPrimary"
+        android:layout_marginStart="4dp"/>
+
+
+    <ImageButton
+        android:id="@+id/close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_close"
+        app:tint="@color/black"
+        android:backgroundTint="@color/colorPrimary"
+        android:layout_marginStart="4dp"/>
+
+
+    </androidx.appcompat.widget.LinearLayoutCompat>

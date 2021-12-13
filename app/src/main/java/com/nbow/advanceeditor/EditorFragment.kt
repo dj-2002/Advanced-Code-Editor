@@ -277,11 +277,14 @@ class EditorFragment : Fragment {
     private fun prevPage() {
 
         Log.e(TAG, "prevPage: ", )
-        currentPageIndex--;
-        if(dataFile!=null && currentPageIndex>=0 && currentPageIndex<dataFile!!.listOfPageData.size){
+        if(dataFile!=null && (currentPageIndex-1)>=0 && currentPageIndex<dataFile!!.listOfPageData.size){
+            
+            saveDataToPage()
+            currentPageIndex--;
             undoRedo.mIsUndoOrRedo = true
             editText!!.setText(dataFile!!.listOfPageData.get(currentPageIndex))
             undoRedo.mIsUndoOrRedo = false
+            Toast.makeText(context, "${currentPageIndex+1}", Toast.LENGTH_SHORT).show()
             Log.e(TAG, "onViewStateRestored: size : ${dataFile!!.listOfPageData.get(0).length}")
             Log.e(TAG, "onViewStateRestored: number of page : ${dataFile!!.listOfPageData.size}")
         }
@@ -293,11 +296,14 @@ class EditorFragment : Fragment {
 
         Log.e(TAG, "nextPage: ", )
         
-        currentPageIndex++;
-        if(dataFile!=null && currentPageIndex>=0 && currentPageIndex<dataFile!!.listOfPageData.size){
+        if(dataFile!=null && currentPageIndex>=0 && (currentPageIndex+1)<dataFile!!.listOfPageData.size){
+            saveDataToPage()
+            currentPageIndex++;
             undoRedo.mIsUndoOrRedo = true
             editText!!.setText(dataFile!!.listOfPageData.get(currentPageIndex))
             undoRedo.mIsUndoOrRedo = false
+            Toast.makeText(context, "${currentPageIndex+1}", Toast.LENGTH_SHORT).show()
+
             Log.e(TAG, "onViewStateRestored: size : ${dataFile!!.listOfPageData.get(0).length}")
             Log.e(TAG, "onViewStateRestored: number of page : ${dataFile!!.listOfPageData.size}")
         }
@@ -331,10 +337,13 @@ class EditorFragment : Fragment {
 
     fun saveDataToPage() {
         if(editText!=null) {
+            
+            
             val page = StringBuilder(editText!!.text.toString())
-            if (dataFile != null && dataFile!!.listOfPageData.size>0) {
+            if (dataFile != null && dataFile!!.listOfPageData.size>0 && currentPageIndex<dataFile!!.listOfPageData.size) {
                 dataFile!!.listOfPageData.removeAt(currentPageIndex)
                 dataFile!!.listOfPageData.add(currentPageIndex, page)
+                Log.e(TAG, "saveDataToPage: ", )
             }
         }
     }

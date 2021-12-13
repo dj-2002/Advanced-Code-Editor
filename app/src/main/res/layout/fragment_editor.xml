@@ -6,65 +6,62 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context=".EditorFragment">
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <RelativeLayout
+        android:id="@+id/relativeLayout2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        >
-<!--        <HorizontalScrollView-->
-<!--            android:id="@+id/horizontal_scroller"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:scrollbars="none"-->
-<!--            android:paddingEnd="3dp"-->
-<!--            android:layout_height="match_parent">-->
-    <com.nbow.advanceeditor.code.CodeView
-        android:id="@+id/editText"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/transparent"
-        android:dropDownWidth="200dp"
-        android:imeOptions="flagNoExtractUi|actionSend"
-        android:inputType="textNoSuggestions|textMultiLine"
-        android:lastBaselineToBottomHeight="300dp"
-        android:paddingEnd="7dp"
-        android:singleLine="false"
-        android:textSize="16sp" />
+        android:orientation="vertical">
+        <!--        <HorizontalScrollView-->
+        <!--            android:id="@+id/horizontal_scroller"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:scrollbars="none"-->
+        <!--            android:paddingEnd="3dp"-->
+        <!--            android:layout_height="match_parent">-->
+        <com.nbow.advanceeditor.code.CodeView
+            android:id="@+id/editText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:dropDownWidth="200dp"
+            android:imeOptions="flagNoExtractUi|actionSend"
+            android:inputType="textNoSuggestions|textMultiLine"
+            android:lastBaselineToBottomHeight="300dp"
+            android:paddingEnd="7dp"
+            android:singleLine="false"
+            android:textSize="16sp" />
 
-<!--                />-->
-<!--        </HorizontalScrollView>-->
+        <!--                />-->
+        <!--        </HorizontalScrollView>-->
 
-
-
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/prev_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="60dp"
-            android:layout_marginBottom="16dp"
-            android:src="@drawable/ic_left"
-            app:backgroundTint="#FFFFFF"
-            app:fabSize="normal"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
-
-            />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/next_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:src="@drawable/ic_right"
-            app:backgroundTint="#FFFFFF"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
-            app:fabSize="normal"
-            />
 
     </RelativeLayout>
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/prev_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_left"
+        app:backgroundTint="#FFFFFF"
+        app:fabSize="normal"
+        android:layout_marginEnd="60dp"
+        android:layout_marginBottom="36dp"
+        app:layout_constraintBottom_toBottomOf="@+id/relativeLayout2"
+        app:layout_constraintEnd_toEndOf="parent" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/next_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_right"
+        app:backgroundTint="#FFFFFF"
+        app:fabSize="normal"
+        android:layout_marginBottom="36dp"
+        app:layout_constraintBottom_toBottomOf="@+id/relativeLayout2"
+        app:layout_constraintEnd_toEndOf="parent" />
 
+</androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

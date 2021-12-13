@@ -207,6 +207,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
 
             close.setOnClickListener {
+                currentFragment = adapter.fragmentList.get(binding.tabLayout.selectedTabPosition) as EditorFragment
 
                 if (currentFragment != null) {
                     //if (currentFragment!!.hasUnsavedChanges.value ?: false) {
@@ -224,6 +225,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
 
             save.setOnClickListener {
+                currentFragment = adapter.fragmentList.get(binding.tabLayout.selectedTabPosition) as EditorFragment
+
                 if (currentFragment != null) {
 
                     //if (currentFragment!!.hasUnsavedChanges.value != false) {
@@ -237,6 +240,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
             }
             search.setOnClickListener {
+                currentFragment = adapter.fragmentList.get(binding.tabLayout.selectedTabPosition) as EditorFragment
 
                 if (currentFragment != null)
                     search(currentFragment!!, false)
@@ -250,6 +254,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
 
             undoChange.setOnClickListener {
+                currentFragment = adapter.fragmentList.get(binding.tabLayout.selectedTabPosition) as EditorFragment
 
                 if (currentFragment != null) {
                     currentFragment!!.undoChanges()
@@ -258,6 +263,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             }
             redoChange.setOnClickListener {
+                currentFragment = adapter.fragmentList.get(binding.tabLayout.selectedTabPosition) as EditorFragment
+
                 if (currentFragment != null) {
                     currentFragment!!.redoChanges()
                 }

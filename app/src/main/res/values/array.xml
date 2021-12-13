@@ -8,56 +8,6 @@
         <item>SERIF</item>
     </string-array>
 
-    <!--Java Keywords List-->
-    <string-array name="java_keywords">
-        <item>public</item>
-        <item>private</item>
-        <item>protected</item>
-        <item>package</item>
-        <item>abstract</item>
-        <item>boolean</item>
-        <item>break</item>
-        <item>byte</item>
-        <item>case</item>
-        <item>catch</item>
-        <item>char</item>
-        <item>class</item>
-        <item>continue</item>
-        <item>default</item>
-        <item>do</item>
-        <item>double</item>
-        <item>else</item>
-        <item>enum</item>
-        <item>extends</item>
-        <item>final</item>
-        <item>finally</item>
-        <item>float</item>
-        <item>for</item>
-        <item>if</item>
-        <item>implements</item>
-        <item>import</item>
-        <item>instanceof</item>
-        <item>int</item>
-        <item>interface</item>
-        <item>long</item>
-        <item>native</item>
-        <item>new</item>
-        <item>return</item>
-        <item>short</item>
-        <item>static</item>
-        <item>strictfp</item>
-        <item>super</item>
-        <item>switch</item>
-        <item>synchronized</item>
-        <item>this</item>
-        <item>throw</item>
-        <item>transient</item>
-        <item>try</item>
-        <item>void</item>
-        <item>volatile</item>
-        <item>while</item>
-    </string-array>
-
     <!--GoLang Keywords List-->
     <string-array name="go_keywords">
         <item>break</item>
@@ -109,6 +59,339 @@
         <item>import</item>
         <item>return</item>
         <item>var</item>
+
+    </string-array>
+
+    <!--    HTML keywords list-->
+    <string-array name="html_keywords">
+
+        <item>&lt;!DOCTYPE html&gt;</item>
+        <item>&lt;aside&gt;</item>
+        <item>&lt;base&gt;</item>
+        <item>&lt;canvas&gt;</item>
+        <item>&lt;center&gt;</item>
+        <item>&lt;cite&gt;</item>
+        <item>&lt;code&gt;</item>
+        <item>&lt;col&gt;</item>
+        <item>&lt;data&gt;</item>
+        <item>&lt;datalist&gt;</item>
+        <item>&lt;dd&gt;</item>
+        <item>&lt;details&gt;</item>
+        <item>&lt;dir&gt;</item>
+        <item>&lt;embed&gt;</item>
+        <item>&lt;figure&gt;</item>
+        <item>&lt;font&gt;</item>
+        <item>&lt;frame&gt;</item>
+        <item>&lt;marquee&gt;</item>
+        <item>&lt;option&gt;</item>
+        <item>&lt;output&gt;</item>
+        <item>&lt;picture&gt;</item>
+        <item>&lt;progress&gt;</item>
+        <item>&lt;rp&gt;</item>
+        <item>&lt;small&gt;</item>
+        <item>&lt;source&gt;</item>
+        <item>&lt;dfn&gt;</item>
+        <item>&lt;a&gt;</item>
+        <item>&lt;acronym&gt;</item>
+        <item>&lt;address&gt;</item>
+        <item>&lt;applet&gt;</item>
+        <item>&lt;article&gt;</item>
+        <item>&lt;basefont&gt;</item>
+        <item>&lt;bdi&gt;</item>
+        <item>&lt;big&gt;</item>
+        <item>&lt;blockquote&gt;</item>
+        <item>&lt;body&gt;</item>
+        <item>&lt;s&gt;</item>
+        <item>&lt;samp&gt;</item>
+        <item>&lt;script&gt;</item>
+        <item>&lt;section&gt;</item>
+        <item>&lt;select&gt;</item>
+        <item>&lt;picture&gt;</item>
+        <item>&lt;video&gt;</item>
+        <item>&lt;audio&gt;</item>
+        <item>&lt;span&gt;</item>
+        <item>&lt;strike&gt;</item>
+        <item>&lt;strong&gt;</item>
+        <item>&lt;h1&gt;</item>
+        <item>&lt;h2&gt;</item>
+        <item>&lt;h3&gt;</item>
+        <item>&lt;h4&gt;</item>
+        <item>&lt;h5&gt;</item>
+        <item>&lt;h6&gt;</item>
+        <item>&lt;del&gt;</item>
+        <item>&lt;footer&gt;</item>
+        <item>&lt;form&gt;</item>
+        <item>&lt;caption&gt;</item>
+        <item>&lt;colgroup&gt;</item>
+        <item>&lt;dt&gt;</item>
+        <item>&lt;em&gt;</item>
+        <item>&lt;dl&gt;</item>
+        <item>&lt;b&gt;</item>
+        <item>&lt;bdo&gt;</item>
+        <item>&lt;area&gt;</item>
+        <item>&lt;abbr&gt;</item>
+        <item>&lt;colgroup&gt;</item>
+        <item>&lt;br&gt;</item>
+        <item>&lt;button&gt;</item>
+        <item>&lt;html&gt;</item>
+        <item>&lt;div&gt;</item>
+        <item>&lt;head&gt;</item>
+        <item>&lt;frameset&gt;</item>
+        <item>&lt;dialog&gt;</item>
+        <item>&lt;header&gt;</item>
+        <item>&lt;fieldset&gt;</item>
+        <item>&lt;figcaption&gt;</item>
+        <item>&lt;hr&gt;</item>
+        <item>&lt;i&gt;</item>
+        <item>&lt;iframe&gt;</item>
+        <item>&lt;img&gt;</item>
+        <item>&lt;link&gt;</item>
+        <item>&lt;main&gt;</item>
+        <item>&lt;menu&gt;</item>
+        <item>&lt;meter&gt;</item>
+        <item>&lt;nav&gt;</item>
+        <item>&lt;noframes&gt;</item>
+        <item>&lt;frame&gt;</item>
+        <item>&lt;noscript&gt;</item>
+        <item>&lt;object&gt;</item>
+        <item>&lt;ol&gt;</item>
+        <item>&lt;optgroup&gt;</item>
+        <item>&lt;input&gt;</item>
+        <item>&lt;ins&gt;</item>
+        <item>&lt;isindex&gt;</item>
+        <item>&lt;kbd&gt;</item>
+        <item>&lt;label&gt;</item>
+        <item>&lt;legend&gt;</item>
+        <item>&lt;fieldset&gt;</item>
+        <item>&lt;li&gt;</item>
+        <item>&lt;style&gt;</item>
+        <item>&lt;p&gt;</item>
+        <item>&lt;map&gt;</item>
+        <item>&lt;mark&gt;</item>
+        <item>&lt;meta&gt;</item>
+        <item>&lt;param&gt;</item>
+        <item>&lt;ruby&gt;</item>
+        <item>&lt;object&gt;</item>
+        <item>&lt;pre&gt;</item>
+        <item>&lt;q&gt;</item>
+        <item>&lt;rt&gt;</item>
+        <item>&lt;sub&gt;</item>
+        <item>&lt;summary&gt;</item>
+        <item>&lt;details&gt;</item>
+        <item>&lt;sup&gt;</item>
+        <item>&lt;svg&gt;</item>
+        <item>&lt;table&gt;</item>
+        <item>&lt;tbody&gt;</item>
+        <item>&lt;thead&gt;</item>
+        <item>&lt;tfoot&gt;</item>
+        <item>&lt;td&gt;</item>
+        <item>&lt;template&gt;</item>
+        <item>&lt;textarea&gt;</item>
+        <item>&lt;tfoot&gt;</item>
+        <item>&lt;th&gt;</item>
+        <item>&lt;thead&gt;</item>
+        <item>&lt;tbody&gt;</item>
+        <item>&lt;tfoot&gt;</item>
+        <item>&lt;time&gt;</item>
+        <item>&lt;title&gt;</item>
+        <item>&lt;tr&gt;</item>
+        <item>&lt;track&gt;</item>
+        <item>&lt;video&gt;</item>
+        <item>&lt;tt&gt;</item>
+        <item>&lt;u&gt;</item>
+        <item>&lt;ul&gt;</item>
+        <item>&lt;var&gt;</item>
+        <item>&lt;video&gt;</item>
+        <item>&lt;wbr&gt;</item>
+
+        <!--        closing tag-->
+        <item>&lt;/aside&gt;</item>
+        <item>&lt;/base&gt;</item>
+        <item>&lt;/canvas&gt;</item>
+        <item>&lt;/center&gt;</item>
+        <item>&lt;/cite&gt;</item>
+        <item>&lt;/code&gt;</item>
+        <item>&lt;/col&gt;</item>
+        <item>&lt;/data&gt;</item>
+        <item>&lt;/datalist&gt;</item>
+        <item>&lt;/dd&gt;</item>
+        <item>&lt;/details&gt;</item>
+        <item>&lt;/dir&gt;</item>
+        <item>&lt;/embed&gt;</item>
+        <item>&lt;/figure&gt;</item>
+        <item>&lt;/font&gt;</item>
+        <item>&lt;/frame&gt;</item>
+        <item>&lt;/marquee&gt;</item>
+        <item>&lt;/option&gt;</item>
+        <item>&lt;/output&gt;</item>
+        <item>&lt;/picture&gt;</item>
+        <item>&lt;/progress&gt;</item>
+        <item>&lt;/rp&gt;</item>
+        <item>&lt;/small&gt;</item>
+        <item>&lt;/source&gt;</item>
+        <item>&lt;/dfn&gt;</item>
+        <item>&lt;/a&gt;</item>
+        <item>&lt;/acronym&gt;</item>
+        <item>&lt;/address&gt;</item>
+        <item>&lt;/applet&gt;</item>
+        <item>&lt;/article&gt;</item>
+        <item>&lt;/basefont&gt;</item>
+        <item>&lt;/bdi&gt;</item>
+        <item>&lt;/big&gt;</item>
+        <item>&lt;/blockquote&gt;</item>
+        <item>&lt;/body&gt;</item>
+        <item>&lt;/s&gt;</item>
+        <item>&lt;/samp&gt;</item>
+        <item>&lt;/script&gt;</item>
+        <item>&lt;/section&gt;</item>
+        <item>&lt;/select&gt;</item>
+        <item>&lt;/picture&gt;</item>
+        <item>&lt;/video&gt;</item>
+        <item>&lt;/audio&gt;</item>
+        <item>&lt;/span&gt;</item>
+        <item>&lt;/strike&gt;</item>
+        <item>&lt;/strong&gt;</item>
+        <item>&lt;/h1&gt;</item>
+        <item>&lt;/h2&gt;</item>
+        <item>&lt;/h3&gt;</item>
+        <item>&lt;/h4&gt;</item>
+        <item>&lt;/h5&gt;</item>
+        <item>&lt;/h6&gt;</item>
+        <item>&lt;/del&gt;</item>
+        <item>&lt;/footer&gt;</item>
+        <item>&lt;/form&gt;</item>
+        <item>&lt;/caption&gt;</item>
+        <item>&lt;/colgroup&gt;</item>
+        <item>&lt;/dt&gt;</item>
+        <item>&lt;/em&gt;</item>
+        <item>&lt;/dl&gt;</item>
+        <item>&lt;/b&gt;</item>
+        <item>&lt;/bdo&gt;</item>
+        <item>&lt;/area&gt;</item>
+        <item>&lt;/abbr&gt;</item>
+        <item>&lt;/colgroup&gt;</item>
+        <item>&lt;/br&gt;</item>
+        <item>&lt;/button&gt;</item>
+        <item>&lt;/html&gt;</item>
+        <item>&lt;/div&gt;</item>
+        <item>&lt;/head&gt;</item>
+        <item>&lt;/frameset&gt;</item>
+        <item>&lt;/dialog&gt;</item>
+        <item>&lt;/header&gt;</item>
+        <item>&lt;/fieldset&gt;</item>
+        <item>&lt;/figcaption&gt;</item>
+        <item>&lt;/hr&gt;</item>
+        <item>&lt;/i&gt;</item>
+        <item>&lt;/iframe&gt;</item>
+        <item>&lt;/img&gt;</item>
+        <item>&lt;/link&gt;</item>
+        <item>&lt;/main&gt;</item>
+        <item>&lt;/menu&gt;</item>
+        <item>&lt;/meter&gt;</item>
+        <item>&lt;/nav&gt;</item>
+        <item>&lt;/noframes&gt;</item>
+        <item>&lt;/frame&gt;</item>
+        <item>&lt;/noscript&gt;</item>
+        <item>&lt;/object&gt;</item>
+        <item>&lt;/ol&gt;</item>
+        <item>&lt;/optgroup&gt;</item>
+        <item>&lt;/input&gt;</item>
+        <item>&lt;/ins&gt;</item>
+        <item>&lt;/isindex&gt;</item>
+        <item>&lt;/kbd&gt;</item>
+        <item>&lt;/label&gt;</item>
+        <item>&lt;/legend&gt;</item>
+        <item>&lt;/fieldset&gt;</item>
+        <item>&lt;/li&gt;</item>
+        <item>&lt;/style&gt;</item>
+        <item>&lt;/p&gt;</item>
+        <item>&lt;/map&gt;</item>
+        <item>&lt;/mark&gt;</item>
+        <item>&lt;/meta&gt;</item>
+        <item>&lt;/param&gt;</item>
+        <item>&lt;/ruby&gt;</item>
+        <item>&lt;/object&gt;</item>
+        <item>&lt;/pre&gt;</item>
+        <item>&lt;/q&gt;</item>
+        <item>&lt;/rt&gt;</item>
+        <item>&lt;/sub&gt;</item>
+        <item>&lt;/summary&gt;</item>
+        <item>&lt;/details&gt;</item>
+        <item>&lt;/sup&gt;</item>
+        <item>&lt;/svg&gt;</item>
+        <item>&lt;/table&gt;</item>
+        <item>&lt;/tbody&gt;</item>
+        <item>&lt;/thead&gt;</item>
+        <item>&lt;/tfoot&gt;</item>
+        <item>&lt;/td&gt;</item>
+        <item>&lt;/template&gt;</item>
+        <item>&lt;/textarea&gt;</item>
+        <item>&lt;/tfoot&gt;</item>
+        <item>&lt;/th&gt;</item>
+        <item>&lt;/thead&gt;</item>
+        <item>&lt;/tbody&gt;</item>
+        <item>&lt;/tfoot&gt;</item>
+        <item>&lt;/time&gt;</item>
+        <item>&lt;/title&gt;</item>
+        <item>&lt;/tr&gt;</item>
+        <item>&lt;/track&gt;</item>
+        <item>&lt;/video&gt;</item>
+        <item>&lt;/tt&gt;</item>
+        <item>&lt;/u&gt;</item>
+        <item>&lt;/ul&gt;</item>
+        <item>&lt;/var&gt;</item>
+        <item>&lt;/video&gt;</item>
+        <item>&lt;/wbr&gt;</item>
+    </string-array>
+
+    <!--Java Keywords List-->
+    <string-array name="java_keywords">
+        <item>public</item>
+        <item>private</item>
+        <item>protected</item>
+        <item>package</item>
+        <item>abstract</item>
+        <item>boolean</item>
+        <item>break</item>
+        <item>byte</item>
+        <item>case</item>
+        <item>catch</item>
+        <item>char</item>
+        <item>class</item>
+        <item>continue</item>
+        <item>default</item>
+        <item>do</item>
+        <item>double</item>
+        <item>else</item>
+        <item>enum</item>
+        <item>extends</item>
+        <item>final</item>
+        <item>finally</item>
+        <item>float</item>
+        <item>for</item>
+        <item>if</item>
+        <item>implements</item>
+        <item>import</item>
+        <item>instanceof</item>
+        <item>int</item>
+        <item>interface</item>
+        <item>long</item>
+        <item>native</item>
+        <item>new</item>
+        <item>return</item>
+        <item>short</item>
+        <item>static</item>
+        <item>strictfp</item>
+        <item>super</item>
+        <item>switch</item>
+        <item>synchronized</item>
+        <item>this</item>
+        <item>throw</item>
+        <item>transient</item>
+        <item>try</item>
+        <item>void</item>
+        <item>volatile</item>
+        <item>while</item>
     </string-array>
 
     <!--Python Keywords List-->
@@ -150,7 +433,6 @@
         <item>yield</item>
     </string-array>
 
-
     <string-array name="c_keywords">
         <item>auto</item><item>break</item><item>case</item><item>char</item><item>const</item><item>continue</item><item>default</item><item>do</item><item>double</item><item>else</item><item>enum</item><item>extern</item><item>float</item><item>for</item><item>goto</item><item>if</item><item>int</item><item>long</item><item>register</item><item>return</item><item>short</item><item>signed</item><item>sizeof</item><item>static</item><item>struct</item><item>switch</item><item>typedef</item><item>union</item><item>unsigned</item><item>void</item><item>volatile</item><item>while</item>
     </string-array>
@@ -167,7 +449,7 @@
         <item>null</item><item>package</item><item>private</item><item>protected</item><item>public</item><item>return</item><item>super</item><item>switch</item><item>static</item><item>this</item><item>throw</item><item>try</item><item>true</item><item>typeof</item><item>var</item><item>void</item><item>while</item><item>with</item><item>yield</item>
 
     </string-array>
-    <string-array name="html_keywords"></string-array>
+
     <string-array name="blank" />
 
     <string-array name="php_keywords">

@@ -21,6 +21,7 @@ import android.content.Context
 import android.view.View.OnLongClickListener
 import android.widget.ArrayAdapter
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.nbow.advanceeditor.code.AutoCompleteKeywordAdapter
 import com.nbow.advanceeditor.code.CodeView
 import com.nbow.advanceeditor.syntax.Language
 import com.nbow.advanceeditor.syntax.SyntaxManager
@@ -187,10 +188,17 @@ class EditorFragment : Fragment {
 
         //TextView id to put suggestion on it
         val viewId = R.id.suggestItemTextView
-        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(requireContext().applicationContext, layoutId, viewId, languageKeywords)
+        if(mCurrentLanguage==Language.HTML){
+            val adapter = AutoCompleteKeywordAdapter(requireContext().applicationContext, languageKeywords.toMutableList())
 
-        //Add Custom Adapter to the CodeView
-        editText!!.setAdapter(adapter)
+            //Add Custom Adapter to the CodeView
+            editText!!.setAdapter(adapter)
+        }else{
+            val adapter: ArrayAdapter<String> = ArrayAdapter<String>(requireContext().applicationContext, layoutId, viewId, languageKeywords)
+
+            //Add Custom Adapter to the CodeView
+            editText!!.setAdapter(adapter)
+        }
     }
 
 

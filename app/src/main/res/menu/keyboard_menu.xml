@@ -74,6 +74,37 @@
         android:title='\"'
         app:showAsAction="always"/>
 
+    <item
+        android:id="@+id/exclamation"
+        android:title='!'
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/colon"
+        android:title=':'
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/semi_colon"
+        android:title=';'
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/question_mark"
+        android:title='\?'
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/forward_slash"
+        android:title='/'
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/pipeline_symbol"
+        android:title='|'
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/at_the_rate"
+        android:title='\@'
+        app:showAsAction="always"/>
+
+
 </menu>
 
 

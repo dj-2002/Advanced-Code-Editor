@@ -144,7 +144,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         binding.pager2.adapter = adapter
         binding.pager2.isUserInputEnabled = false
         val v:View  = binding.noTabLayout.cl1
-        v.setOnClickListener({
+        v.setOnClickListener {
             try {
                 val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
                     addCategory(Intent.CATEGORY_OPENABLE)
@@ -152,21 +152,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     putExtra(Intent.EXTRA_TITLE, "new.txt")
                 }
                 newFileLauncher.launch(intent)
-            }
-            catch (e:Exception)
-            {
-                Toast.makeText(applicationContext, "${e.message.toString()}", Toast.LENGTH_SHORT).show()
+            } catch (e: Exception) {
+                Toast.makeText(applicationContext, "${e.message.toString()}", Toast.LENGTH_SHORT)
+                    .show()
                 Log.e(TAG, "newFileLauncher: ${e.toString()}.")
             }
 
-        })
+        }
         val v2:View = binding.noTabLayout.cl2
-        v2.setOnClickListener({
+        v2.setOnClickListener {
             if (!helper.isStoragePermissionGranted()) helper.takePermission()
 
             if (helper.isStoragePermissionGranted()) chooseFile()
 
-        })
+        }
         manager = ReviewManagerFactory.create(applicationContext)
 
 
@@ -187,7 +186,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             title = getFileName()
                             subtitle = ""
                         }
-
                     }
                 }
             }
@@ -210,11 +208,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 currentFragment = adapter.fragmentList.get(binding.tabLayout.selectedTabPosition) as EditorFragment
 
                 if (currentFragment != null) {
-                    //if (currentFragment!!.hasUnsavedChanges.value ?: false) {
-                      //  showUnsavedDialog(currentFragment!!)
-                    //} else {
+                    if (currentFragment!!.hasUnsavedChanges.value ?: false) {
+                        showUnsavedDialog(currentFragment!!)
+                    } else {
                         closeTab()
-                    //}
+                    }
                 }
             }
 
@@ -229,14 +227,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                 if (currentFragment != null) {
 
-                    //if (currentFragment!!.hasUnsavedChanges.value != false) {
-                        saveFile(currentFragment!!, currentFragment!!.getUri())
-                    //} else
-//                        Toast.makeText(
-//                            this@MainActivity,
-//                            "No Changes Found",
-//                            Toast.LENGTH_SHORT
-//                        ).show()
+                    if (currentFragment!!.hasUnsavedChanges.value != false) {
+                        if(currentFragment!!.getFilePath().equals("note"))
+                            saveAsIntent(currentFragment)
+                        else
+                            saveFile(currentFragment!!, currentFragment!!.getUri())
+                    } else
+                        Toast.makeText(
+                            this@MainActivity,
+                            "No Changes Found",
+                            Toast.LENGTH_SHORT
+                        ).show()
                 }
             }
             search.setOnClickListener {
@@ -361,7 +362,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
 
-        binding.specialCharLayout.charToolbar.setOnMenuItemClickListener({
+        binding.specialCharLayout.charToolbar.setOnMenuItemClickListener {
             var currentFragment: EditorFragment? = null
 
             if (isValidTab()) {
@@ -415,10 +416,31 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     R.id.lessThan -> {
                         currentFragment!!.insertSpecialChar("<")
                     }
+                    R.id.exclamation -> {
+                        currentFragment!!.insertSpecialChar("!")
+                    }
+                    R.id.colon -> {
+                        currentFragment!!.insertSpecialChar(":")
+                    }
+                    R.id.semi_colon -> {
+                        currentFragment!!.insertSpecialChar(";")
+                    }
+                    R.id.question_mark -> {
+                        currentFragment!!.insertSpecialChar("?")
+                    }
+                    R.id.forward_slash -> {
+                        currentFragment!!.insertSpecialChar("/")
+                    }
+                    R.id.at_the_rate -> {
+                        currentFragment!!.insertSpecialChar("@")
+                    }
+                    R.id.pipeline_symbol -> {
+                        currentFragment!!.insertSpecialChar("|")
+                    }
 
                 }
             false
-        })
+        }
 
     }
 
@@ -620,11 +642,26 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         Log.e(TAG, "onResume: selectedtabposition $selectedTabPosition")
                         model.currentTab = selectedTabPosition
                     }
-                    else {
+                    if(it && adapter.fragmentList.size==0){
                         makeBlankFragment("untitled")
                     }
                 }
                 createTabsInTabLayout(adapter.fragmentList)
+
+                for ((count, frag) in model.getFragmentList().value!!.withIndex()) {
+                    val fragment = frag as EditorFragment
+                    fragment.hasUnsavedChanges.observe(this@MainActivity) {
+                        if (it){
+                            setCustomTabLayout(count, "*${fragment.getFileName()}")
+                        }else setCustomTabLayout(count, fragment.getFileName())
+                    }
+                    fragment.hasLongPress.observe(this@MainActivity){
+                        if(it) {
+                            startActionMode(actionModeCallbackCopyPaste)
+                            fragment.hasLongPress.value = false
+                        }
+                    }
+                }
             }
 
 //            if (binding.tabLayout.tabCount > 0 && isThemeChangedFromSetting) {
@@ -635,29 +672,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 //            }
 
 
-            binding.tabLayout.apply {
+        binding.tabLayout.apply {
                 if (model.currentTab >= 0 && model.currentTab < tabCount)
                     selectTab(getTabAt(model.currentTab))
             }
-            Log.e(TAG, "onResume: called")
+        Log.e(TAG, "onResume: called")
 
 
-            for ((count, frag) in model.getFragmentList().value!!.withIndex()) {
-                val fragment = frag as EditorFragment
-                fragment.hasUnsavedChanges.observe(this@MainActivity) {
-                    if (it){
-                        setCustomTabLayout(count, "*${fragment.getFileName()}")
-                    }
-                }
-                fragment.hasLongPress.observe(this@MainActivity){
-                    if(it) {
-                        startActionMode(actionModeCallbackCopyPaste)
-                        fragment.hasLongPress.value = false
-                    }
-
-
-                }
-            }
         //progressBar.visibility=View.VISIBLE
       //  }
 
@@ -668,6 +689,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         Log.e(TAG, "makeBlankFragment: " )
         val list:MutableList<StringBuilder> = arrayListOf()
+        list.add(StringBuilder(""))
         val dataFile = DataFile(
             fileName = fileName,
             filePath = "note",
@@ -783,8 +805,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
                 R.id.save -> {
                     if (currentFragment != null) {
-                        if (currentFragment.hasUnsavedChanges.value != false)
-                            saveFile(currentFragment, currentFragment.getUri())
+                        if (currentFragment!!.hasUnsavedChanges.value != false) {
+                            if(currentFragment!!.getFilePath().equals("note"))
+                                saveAsIntent(currentFragment)
+                            else
+                                saveFile(currentFragment!!, currentFragment!!.getUri())
+                        }
                         else
                             Toast.makeText(this, "No Changes Found", Toast.LENGTH_SHORT).show()
                     }
@@ -914,7 +940,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         val file = File.createTempFile(prefix,suffix,applicationContext.cacheDir)
 
                         file.bufferedWriter().use {
-
                                 it.write(currentFragment.getEditTextData().toString())
                         }
 
@@ -1078,7 +1103,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             fragment.hasUnsavedChanges.observe(this) {
                 if (it)
                     setCustomTabLayout(binding.tabLayout.selectedTabPosition, "*$fileName")
-                else setCustomTabLayout(binding.tabLayout.selectedTabPosition, "$fileName")
+                else setCustomTabLayout(binding.tabLayout.selectedTabPosition, fileName)
             }
             fragment.hasLongPress.observe(this@MainActivity){
                 if(it) {
@@ -1256,16 +1281,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if (currentFragment != null) {
 
             try {
-                if (currentFragment != null) {
 
-                    val fileExtension = currentFragment.getFileExtension()
-                    val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
-                        addCategory(Intent.CATEGORY_OPENABLE)
-                        type = "*/*"
-                        putExtra(Intent.EXTRA_TITLE, "untitled${fileExtension}")
-                    }
-                    saveAsSystemPickerLauncher.launch(intent)
+                val fileExtension = currentFragment.getFileExtension()
+                val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+                    addCategory(Intent.CATEGORY_OPENABLE)
+                    type = "*/*"
+                    putExtra(Intent.EXTRA_TITLE, "untitled${fileExtension}")
                 }
+                saveAsSystemPickerLauncher.launch(intent)
             }
             catch (e:Exception)
             {

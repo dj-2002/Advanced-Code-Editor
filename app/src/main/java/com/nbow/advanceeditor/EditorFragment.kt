@@ -20,6 +20,7 @@ import android.content.Context
 
 import android.view.View.OnLongClickListener
 import android.widget.ArrayAdapter
+import androidx.core.widget.doOnTextChanged
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.nbow.advanceeditor.code.AutoCompleteKeywordAdapter
 import com.nbow.advanceeditor.code.CodeView
@@ -51,8 +52,9 @@ class EditorFragment : Fragment {
         val temp = StringBuilder("")
         saveDataToPage()
         if(dataFile!=null){
-            for(page in dataFile!!.listOfPageData){
-                temp.append("$page\n")
+            for((count,page) in dataFile!!.listOfPageData.withIndex()){
+                temp.append("$page")
+                if(count!=dataFile!!.listOfPageData.size-1) temp.append('\n')
             }
         }
         return temp
@@ -132,7 +134,9 @@ class EditorFragment : Fragment {
         Log.e(TAG, "onViewStateRestored: Language ${mCurrentLanguage.name}", )
         SyntaxManager.applyMonokaiTheme(context, editText, mCurrentLanguage)
 
-
+        (editText as CodeView).doOnTextChanged { text, start, before, count ->
+            hasUnsavedChanges.value = true
+        }
 
         super.onViewStateRestored(savedInstanceState)
     }
@@ -254,7 +258,6 @@ class EditorFragment : Fragment {
 
 //        editText.setHorizontallyScrolling(false)
 
-
         val fabPrev:FloatingActionButton  = view.findViewById(R.id.prev_btn);
         val fabNext:FloatingActionButton = view.findViewById(R.id.next_btn);
 
@@ -321,6 +324,7 @@ class EditorFragment : Fragment {
             before =  undoRedo.undo()
         }
 
+        editText?.requestFocus()
 
     }
     fun redoChanges()
@@ -332,18 +336,20 @@ class EditorFragment : Fragment {
         while(after!=null && after.length>0 && after.last()!=' ' ) {
             after =  undoRedo.redo()
         }
+
+        editText?.requestFocus()
+
     }
 
 
     fun saveDataToPage() {
         if(editText!=null) {
-            
-            
+
             val page = StringBuilder(editText!!.text.toString())
+            Log.e(TAG, "saveDataToPage: $page", )
             if (dataFile != null && dataFile!!.listOfPageData.size>0 && currentPageIndex<dataFile!!.listOfPageData.size) {
                 dataFile!!.listOfPageData.removeAt(currentPageIndex)
                 dataFile!!.listOfPageData.add(currentPageIndex, page)
-                Log.e(TAG, "saveDataToPage: ", )
             }
         }
     }

@@ -111,6 +111,7 @@ class MyViewModel(application: Application) : AndroidViewModel(application) {
                     uri.path!!,
                     uri,mlist)
                 val frag = EditorFragment(datafile,  history.hasUnsavedData)
+                Log.e(TAG, "loadHistory: hasUnsavedData : ${history.hasUnsavedData}")
                 (fragmentList.value ?: arrayListOf()).add(frag)
             }
             isHistoryLoaded.postValue(true)

@@ -8,12 +8,14 @@
     tools:context=".EditorFragment">
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    >
 
     <RelativeLayout
         android:id="@+id/relativeLayout2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+
         android:orientation="vertical">
         <!--        <HorizontalScrollView-->
         <!--            android:id="@+id/horizontal_scroller"-->
@@ -25,6 +27,8 @@
             android:id="@+id/editText"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:minHeight="700dp"
+            android:gravity="start"
             android:background="@android:color/transparent"
             android:dropDownWidth="200dp"
             android:imeOptions="flagNoExtractUi|actionSend"

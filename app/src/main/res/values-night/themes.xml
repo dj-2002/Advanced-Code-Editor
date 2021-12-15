@@ -17,6 +17,12 @@
     </style>
 
 
+    <style name="BottamBarTheme" parent="superMaterialThemeNight">
+        <item name="android:background">@color/colorPrimaryNight</item>
+        <item name="backgroundTint">@color/colorPrimaryNight</item>
+        <item name="android:tint">@color/white</item>
+    </style>
+
     <style name="superMaterialThemeNight" parent="Theme.AppCompat.NoActionBar">
 
         <item name="colorPrimary">@color/colorPrimaryNight</item>

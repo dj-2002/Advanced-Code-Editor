@@ -20,8 +20,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppMaterialTheme">
-
-
         <activity
             android:name=".WebViewActivity"
             android:exported="true"
@@ -29,15 +27,18 @@
         <activity
             android:name=".SplashScreen"
             android:noHistory="true"
-            android:theme="@style/SplashTheme">
-        </activity>
-        <activity
-            android:name=".MainActivity"
+            android:theme="@style/SplashTheme"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+        </activity>
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
                 <action android:name="android.intent.action.SEND" />

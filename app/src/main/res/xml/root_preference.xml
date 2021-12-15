@@ -8,13 +8,13 @@
         android:key="appreance">
         >
 
-<!--        <SwitchPreference-->
-<!--            android:key="night_mode_preference"-->
-<!--            android:icon="@drawable/baseline_dark_mode_24"-->
-<!--            android:defaultValue="true"-->
-<!--            android:switchTextOn="Dark"-->
-<!--            android:switchTextOff="Light"-->
-<!--            android:title="Night Mode"/>-->
+        <SwitchPreference
+            android:key="night_mode_preference"
+            android:icon="@drawable/baseline_dark_mode_24"
+            android:defaultValue="true"
+            android:switchTextOn="Dark"
+            android:switchTextOff="Light"
+            android:title="Night Mode"/>
 
 
 

@@ -22,10 +22,7 @@
             android:id="@+id/nav_feedback"
             android:title="@string/feedback"
             android:icon="@drawable/ic_feedback"/>
-        <item
-            android:id="@+id/nav_ad"
-            android:title="Watch Ad"
-            android:icon="@drawable/ic_feedback"/>
+
 
     </group>
 </menu>

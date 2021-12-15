@@ -18,4 +18,5 @@ public enum Language {
     KOTLIN,
     JAVASCRIPT,
     DEFAULT,
+    TXT,
 }

@@ -16,6 +16,12 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="BottamBarTheme" parent="superMaterialTheme">
+        <item name="android:tint">@color/black</item>
+        <item name="backgroundTint">@color/colorPrimary</item>
+        <item name="android:background">@color/colorPrimary</item>
+    </style>
+
     <style name="superMaterialTheme" parent="Theme.AppCompat.Light.NoActionBar">
 
         <item name="colorPrimary">@color/colorPrimary</item>

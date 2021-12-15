@@ -3,7 +3,7 @@
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/colorPrimary"
+    android:theme="@style/BottamBarTheme"
     android:gravity="center_horizontal"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
@@ -13,8 +13,8 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_menu_open"
         android:layout_marginStart="4dp"
-        app:tint="@color/black"
-        android:backgroundTint="@color/colorPrimary"/>
+        android:theme="@style/BottamBarTheme"
+        />
 
         <ImageButton
             android:id="@+id/search"
@@ -22,8 +22,8 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_search"
             android:layout_marginStart="4dp"
-            app:tint="@color/black"
-            android:backgroundTint="@color/colorPrimary"/>
+            android:theme="@style/BottamBarTheme"
+            />
 
 
         <ImageButton
@@ -32,8 +32,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_undo"
             android:layout_marginStart="4dp"
-            app:tint="@color/black"
-            android:backgroundTint="@color/colorPrimary"
+            android:theme="@style/BottamBarTheme"
             />
 
 
@@ -43,8 +42,7 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_redo"
         android:layout_marginStart="4dp"
-        app:tint="@color/black"
-        android:backgroundTint="@color/colorPrimary"
+        android:theme="@style/BottamBarTheme"
         />
 
     <ImageButton
@@ -52,8 +50,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_save"
-        app:tint="@color/black"
-        android:backgroundTint="@color/colorPrimary"
+        android:theme="@style/BottamBarTheme"
             android:layout_marginStart="4dp"/>
 
     <ImageButton
@@ -61,18 +58,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_folder_open"
-        app:tint="@color/black"
-        android:backgroundTint="@color/colorPrimary"
+        android:theme="@style/BottamBarTheme"
         android:layout_marginStart="4dp"/>
 
 
     <ImageButton
-        android:id="@+id/change_theme"
+        android:id="@+id/change_syntax"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_effect_theme"
-        app:tint="@color/black"
-        android:backgroundTint="@color/colorPrimary"
+        android:theme="@style/BottamBarTheme"
         android:layout_marginStart="4dp"/>
 
 
@@ -81,8 +76,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_close"
-        app:tint="@color/black"
-        android:backgroundTint="@color/colorPrimary"
+        android:theme="@style/BottamBarTheme"
         android:layout_marginStart="4dp"/>
 
 

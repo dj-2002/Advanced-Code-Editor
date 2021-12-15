@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/no_syntax" android:title="No Syntax"></item>
+    <item android:id="@+id/default_syntax" android:title="Default"></item>
+    <item android:id="@+id/java" android:title="Java"></item>
+    <item android:id="@+id/c" android:title="C"></item>
+    <item android:id="@+id/cpp" android:title="C++"></item>
+    <item android:id="@+id/go" android:title="Go"></item>
+    <item android:id="@+id/python" android:title="Python"></item>
+    <item android:id="@+id/html" android:title="HTML"></item>
+    <item android:id="@+id/css" android:title="Css"></item>
+    <item android:id="@+id/xml" android:title="Xml"></item>
+    <item android:id="@+id/javascript" android:title="JavaScript"></item>
+    <item android:id="@+id/php" android:title="Php"></item>
+
+</menu>

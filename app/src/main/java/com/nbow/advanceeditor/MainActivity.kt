@@ -122,8 +122,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 readFileUsingUri(uri,true)
             }
         }
-        MobileAds.initialize(this) {}
-        Admob.loadAd(applicationContext)
+        //MobileAds.initialize(this) {}
 
     }
 
@@ -229,7 +228,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                     if (currentFragment!!.hasUnsavedChanges.value != false) {
                         if(currentFragment!!.getFilePath().equals("note"))
-                            saveAsIntent(currentFragment)
+                            saveIntentForUntitledFile(currentFragment!!)
                         else
                             saveFile(currentFragment!!, currentFragment!!.getUri())
                     } else
@@ -268,6 +267,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                 if (currentFragment != null) {
                     currentFragment!!.redoChanges()
+                }
+            }
+
+            changeSyntax.setOnClickListener {
+
+                currentFragment = adapter.fragmentList.get(binding.tabLayout.selectedTabPosition) as EditorFragment
+
+                if (currentFragment != null) {
+                     syntaxSelectionPopUp(currentFragment!!)
                 }
             }
 
@@ -444,6 +452,65 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     }
 
+    private fun syntaxSelectionPopUp(currentFragment: EditorFragment) {
+
+        var view = binding.bottamBarLayout.changeSyntax as View
+
+        val popup = android.widget.PopupMenu(applicationContext, view)
+        popup.inflate(R.menu.syntax_menu)
+
+        popup.setOnMenuItemClickListener { item ->
+
+
+            when (item.itemId) {
+
+                R.id.no_syntax -> {
+                    currentFragment.applySynatx("no")
+
+                }
+
+                R.id.default_syntax -> {
+                    currentFragment.applySynatx("default")
+                }
+                R.id.java -> {
+                    currentFragment.applySynatx("java")
+                }
+                R.id.c -> {
+                    currentFragment.applySynatx("no")
+                }
+                R.id.cpp -> {
+                    currentFragment.applySynatx("no")
+                }
+                R.id.python -> {
+                    currentFragment.applySynatx("no")
+                }
+                R.id.html -> {
+                    currentFragment.applySynatx("no")
+                }
+                R.id.css -> {
+                    currentFragment.applySynatx("no")
+                }
+                R.id.javascript -> {
+                    currentFragment.applySynatx("no")
+                }
+                R.id.go -> {
+                    currentFragment.applySynatx("no")
+                }
+                R.id.xml -> {
+                    currentFragment.applySynatx("no")
+                }
+
+
+            }
+            false
+
+        }
+
+        popup.show()
+
+
+    }
+
     //sdfklsdflks;dlfk;sdkf;sldkf;ladskf;ldsf
     //sadflsdkf;sdkf;lsad
     //why call every timr
@@ -545,22 +612,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_feedback -> {
                 feedback()
             }
-            R.id.nav_ad -> {
-
-                if (Admob.rewardedAd != null) {
-                    Log.e(TAG, "onNavigationItemSelected: admob initialized", )
-                    Admob.rewardedAd!!.show(
-                        this,
-                        OnUserEarnedRewardListener { rewardItem ->
-                            Toast.makeText(
-                                this@MainActivity,
-                                "Rewarded with Thanks", Toast.LENGTH_SHORT
-                            ).show()
-                        })
-                }
-
-                Admob.loadAd(applicationContext)
-            }
+//            R.id.nav_ad -> {
+//
+//                if (Admob.rewardedAd != null) {
+//                    Log.e(TAG, "onNavigationItemSelected: admob initialized", )
+//                    Admob.rewardedAd!!.show(
+//                        this,
+//                        OnUserEarnedRewardListener { rewardItem ->
+//                            Toast.makeText(
+//                                this@MainActivity,
+//                                "Rewarded with Thanks", Toast.LENGTH_SHORT
+//                            ).show()
+//                        })
+//                }
+//
+//            }
 
         }
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
@@ -618,6 +684,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         //lifecycleScope.launch(Dispatchers.Main){
 
+
         val preferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         val wrap = preferences.getBoolean("word_wrap", false)
 
@@ -626,14 +693,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             Utils.isLineNumber = preferences.getBoolean("line_number", true)
         }
 
-            //val keyIsThemeChanged = "is_theme_changed_setting"
-            // val isThemeChangedFromSetting = preferences.getBoolean(keyIsThemeChanged, false)
+            val keyIsThemeChanged = "is_theme_changed_setting"
+             val isThemeChangedFromSetting = preferences.getBoolean(keyIsThemeChanged, false)
             if (wrap != model.isWrap) {
                 model.isWrap = wrap
                 recreate()
             }
-            //darkTheme = preferences.getBoolean(THEME_PREFERENCE_KEY, true)
-            //changeTheme()
+            darkTheme = preferences.getBoolean(THEME_PREFERENCE_KEY, true)
+            changeTheme()
 
             model.isHistoryLoaded.observe(this@MainActivity) {
                 adapter.fragmentList = model.getFragmentList().value ?: arrayListOf()
@@ -664,12 +731,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
             }
 
-//            if (binding.tabLayout.tabCount > 0 && isThemeChangedFromSetting) {
-//                model.currentTab = 0
-//                val editor = preferences.edit()
-//                //editor.putBoolean(keyIsThemeChanged, false)
-//                editor.apply()
-//            }
+            if (binding.tabLayout.tabCount > 0 && isThemeChangedFromSetting) {
+                model.currentTab = 0
+                val editor = preferences.edit()
+                //editor.putBoolean(keyIsThemeChanged, false)
+                editor.apply()
+            }
 
 
         binding.tabLayout.apply {
@@ -681,6 +748,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         //progressBar.visibility=View.VISIBLE
       //  }
+       // Admob.loadAd(applicationContext)
 
     }
 
@@ -807,7 +875,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     if (currentFragment != null) {
                         if (currentFragment!!.hasUnsavedChanges.value != false) {
                             if(currentFragment!!.getFilePath().equals("note"))
-                                saveAsIntent(currentFragment)
+                                saveIntentForUntitledFile(currentFragment!!)
                             else
                                 saveFile(currentFragment!!, currentFragment!!.getUri())
                         }
@@ -1006,7 +1074,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
 
-    private fun readFileUsingUri(uri: Uri,isOuterFile : Boolean = false,isReload : Boolean = false) {
+    private fun readFileUsingUri(uri: Uri,isOuterFile : Boolean = false,isReload : Boolean = false,isUntitled : Boolean = false) {
 
         try {
             val takeFlags: Int =
@@ -1034,7 +1102,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             while(index<listOfLines.size){
                 temp.append(listOfLines[index])
                 count++
-                if (count >= 1000 || temp.length >= 50000) { // 500kb
+                if (count >= 500 || temp.length >= 250000) { // 50kb
 //                Log.e(TAG, "readFileUsingUri: temp : at $count : $temp")
                     listOfPageData.add(temp)
                     temp.clear()
@@ -1070,7 +1138,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             )
             val fragment = EditorFragment(dataFile)
 
-            if (isReload && isValidTab()) {
+            if ((isReload || isUntitled) && isValidTab()) {
                 val position = binding.tabLayout.selectedTabPosition
                 adapter.fragmentList.removeAt(position)
                 adapter.fragmentList.add(position, fragment)
@@ -1726,4 +1794,44 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
     }
+
+    private fun saveIntentForUntitledFile(currentFragment: EditorFragment) {
+
+        try {
+
+            val fileExtension = currentFragment.getFileExtension()
+            val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+                addCategory(Intent.CATEGORY_OPENABLE)
+                type = "*/*"
+                putExtra(Intent.EXTRA_TITLE, "untitled${fileExtension}")
+            }
+            saveSystemPickerLauncherForUntitled.launch(intent)
+        }
+        catch (e:Exception)
+        {
+            Toast.makeText(applicationContext, "${e.message.toString()}", Toast.LENGTH_SHORT).show()
+            Log.e(TAG, "saveAsIntent: ${e.toString()}.")
+        }
+
+    }
+
+    val saveSystemPickerLauncherForUntitled =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val intent: Intent? = result.data
+                val uri: Uri? = intent?.data
+                if (uri != null) {
+//                    Log.e(TAG, "save as sytem picker: uri -> $uri")
+                    if (isValidTab()) {
+                        val fragment =
+                            adapter.fragmentList.get(binding.tabLayout.selectedTabPosition) as EditorFragment
+                        saveFile(fragment, uri)
+
+                        var currentFragment : EditorFragment? = null
+                        readFileUsingUri(uri,isUntitled = true)
+                    }
+                }
+            }
+        }
+
 }

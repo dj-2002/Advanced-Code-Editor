@@ -33,9 +33,10 @@ class EditorFragment : Fragment {
     private val TAG = "EditorFragment"
     private var editText : CodeView? = null
     private var mNextThemeIndex = 2
-
     private var currentPageIndex : Int = 0
     private var mCurrentLanguage: Language = Language.DEFAULT
+    lateinit var fabPrev:FloatingActionButton
+    lateinit var fabNext:FloatingActionButton
 
     var hasUnsavedChanges = MutableLiveData(false)
     var hasLongPress = MutableLiveData<Boolean>(false)
@@ -126,6 +127,8 @@ class EditorFragment : Fragment {
                 mCurrentLanguage = Language.KOTLIN
             else if (dataFile!!.fileExtension == ".java")
                 mCurrentLanguage = Language.JAVA
+            else if(dataFile!!.fileExtension==".txt")
+                mCurrentLanguage = Language.TXT
         }
         configLanguageAutoComplete()
 
@@ -194,12 +197,10 @@ class EditorFragment : Fragment {
         val viewId = R.id.suggestItemTextView
         if(mCurrentLanguage==Language.HTML){
             val adapter = AutoCompleteKeywordAdapter(requireContext().applicationContext, languageKeywords.toMutableList())
-
             //Add Custom Adapter to the CodeView
             editText!!.setAdapter(adapter)
         }else{
             val adapter: ArrayAdapter<String> = ArrayAdapter<String>(requireContext().applicationContext, layoutId, viewId, languageKeywords)
-
             //Add Custom Adapter to the CodeView
             editText!!.setAdapter(adapter)
         }
@@ -250,6 +251,7 @@ class EditorFragment : Fragment {
 
         currentPageIndex = 0
         editText = view.findViewById(R.id.editText)
+
 //            Log.e(TAG, "onCreateView: observe called value of unsaved change $it ${hasUnsavedChanges.value}")
 
 //        editText?.inputType =(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS or InputType.TYPE_TEXT_FLAG_MULTI_LINE)
@@ -258,8 +260,8 @@ class EditorFragment : Fragment {
 
 //        editText.setHorizontallyScrolling(false)
 
-        val fabPrev:FloatingActionButton  = view.findViewById(R.id.prev_btn);
-        val fabNext:FloatingActionButton = view.findViewById(R.id.next_btn);
+         fabPrev  = view.findViewById(R.id.prev_btn);
+         fabNext = view.findViewById(R.id.next_btn);
 
         fabNext.setOnClickListener({
 
@@ -271,25 +273,34 @@ class EditorFragment : Fragment {
             prevPage()
         })
 
+        if(dataFile !=null && dataFile!!.listOfPageData.size==1){
+            fabPrev.visibility  = View.GONE
+            fabNext.visibility = View.GONE
+        }
+
         if(editText!=null) {
             undoRedo = TextViewUndoRedo(editText,viewLifecycleOwner)
+            editText!!.setHighlightWhileTextChanging(false)
+
         }
         return view
     }
 
     private fun prevPage() {
 
-        Log.e(TAG, "prevPage: ", )
-        if(dataFile!=null && (currentPageIndex-1)>=0 && currentPageIndex<dataFile!!.listOfPageData.size){
-            
+        if(currentPageIndex>0 && currentPageIndex < dataFile!!.listOfPageData.size && editText!=null){
             saveDataToPage()
-            currentPageIndex--;
-            undoRedo.mIsUndoOrRedo = true
+            fabNext.isEnabled = true
+            currentPageIndex--
+            if(currentPageIndex==0){
+                fabPrev.isEnabled = false
+            }
+                Toast.makeText(context, "page $currentPageIndex", Toast.LENGTH_SHORT).show()
+            editText!!.setIsPrev(true)
             editText!!.setText(dataFile!!.listOfPageData.get(currentPageIndex))
-            undoRedo.mIsUndoOrRedo = false
-            Toast.makeText(context, "${currentPageIndex+1}", Toast.LENGTH_SHORT).show()
-            Log.e(TAG, "onViewStateRestored: size : ${dataFile!!.listOfPageData.get(0).length}")
-            Log.e(TAG, "onViewStateRestored: number of page : ${dataFile!!.listOfPageData.size}")
+//                Log.e(TAG, "onCreateView: starting index $startingIndexOfCurrentPage")
+//                editText.setStartIndex(startingIndexOfCurrentPage)
+            //TODO : if not ....
         }
 
 
@@ -298,21 +309,28 @@ class EditorFragment : Fragment {
     private fun nextPage() {
 
         Log.e(TAG, "nextPage: ", )
-        
-        if(dataFile!=null && currentPageIndex>=0 && (currentPageIndex+1)<dataFile!!.listOfPageData.size){
-            saveDataToPage()
-            currentPageIndex++;
-            undoRedo.mIsUndoOrRedo = true
-            editText!!.setText(dataFile!!.listOfPageData.get(currentPageIndex))
-            undoRedo.mIsUndoOrRedo = false
-            Toast.makeText(context, "${currentPageIndex+1}", Toast.LENGTH_SHORT).show()
 
-            Log.e(TAG, "onViewStateRestored: size : ${dataFile!!.listOfPageData.get(0).length}")
-            Log.e(TAG, "onViewStateRestored: number of page : ${dataFile!!.listOfPageData.size}")
+        if(currentPageIndex>=0 && currentPageIndex < dataFile!!.listOfPageData.size-1 && editText!=null){
+            fabPrev.isEnabled = true
+            saveDataToPage()
+            currentPageIndex++
+            if(currentPageIndex==dataFile!!.listOfPageData.size-1){
+                fabNext.isEnabled = false
+            }
+            editText!!.pushPrevPageStartLineIndex()
+//            editText!!.prevPageStartLineIndex = editText!!.startIndex
+                Toast.makeText(context, "page $currentPageIndex", Toast.LENGTH_SHORT).show()
+            val startingIndexOfCurrentPage =/* editText!!.getStartingIndex()+*/ editText!!.findLineCount() + 1 ;
+            editText!!.setStartIndex(startingIndexOfCurrentPage)
+            editText!!.setText(dataFile!!.listOfPageData.get(currentPageIndex))
         }
 
 
     }
+
+
+
+
 
     fun undoChanges()
     {
@@ -467,6 +485,18 @@ class EditorFragment : Fragment {
             }
         }
         return null
+    }
+
+    fun applySynatx(s: String) {
+
+        if(s=="java")
+        {
+            if(editText!=null)
+            {
+
+            }
+        }
+
     }
 
 

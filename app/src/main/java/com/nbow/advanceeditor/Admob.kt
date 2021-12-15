@@ -40,7 +40,7 @@ class Admob {
 
             RewardedAd.load(
                 context,
-                "ca-app-pub-3940256099942544/5224354917",
+                "ca-app-pub-6948459060967328/3540124953",
                 AdRequest.Builder().build(),
                 object : RewardedAdLoadCallback() {
                     override fun onAdLoaded(ad: RewardedAd) {

@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.SortedMap;
+import java.util.Stack;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,7 +41,10 @@ public class CodeView extends AppCompatMultiAutoCompleteTextView {
     private int tabWidth;
     private int tabWidthInCharacters;
     private int mUpdateDelayTime = 500;
-
+    public int startIndex  = 1;
+    public int prevPageLastLineNumber = 0;
+    public Stack<Integer> lineNumberStack = new Stack<Integer>();
+    private boolean isPrev  = false;
     private boolean modified = true;
     private boolean highlightWhileTextChanging = true;
 
@@ -75,6 +79,13 @@ public class CodeView extends AppCompatMultiAutoCompleteTextView {
     public CodeView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initEditorView();
+    }
+
+    public void setStartIndex(int index){
+        startIndex = index;
+    }
+    public void setIsPrev(boolean isPrev){
+        this.isPrev = isPrev;
     }
 
     private void initEditorView() {
@@ -118,8 +129,12 @@ public class CodeView extends AppCompatMultiAutoCompleteTextView {
         if (enableLineNumber) {
             int baseline;
             int lineCount = getLineCount();
-            int lineNumber = 1;
 
+            if(isPrev){
+                startIndex = popPrevPageStartLineIndex();
+                isPrev = false;
+            }
+            int lineNumber = startIndex;
             for (int i = 0; i < lineCount; i++) {
                 baseline = getLineBounds(i, null);
                 if (i == 0 || getText().charAt(getLayout().getLineStart(i) - 1) == '\n') {
@@ -128,10 +143,16 @@ public class CodeView extends AppCompatMultiAutoCompleteTextView {
                 }
             }
 
-            int paddingLeft = 40 + (int) (Math.log10(lineCount) + 1) * 16;
+            prevPageLastLineNumber = lineNumber-1;
+
+            int paddingLeft =  (int) (Math.log10(lineCount) + 1)* (int)getLineNumberTextSize() ;
             setPadding(paddingLeft, getPaddingTop(), getPaddingRight(), getPaddingBottom());
         }
         super.onDraw(canvas);
+    }
+
+    public int getStartingIndex() {
+        return startIndex;
     }
 
     private CharSequence autoIndent(CharSequence source, Spanned dest, int dstart, int dend) {
@@ -408,6 +429,11 @@ public class CodeView extends AppCompatMultiAutoCompleteTextView {
         lineNumberPaint.setTextSize(size);
     }
 
+    public float getLineNumberTextSize() {
+        return lineNumberPaint.getTextSize();
+    }
+
+
     @Override
     public void showDropDown() {
         int[] screenPoint = new int[2];
@@ -475,6 +501,20 @@ public class CodeView extends AppCompatMultiAutoCompleteTextView {
             }
         }
     };
+
+    public int findLineCount() {
+        return prevPageLastLineNumber;
+    }
+
+    public void pushPrevPageStartLineIndex() {
+        lineNumberStack.push(startIndex);
+    }
+
+    public int popPrevPageStartLineIndex() {
+        if(lineNumberStack.isEmpty())
+            return 1;
+        return lineNumberStack.pop();
+    }
 
     private final class TabWidthSpan extends ReplacementSpan {
 

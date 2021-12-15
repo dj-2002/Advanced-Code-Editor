@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal"
+
         >
         <HorizontalScrollView
             android:id="@+id/horizontal_scroller"
@@ -23,6 +24,8 @@
                     android:layout_width="match_parent"
                     android:dropDownWidth="200dp"
                     android:minWidth="800dp"
+                    android:gravity="start"
+                    android:minHeight="700dp"
                     android:layout_height="match_parent"
                     android:background="@android:color/transparent"
                     android:imeOptions="flagNoExtractUi|actionSend"

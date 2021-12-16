@@ -42,8 +42,11 @@ import java.util.*
 import android.content.Intent
 import androidx.core.content.FileProvider
 import android.widget.Toast
+import androidx.lifecycle.LifecycleCoroutineScope
 
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.firebase.analytics.FirebaseAnalytics
+import kotlinx.coroutines.GlobalScope
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -94,7 +97,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var alertDialogGlobal: AlertDialog
     lateinit var progressBar: ProgressBar
     lateinit var constraintLayout: ConstraintLayout
-
+    private var mFirebaseAnalytics: FirebaseAnalytics? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.e(TAG, "onCreate: callled")
@@ -109,8 +112,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 readFileUsingUri(uri,true)
             }
         }
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         //MobileAds.initialize(this) {}
+        lifecycleScope.launch(Dispatchers.IO) {
+            firebaseEvent()
+        }
 
+    }
+
+    private fun firebaseEvent() {
+
+        val bundle =  Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID,"onCreate" );
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "${Build.MANUFACTURER} + ${BuildConfig.VERSION_CODE}");
+        mFirebaseAnalytics?.logEvent("oncrate_event", bundle)
     }
 
 
@@ -221,7 +236,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 getCurrentFragment()?.apply{
                     if (hasUnsavedChanges.value != false) {
                         if(this.getFilePath().equals("note") || this.getFileName().equals("untitled")) {
-                            Log.e(TAG, "save: to save note file ", )
+                            Log.e(TAG, "save: to save note file ")
                             saveIntentForUntitledFile(this)
                         }
                         else
@@ -1105,10 +1120,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 
             for(page in listOfPageData)
             {
-                Log.e(TAG, "readFileUsingUri: page ${page.length}", )
+                Log.e(TAG, "readFileUsingUri: page ${page.length}")
             }
 
-            Log.e(TAG, "readFileUsingUri: listofpages size ${listOfPageData.size}", )
+            Log.e(TAG, "readFileUsingUri: listofpages size ${listOfPageData.size}")
 
             val fileName: String = helper.queryName(contentResolver, uri)
             val dataFile = DataFile(
@@ -1121,7 +1136,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             if ((isReload) && isValidTab()) {
 
-                Log.e(TAG, "readFileUsingUri: removing and adding fragment is Reload ", )
+                Log.e(TAG, "readFileUsingUri: removing and adding fragment is Reload ")
                 val position = binding.pager2.currentItem
                 adapter.fragmentList.removeAt(position)
                 adapter.fragmentList.add(position, fragment)

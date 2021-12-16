@@ -31,6 +31,9 @@ public class SyntaxManager {
             case HTML:
                 HtmlSyntaxUtils.applyMonokaiTheme(context, codeView);
                 break;
+            case XML:
+                HtmlSyntaxUtils.applyMonokaiTheme(context, codeView);
+                break;
             case GO_LANG:
                 GoSyntaxUtils.applyMonokaiTheme(context, codeView);
                 break;
@@ -66,6 +69,9 @@ public class SyntaxManager {
                 JavaSyntaxUtils.applyNoctisWhiteTheme(context, codeView);
                 break;
             case HTML:
+                HtmlSyntaxUtils.applyNoctisWhiteTheme(context, codeView);
+                break;
+            case XML:
                 HtmlSyntaxUtils.applyNoctisWhiteTheme(context, codeView);
                 break;
             case GO_LANG:
@@ -105,6 +111,9 @@ public class SyntaxManager {
             case HTML:
                 HtmlSyntaxUtils.applyFiveColorsDarkTheme(context, codeView);
                 break;
+            case XML:
+                HtmlSyntaxUtils.applyFiveColorsDarkTheme(context, codeView);
+                break;
             case GO_LANG:
                 GoSyntaxUtils.applyFiveColorsDarkTheme(context, codeView);
                 break;
@@ -141,6 +150,9 @@ public class SyntaxManager {
                 JavaSyntaxUtils.applyOrangeBoxTheme(context, codeView);
                 break;
             case HTML:
+                HtmlSyntaxUtils.applyOrangeBoxTheme(context, codeView);
+                break;
+            case XML:
                 HtmlSyntaxUtils.applyOrangeBoxTheme(context, codeView);
                 break;
             case GO_LANG:

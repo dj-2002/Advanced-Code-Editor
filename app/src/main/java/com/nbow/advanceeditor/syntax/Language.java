@@ -1,5 +1,7 @@
 package com.nbow.advanceeditor.syntax;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * List of examples languages for CodeView
  */
@@ -19,4 +21,6 @@ public enum Language {
     JAVASCRIPT,
     DEFAULT,
     TXT,
+    NO_SYNTAX
+
 }

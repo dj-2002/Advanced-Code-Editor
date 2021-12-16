@@ -13,5 +13,7 @@
     <item android:id="@+id/xml" android:title="Xml"></item>
     <item android:id="@+id/javascript" android:title="JavaScript"></item>
     <item android:id="@+id/php" android:title="Php"></item>
+    <item android:id="@+id/plain_text" android:title="Text"></item>
+
 
 </menu>

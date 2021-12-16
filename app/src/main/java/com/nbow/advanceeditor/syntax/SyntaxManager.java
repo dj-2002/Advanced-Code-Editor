@@ -34,6 +34,12 @@ public class SyntaxManager {
             case GO_LANG:
                 GoSyntaxUtils.applyMonokaiTheme(context, codeView);
                 break;
+            case TXT:
+                NoSyntaxUtils.applyMonokaiTheme(context,codeView);
+                break;
+            case NO_SYNTAX:
+                NoSyntaxUtils.applyMonokaiTheme(context,codeView);
+                break;
             default:
                 DefaultSyntaxUtils.applyMonokaiTheme(context,codeView);
         }
@@ -64,6 +70,12 @@ public class SyntaxManager {
                 break;
             case GO_LANG:
                 GoSyntaxUtils.applyNoctisWhiteTheme(context, codeView);
+                break;
+            case TXT:
+                NoSyntaxUtils.applyNoctisWhiteTheme(context,codeView);
+                break;
+            case NO_SYNTAX:
+                NoSyntaxUtils.applyNoctisWhiteTheme(context,codeView);
                 break;
             default:
                 DefaultSyntaxUtils.applyNoctisWhiteTheme(context,codeView);
@@ -96,6 +108,12 @@ public class SyntaxManager {
             case GO_LANG:
                 GoSyntaxUtils.applyFiveColorsDarkTheme(context, codeView);
                 break;
+            case TXT:
+                NoSyntaxUtils.applyFiveColorsDarkTheme(context, codeView);
+                break;
+            case NO_SYNTAX:
+                NoSyntaxUtils.applyFiveColorsDarkTheme(context, codeView);
+                break;
             default:
                 DefaultSyntaxUtils.applyFiveColorsDarkTheme(context,codeView);
         }
@@ -113,7 +131,6 @@ public class SyntaxManager {
                 PhpSyntaxUtils.applyOrangeBoxTheme(context, codeView);
                 break;
 
-
             case CPP:
                 CppSyntaxUtils.applyOrangeBoxTheme(context, codeView);
                 break;
@@ -128,6 +145,12 @@ public class SyntaxManager {
                 break;
             case GO_LANG:
                 GoSyntaxUtils.applyOrangeBoxTheme(context, codeView);
+                break;
+            case TXT:
+                NoSyntaxUtils.applyOrangeBoxTheme(context, codeView);
+                break;
+            case NO_SYNTAX:
+                NoSyntaxUtils.applyOrangeBoxTheme(context, codeView);
                 break;
             default:
                 DefaultSyntaxUtils.applyOrangeBoxTheme(context,codeView);

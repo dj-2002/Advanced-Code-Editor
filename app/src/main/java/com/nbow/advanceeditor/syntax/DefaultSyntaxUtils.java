@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 public class DefaultSyntaxUtils {
 
     //Language Keywords
-    private static final Pattern PATTERN_KEYWORDS = Pattern.compile("\\b(auto|break|case|char|const|continue|default|do|double|else|enum|extern|float|for|goto|if|int|long|register|return|short|signed|sizeof|static|struct|switch|typedef|union|unsigned|void|volatile|while|asm|dynamic_cast|namespace|reinterpret_cast|bool|explicit|new|static_cast|false|catch|operator|template|friend|private|class|this|inline|public|throw|const_cast|delete|mutable|protected|true|try|typeid|typename|using|virtual|wchar_t)\\b");
+    private static final Pattern PATTERN_KEYWORDS = Pattern.compile("\\b()\\b");
 
     private static final Pattern PATTERN_BUILTINS = Pattern.compile("[,:;[->]{}()]");
     private static final Pattern PATTERN_COMMENT = Pattern.compile("//(?!TODO )[^\\n]*" + "|" + "/\\*(.|\\R)*?\\*/");

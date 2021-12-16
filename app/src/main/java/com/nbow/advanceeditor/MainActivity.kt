@@ -2,11 +2,9 @@ package com.nbow.advanceeditor
 
 import android.app.Activity
 import android.content.*
-import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.OpenableColumns
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
@@ -24,7 +22,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ShareCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
@@ -44,17 +41,8 @@ import java.net.URLConnection
 import java.util.*
 import android.content.Intent
 import androidx.core.content.FileProvider
-import com.google.android.gms.ads.MobileAds
 import android.widget.Toast
 
-import com.google.android.gms.ads.rewarded.RewardItem
-
-import androidx.annotation.NonNull
-import androidx.core.view.get
-import androidx.core.view.isVisible
-import androidx.transition.Visibility
-
-import com.google.android.gms.ads.OnUserEarnedRewardListener
 import com.google.android.material.tabs.TabLayoutMediator
 
 
@@ -167,59 +155,53 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         manager = ReviewManagerFactory.create(applicationContext)
 
 
-        //setDefaultToolbarTitle()
+        setDefaultToolbarTitle()
         toolbar.apply {
             setNavigationIcon(R.drawable.ic_navigation)
         }
 
         setSupportActionBar(toolbar)
-//        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-//            override fun onTabSelected(tab: TabLayout.Tab?) {
-//                changeNoTabLayout()
-//                binding.pager2.setCurrentItem(tab!!.position, true)
-//                Log.e(TAG, "onTabSelected: position ${tab.position}")
-//                toolbar.apply {
-//                    if (isValidTab()) {
-//                        (adapter.fragmentList.get(tab.position)).apply {
-//                            title = getFileName()
-//                            subtitle = ""
-//                        }
-//                    }
-//                }
-//                model.currentTab=tab.position
-//            }
-//
-//            override fun onTabUnselected(tab: TabLayout.Tab?) {}
-//            override fun onTabReselected(tab: TabLayout.Tab?) {}
-//
-//        })
+        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                changeNoTabLayout()
+                toolbar.apply {
+                    if (isValidTab()) {
+                        if (tab != null) {
+                            (adapter.fragmentList.get(tab.position)).apply {
+                                title = getFileName()
+                                subtitle = ""
+                            }
+                        }
+                    }
+                }
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {}
+            override fun onTabReselected(tab: TabLayout.Tab?) {}
+
+        })
 
         TabLayoutMediator(binding.tabLayout, binding.pager2) { tab, position ->
             (adapter.fragmentList[position]).apply{
-                if(hasUnsavedChanges.value?:false) tab.text = "*${getFileName()}"
-                else tab.text = getFileName()
+                var fileName = getFileName()
+                if(hasUnsavedChanges.value == true) fileName = "*$fileName"
+
+                tab.apply {
+                    if (customView == null) {
+                        setCustomView(R.layout.tab_layout)
+                    }
+                    customView!!.findViewById<TextView>(R.id.file_name).setText(fileName)
+                }
             }
         }.attach()
 
 
-
-
         binding.bottamBarLayout.apply {
 
-            var currentFragment: EditorFragment? = null
-
-            if (isValidTab()) {
-                currentFragment = adapter.fragmentList.get(binding.tabLayout.selectedTabPosition)
-            }
-
             close.setOnClickListener {
-
-
-                currentFragment = getCurrentFragment()
-
-                if (currentFragment != null) {
-                    if (currentFragment!!.hasUnsavedChanges.value ?: false) {
-                        showUnsavedDialog(currentFragment!!)
+                getCurrentFragment()?.apply{
+                    if (hasUnsavedChanges.value == true) {
+                        showUnsavedDialog(this)
                     } else {
                         closeTab()
                     }
@@ -233,17 +215,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
 
             save.setOnClickListener {
-                currentFragment = adapter.fragmentList.get(binding.tabLayout.selectedTabPosition)
-
-                if (currentFragment != null) {
-
-                    if (currentFragment!!.hasUnsavedChanges.value != false) {
-                        if(currentFragment!!.getFilePath().equals("note") || currentFragment!!.getFileName().equals("untitled")) {
+                getCurrentFragment()?.apply{
+                    if (hasUnsavedChanges.value != false) {
+                        if(this.getFilePath().equals("note") || this.getFileName().equals("untitled")) {
                             Log.e(TAG, "save: to save note file ", )
-                            saveIntentForUntitledFile(currentFragment!!)
+                            saveIntentForUntitledFile(this)
                         }
                         else
-                            saveFile(currentFragment!!, currentFragment!!.getUri())
+                            saveFile(this, this.getUri())
                     } else
                         Toast.makeText(
                             this@MainActivity,
@@ -253,10 +232,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
             }
             search.setOnClickListener {
-                currentFragment = adapter.fragmentList.get(binding.tabLayout.selectedTabPosition)
-
-                if (currentFragment != null)
-                    search(currentFragment!!, false)
+                getCurrentFragment()?.apply {
+                    search(this, false)
+                }
             }
 
             toolbox.setOnClickListener {
@@ -267,28 +245,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
 
             undoChange.setOnClickListener {
-                currentFragment = adapter.fragmentList.get(binding.tabLayout.selectedTabPosition)
-
-                if (currentFragment != null) {
-                    currentFragment!!.undoChanges()
-                }
-
-
+                getCurrentFragment()?.undoChanges()
             }
             redoChange.setOnClickListener {
-                currentFragment = adapter.fragmentList.get(binding.tabLayout.selectedTabPosition)
-
-                if (currentFragment != null) {
-                    currentFragment!!.redoChanges()
-                }
+                getCurrentFragment()?.redoChanges()
             }
 
             changeSyntax.setOnClickListener {
-
-                currentFragment = adapter.fragmentList.get(binding.tabLayout.selectedTabPosition)
-
-                if (currentFragment != null) {
-                     syntaxSelectionPopUp(currentFragment!!)
+                getCurrentFragment()?.apply{
+                    syntaxSelectionPopUp(this)
                 }
             }
 
@@ -296,19 +261,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         binding.contextualBottomNavigation.setOnItemSelectedListener(object :
             NavigationBarView.OnItemSelectedListener {
             override fun onNavigationItemSelected(item: MenuItem): Boolean {
-                var currentFragment: EditorFragment? = null
-
-                if (isValidTab()) {
-                    currentFragment =
-                        adapter.fragmentList.get(binding.tabLayout.selectedTabPosition)
-                }
+                val currentFragment = getCurrentFragment()
 
                 if (currentFragment != null)
                     return when (item.itemId) {
 
                         R.id.up -> {
                             if (indexList.isNotEmpty()) {
-                                index = currentFragment!!.highlight(
+                                index = currentFragment.highlight(
                                     findText,
                                     indexList.last(),
                                     true
@@ -319,18 +279,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             true
                         }
                         R.id.down -> {
-                            down(currentFragment!!)
+                            down(currentFragment)
 //                            Toast.makeText(this@MainActivity, "down", Toast.LENGTH_SHORT).show()
                             true
                         }
                         R.id.replace -> {
-                            index = currentFragment!!.findReplace(
+                            index = currentFragment.findReplace(
                                 findText,
                                 replaceText,
                                 index,
                                 ignoreCase
                             )
-                            down(currentFragment!!)
+                            down(currentFragment)
                             if (index == -1) {
                                 Toast.makeText(
                                     this@MainActivity,
@@ -377,79 +337,74 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
         binding.specialCharLayout.charToolbar.setOnMenuItemClickListener {
-            var currentFragment: EditorFragment? = null
-
-            if (isValidTab()) {
-                currentFragment =
-                    adapter.fragmentList.get(binding.tabLayout.selectedTabPosition)
-            }
+            var currentFragment: EditorFragment? = getCurrentFragment()
 
             if (currentFragment != null)
                 when (it.itemId) {
                     R.id.tab -> {
-                        currentFragment!!.insertSpecialChar("    ")
+                        currentFragment.insertSpecialChar("    ")
                     }
                     R.id.roundOpen -> {
-                        currentFragment!!.insertSpecialChar("()")
-                        currentFragment!!.selectionPrevPosition()
+                        currentFragment.insertSpecialChar("()")
+                        currentFragment.selectionPrevPosition()
 
                     }
                     R.id.roundClose -> {
-                        currentFragment!!.insertSpecialChar(")")
+                        currentFragment.insertSpecialChar(")")
                     }
                     R.id.breaketOpen -> {
-                        currentFragment!!.insertSpecialChar("[]")
-                        currentFragment!!.selectionPrevPosition()
+                        currentFragment.insertSpecialChar("[]")
+                        currentFragment.selectionPrevPosition()
                     }
                     R.id.breaketClose -> {
-                        currentFragment!!.insertSpecialChar("]")
+                        currentFragment.insertSpecialChar("]")
                     }
                     R.id.curlyOpen -> {
-                        currentFragment!!.insertSpecialChar("{}")
-                        currentFragment!!.selectionPrevPosition()
+                        currentFragment.insertSpecialChar("{}")
+                        currentFragment.selectionPrevPosition()
 
                     }
                     R.id.curlyClose -> {
-                        currentFragment!!.insertSpecialChar("}")
+                        currentFragment.insertSpecialChar("}")
                     }
                     R.id.empercent -> {
-                        currentFragment!!.insertSpecialChar("&")
+                        currentFragment.insertSpecialChar("&")
                     }
                     R.id.singlequote -> {
-                        currentFragment!!.insertSpecialChar("\'")
+                        currentFragment.insertSpecialChar("\'")
                     }
                     R.id.doublequote -> {
-                        currentFragment!!.insertSpecialChar("\"")
+                        currentFragment.insertSpecialChar("\"")
                     }
                     R.id.dollor -> {
-                        currentFragment!!.insertSpecialChar("$")
+                        currentFragment.insertSpecialChar("$")
                     }
                     R.id.greaterThan -> {
-                        currentFragment!!.insertSpecialChar(">")
+                        currentFragment.insertSpecialChar(">")
                     }
                     R.id.lessThan -> {
-                        currentFragment!!.insertSpecialChar("<")
+                        currentFragment.insertSpecialChar("<")
                     }
                     R.id.exclamation -> {
-                        currentFragment!!.insertSpecialChar("!")
+                        currentFragment.insertSpecialChar("!")
                     }
                     R.id.colon -> {
-                        currentFragment!!.insertSpecialChar(":")
+                        currentFragment.insertSpecialChar(":")
                     }
                     R.id.semi_colon -> {
-                        currentFragment!!.insertSpecialChar(";")
+                        currentFragment.insertSpecialChar(";")
                     }
                     R.id.question_mark -> {
-                        currentFragment!!.insertSpecialChar("?")
+                        currentFragment.insertSpecialChar("?")
                     }
                     R.id.forward_slash -> {
-                        currentFragment!!.insertSpecialChar("/")
+                        currentFragment.insertSpecialChar("/")
                     }
                     R.id.at_the_rate -> {
-                        currentFragment!!.insertSpecialChar("@")
+                        currentFragment.insertSpecialChar("@")
                     }
                     R.id.pipeline_symbol -> {
-                        currentFragment!!.insertSpecialChar("|")
+                        currentFragment.insertSpecialChar("|")
                     }
 
                 }
@@ -472,38 +427,43 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                 R.id.no_syntax -> {
                     currentFragment.applySynatx("no")
-
                 }
 
                 R.id.default_syntax -> {
                     currentFragment.applySynatx("default")
                 }
                 R.id.java -> {
-                    currentFragment.applySynatx("java")
+                    currentFragment.applySynatx(".java")
+                }
+                R.id.php -> {
+                    currentFragment.applySynatx(".php")
                 }
                 R.id.c -> {
-                    currentFragment.applySynatx("no")
+                    currentFragment.applySynatx(".c")
                 }
                 R.id.cpp -> {
-                    currentFragment.applySynatx("no")
+                    currentFragment.applySynatx(".cpp")
                 }
                 R.id.python -> {
-                    currentFragment.applySynatx("no")
+                    currentFragment.applySynatx(".py")
                 }
                 R.id.html -> {
-                    currentFragment.applySynatx("no")
+                    currentFragment.applySynatx(".html")
                 }
                 R.id.css -> {
-                    currentFragment.applySynatx("no")
+                    currentFragment.applySynatx(".css")
                 }
                 R.id.javascript -> {
-                    currentFragment.applySynatx("no")
+                    currentFragment.applySynatx(".js")
                 }
                 R.id.go -> {
-                    currentFragment.applySynatx("no")
+                    currentFragment.applySynatx(".go")
                 }
                 R.id.xml -> {
-                    currentFragment.applySynatx("no")
+                    currentFragment.applySynatx(".xml")
+                }
+                R.id.plain_text -> {
+                    currentFragment.applySynatx(".txt")
                 }
 
 
@@ -516,6 +476,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
     }
+
     private fun changeNoTabLayout() {
         binding.apply {
             if(tabLayout.tabCount==0)
@@ -657,6 +618,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 //            }
 //        }
         removeCurrentFragment()
+        if(binding.tabLayout.tabCount==0) setDefaultToolbarTitle()
     }
 
     private fun setDefaultToolbarTitle() {
@@ -688,76 +650,69 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             Utils.isLineNumber = preferences.getBoolean("line_number", true)
         }
 
-            val keyIsThemeChanged = "is_theme_changed_setting"
-             val isThemeChangedFromSetting = preferences.getBoolean(keyIsThemeChanged, false)
-            if (wrap != model.isWrap) {
-                model.isWrap = wrap
-                recreate()
-            }
-            darkTheme = preferences.getBoolean(THEME_PREFERENCE_KEY, true)
-            changeTheme()
+        val keyIsThemeChanged = "is_theme_changed_setting"
+        val isThemeChangedFromSetting = preferences.getBoolean(keyIsThemeChanged, false)
+        if (wrap != model.isWrap) {
+            model.isWrap = wrap
+            recreate()
+        }
+        darkTheme = preferences.getBoolean(THEME_PREFERENCE_KEY, true)
+        changeTheme()
 
-            model.isHistoryLoaded.observe(this@MainActivity) {
-                adapter.fragmentList = model.getFragmentList().value ?: arrayListOf()
-                adapter.notifyDataSetChanged()
-                if(model.currentTabIndex>=0 && model.currentTabIndex<adapter.fragmentList.size)
-                    binding.pager2.currentItem = model.currentTabIndex
+        model.isHistoryLoaded.observe(this@MainActivity) {
+            adapter.fragmentList = model.getFragmentList().value ?: arrayListOf()
+            adapter.notifyDataSetChanged()
+            if(model.currentTabIndex>=0 && model.currentTabIndex<adapter.fragmentList.size)
+                binding.pager2.currentItem = model.currentTabIndex
 
 
-                binding.tabLayout.apply {
-//                    if (tabCount > 0) {
-//                        Log.e(TAG, "onResume: selectedtabposition $selectedTabPosition")
-//                        model.currentTab = selectedTabPosition
-//                    }
-                    if(it && adapter.fragmentList.size==0){
-                        makeBlankFragment("untitled")
-                    }
-                }
-
-                //createTabsInTabLayout(adapter.fragmentList)
-
-                for ((count, frag) in model.getFragmentList().value!!.withIndex()) {
-                    val fragment = frag
-                    fragment.hasUnsavedChanges.observe(this@MainActivity) {
-                        if (it){
-                            setCustomTabLayout(count, "*${fragment.getFileName()}")
-                        }else setCustomTabLayout(count, fragment.getFileName())
-                    }
-                    fragment.hasLongPress.observe(this@MainActivity){
-                        if(it) {
-                            startActionMode(actionModeCallbackCopyPaste)
-                            fragment.hasLongPress.value = false
-                        }
-                    }
+            binding.tabLayout.apply {
+                if(it && adapter.fragmentList.size==0){
+                    makeBlankFragment("untitled")
                 }
             }
 
-            if (binding.tabLayout.tabCount > 0 && isThemeChangedFromSetting) {
+            //createTabsInTabLayout(adapter.fragmentList)
 
-                val editor = preferences.edit()
-                // this was commit
-                editor.putBoolean(keyIsThemeChanged, false)
-                editor.apply()
+            for ((count, frag) in model.getFragmentList().value!!.withIndex()) {
+                frag.hasUnsavedChanges.observe(this@MainActivity) {
+                    var fileName = frag.getFileName()
+                    if (it) fileName = "*$fileName"
+                    setCustomTabLayout(count, fileName)
+                }
+                frag.hasLongPress.observe(this@MainActivity) {
+                    if (it) {
+                        startActionMode(actionModeCallbackCopyPaste)
+                        frag.hasLongPress.value = false
+                    }
+                }
             }
+        }
+
+        if (binding.tabLayout.tabCount > 0 && isThemeChangedFromSetting) {
+
+            val editor = preferences.edit()
+            // this was commit
+            editor.putBoolean(keyIsThemeChanged, false)
+            editor.apply()
+        }
 
 
 
         Log.e(TAG, "onResume: called")
-        if(model.currentTabIndex>=0 && model.currentTabIndex<adapter.fragmentList.size)
-            binding.pager2.currentItem = model.currentTabIndex
-
-
-    }
-
-
-    private fun makeTabLayoutTitleToUnsaved() {
-        val position = binding.tabLayout.selectedTabPosition
-        getCurrentFragment()?.apply {
-            hasUnsavedChanges.value = true
-            binding.tabLayout.getTabAt(position)?.text = "*${getFileName()}"
-        }
+//        if(model.currentTabIndex>=0 && model.currentTabIndex<adapter.fragmentList.size)
+//            binding.pager2.currentItem = model.currentTabIndex
 
     }
+
+
+//    private fun makeTabLayoutTitleToUnsaved() {
+//        val position = binding.tabLayout.selectedTabPosition
+//        getCurrentFragment()?.apply {
+//            hasUnsavedChanges.value = true
+//            binding.tabLayout.getTabAt(position)?.text = "*${getFileName()}"
+//        }
+//    }
 
     private fun getCurrentFragment() : EditorFragment?{
         val position = binding.tabLayout.selectedTabPosition
@@ -780,6 +735,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         adapter.fragmentList.add(fragment)
         adapter.notifyItemInserted(position)
         binding.pager2.currentItem = position
+        adapter.notifyItemChanged(position)
+
+        fragment.hasUnsavedChanges.observe(this@MainActivity) {
+            var fileName = fragment.getFileName()
+            if(it) fileName = "*$fileName"
+            setCustomTabLayout(position, fileName)
+        }
+
+        fragment.hasLongPress.observe(this@MainActivity){
+            if(it) {
+                startActionMode(actionModeCallbackCopyPaste)
+                fragment.hasLongPress.value = false
+            }
+        }
+
     }
 
 
@@ -797,19 +767,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             list
         )
         val fragment = EditorFragment(dataFile,hasUnsavedChanges = true)
-        adapter.addFragment(fragment)
 
-        binding.tabLayout.apply {
-            this.addTab(newTab())
-            setCustomTabLayout(tabCount - 1, fileName)
-            adapter.notifyItemInserted(tabCount - 1)
-            selectTab(getTabAt(tabCount - 1))
-        }
-        fragment.hasUnsavedChanges.observe(this@MainActivity) {
-            if (it) {
-                setCustomTabLayout(binding.tabLayout.tabCount-1, "*${fragment.getFileName()}")
-            }else setCustomTabLayout(binding.tabLayout.tabCount-1, fragment.getFileName())
-        }
+        addFragment(fragment)
+
+//        fragment.hasUnsavedChanges.observe(this@MainActivity) {
+//            if (it) {
+//                setCustomTabLayout(binding.tabLayout.tabCount-1, "*${fragment.getFileName()}")
+//            }else setCustomTabLayout(binding.tabLayout.tabCount-1, fragment.getFileName())
+//        }
     }
 
     private fun changeTheme() {
@@ -878,12 +843,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         popup.setOnMenuItemClickListener { item -> //TODO : list all action for menu popup
 //            Log.e(TAG, "onMenuItemClick: " + item.title)
-            var currentFragment: EditorFragment? = null
-
-            if (isValidTab()) {
-                currentFragment =
-                    adapter.fragmentList[binding.tabLayout.selectedTabPosition]
-            }
+            var currentFragment: EditorFragment? = getCurrentFragment()
 
             when (item.itemId) {
 
@@ -892,7 +852,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     if (!helper.isStoragePermissionGranted()) helper.takePermission()
 
                     if (helper.isStoragePermissionGranted()) chooseFile()
-//                    Log.e(TAG, "showPopupMenu: open called")
                 }
                 R.id.save_as -> {
                     saveAsIntent(currentFragment)
@@ -921,7 +880,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 R.id.new_file -> {
                     //TODO : remaining ....
                     try {
-
 
                         val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
                             addCategory(Intent.CATEGORY_OPENABLE)
@@ -1034,7 +992,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         val file = File.createTempFile(prefix,suffix,applicationContext.cacheDir)
 
                         file.bufferedWriter().use {
-                                it.write(currentFragment.getEditTextData().toString())
+                            it.write(currentFragment.getEditTextData().toString())
                         }
 
                         ShareCompat.IntentBuilder(this)
@@ -1082,9 +1040,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun reloadFile(currentFragment: EditorFragment) {
-            val uri = currentFragment.getUri()
-            if(uri!=null)
-                readFileUsingUri(uri,false,true)
+        val uri = currentFragment.getUri()
+        if(uri!=null)
+            readFileUsingUri(uri,false,true)
 
     }
 
@@ -1170,22 +1128,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 val position = binding.pager2.currentItem
                 adapter.fragmentList.removeAt(position)
                 adapter.fragmentList.add(position, fragment)
+                adapter.notifyItemChanged(position)
                 setCustomTabLayout(position, "$fileName")
-                adapter.notifyDataSetChanged()
+//                adapter.notifyDataSetChanged()
 
             } else {
+
                 addFragment(fragment)
-//                adapter.addFragment(fragment)
-                binding.tabLayout.apply {
-//                    addTab(newTab())
-//                    setCustomTabLayout(tabCount - 1, fileName)
-//                    adapter.notifyItemInserted(tabCount - 1)
-//                    selectTab(getTabAt(tabCount - 1))
-                    if (isOuterFile) {
-                        model.getFragmentList().value?.add(fragment)
-//                        model.currentTab = tabCount - 1
-                    }
-                }
+                if (isOuterFile)
+                    model.getFragmentList().value?.add(fragment)
+
 
                 model.addRecentFile(
                     RecentFile(
@@ -1197,21 +1149,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     )
                 )
             }
-            fragment.hasUnsavedChanges.observe(this) {
-                if (it)
-                    setCustomTabLayout(binding.tabLayout.selectedTabPosition, "*$fileName")
-                else setCustomTabLayout(binding.tabLayout.selectedTabPosition, fileName)
-            }
-            fragment.hasLongPress.observe(this@MainActivity){
-                if(it) {
-                    startActionMode(actionModeCallbackCopyPaste)
-                    fragment.hasLongPress.value = false
-                }
-            }
-            Log.e(
-                TAG,
-                "readFileUsingUri : tab layout selected position : ${binding.tabLayout.selectedTabPosition}"
-            )
+//            fragment.hasUnsavedChanges.observe(this) {
+//                if (it)
+//                    setCustomTabLayout(binding.tabLayout.selectedTabPosition, "*$fileName")
+//                else setCustomTabLayout(binding.tabLayout.selectedTabPosition, fileName)
+//            }
+//            fragment.hasLongPress.observe(this@MainActivity){
+//                if(it) {
+//                    startActionMode(actionModeCallbackCopyPaste)
+//                    fragment.hasLongPress.value = false
+//                }
+//            }
+//            Log.e(
+//                TAG,
+//                "readFileUsingUri : tab layout selected position : ${binding.tabLayout.selectedTabPosition}"
+//            )
         }
         catch (e:Exception)
         {
@@ -1232,26 +1184,26 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    private fun createTabsInTabLayout(list: MutableList<EditorFragment>) {
-        binding.tabLayout.removeAllTabs()
-
-        if (binding.tabLayout.tabCount == 0) {
-
-            binding.tabLayout.apply {
-                list.forEach {
-                    val frag = it
-                    addTab(newTab())
-                    setCustomTabLayout(tabCount - 1, frag.getFileName())
-                }
-            }
-
-        }
-//        if (model.currentTab >= 0 && model.currentTab < adapter.fragmentList.size) {
-//            binding.pager2.setCurrentItem(model.currentTab)
+//    private fun createTabsInTabLayout(list: MutableList<EditorFragment>) {
+//        binding.tabLayout.removeAllTabs()
+//
+//        if (binding.tabLayout.tabCount == 0) {
+//
+//            binding.tabLayout.apply {
+//                list.forEach {
+//                    val frag = it
+//                    addTab(newTab())
+//                    setCustomTabLayout(tabCount - 1, frag.getFileName())
+//                }
+//            }
+//
 //        }
-        binding.pager2.currentItem = model.currentTabIndex
-        adapter.notifyDataSetChanged()
-    }
+////        if (model.currentTab >= 0 && model.currentTab < adapter.fragmentList.size) {
+////            binding.pager2.setCurrentItem(model.currentTab)
+////        }
+//        binding.pager2.currentItem = model.currentTabIndex
+//        adapter.notifyDataSetChanged()
+//    }
 
     private fun setCustomTabLayout(position: Int, fileName: String) {
         binding.tabLayout.apply {
@@ -1273,10 +1225,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 val intent: Intent? = result.data
                 val uri: Uri? = intent?.data
                 if (uri != null) {
-                    if (isValidTab()) {
-                        val fragment =
-                            adapter.fragmentList.get(binding.tabLayout.selectedTabPosition)
-                        saveFile(fragment, uri, isSaveAs = true)
+                    getCurrentFragment()?.apply{
+                        saveFile(this, uri, isSaveAs = true)
                     }
                 }
             }
@@ -1635,7 +1585,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             return when (item.itemId) {
 
-                    // actioMode
+                // actioMode
                 R.id.paste -> {
                     val clipboardManager =
                         getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
@@ -1685,7 +1635,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         val maxLine = fragment.getTotalLine()
         val startIndex = 0
-            //fragment.getStartingIndexOfEdittext()
+        //fragment.getStartingIndexOfEdittext()
         val builder = AlertDialog.Builder(this)
 
         builder.setTitle("Goto Line")
@@ -1773,7 +1723,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     val reviewInfo = task.result
                     val flow = manager.launchReviewFlow(this, reviewInfo)
                     flow.addOnCompleteListener { _ ->
-                         editor.putBoolean(key_got_feedback,true)
+                        editor.putBoolean(key_got_feedback,true)
                         Log.e(TAG, "feedback: finished")
                     }
                 } else {
@@ -1835,15 +1785,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 val uri: Uri? = intent?.data
                 if (uri != null) {
 //                    Log.e(TAG, "save as sytem picker: uri -> $uri")
-                    if (isValidTab()) {
-                        getCurrentFragment()?.apply {
-                            setUri(uri)
-                            saveFile(this, uri)
-                            reloadFile(this)
-                        }
 
-                        //readFileUsingUri(uri,isUntitled = true)
+                    getCurrentFragment()?.apply {
+                        setUri(uri)
+                        saveFile(this, uri)
+                        reloadFile(this)
                     }
+                    //readFileUsingUri(uri,isUntitled = true)
+
                 }
             }
         }

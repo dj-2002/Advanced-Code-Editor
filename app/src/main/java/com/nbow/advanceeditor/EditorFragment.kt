@@ -185,6 +185,7 @@ class EditorFragment : Fragment {
             Language.CPP -> resources.getStringArray(R.array.cpp_keywords)
             Language.JAVASCRIPT -> resources.getStringArray(R.array.javascript_keywords)
             Language.HTML -> resources.getStringArray(R.array.html_keywords)
+            Language.XML -> resources.getStringArray(R.array.html_keywords)
             Language.GO_LANG -> resources.getStringArray(R.array.go_keywords)
             Language.PHP -> resources.getStringArray(R.array.php_keywords)
             else -> resources.getStringArray(R.array.blank)
@@ -297,7 +298,9 @@ class EditorFragment : Fragment {
             }
                 Toast.makeText(context, "page $currentPageIndex", Toast.LENGTH_SHORT).show()
             editText!!.setIsPrev(true)
+            val hasChanges = hasUnsavedChanges.value
             editText!!.setText(dataFile!!.listOfPageData.get(currentPageIndex))
+            hasUnsavedChanges.value = hasChanges
 //                Log.e(TAG, "onCreateView: starting index $startingIndexOfCurrentPage")
 //                editText.setStartIndex(startingIndexOfCurrentPage)
             //TODO : if not ....
@@ -322,7 +325,9 @@ class EditorFragment : Fragment {
                 Toast.makeText(context, "page $currentPageIndex", Toast.LENGTH_SHORT).show()
             val startingIndexOfCurrentPage =/* editText!!.getStartingIndex()+*/ editText!!.findLineCount() + 1 ;
             editText!!.setStartIndex(startingIndexOfCurrentPage)
+            val hasChanges = hasUnsavedChanges.value
             editText!!.setText(dataFile!!.listOfPageData.get(currentPageIndex))
+            hasUnsavedChanges.value = hasChanges
         }
 
 
@@ -363,8 +368,9 @@ class EditorFragment : Fragment {
     fun saveDataToPage() {
         if(editText!=null) {
 
+
             val page = StringBuilder(editText!!.text.toString())
-            Log.e(TAG, "saveDataToPage: $page", )
+            Log.e(TAG, "saveDataToPage: page number $currentPageIndex", )
             if (dataFile != null && dataFile!!.listOfPageData.size>0 && currentPageIndex<dataFile!!.listOfPageData.size) {
                 dataFile!!.listOfPageData.removeAt(currentPageIndex)
                 dataFile!!.listOfPageData.add(currentPageIndex, page)
@@ -391,6 +397,15 @@ class EditorFragment : Fragment {
         if(dataFile!=null)
             return dataFile!!.fileExtension
         return ""
+    }
+
+    fun invalidateEditText()
+    {
+        saveDataToPage()
+        if(editText!=null)
+        {
+            editText!!.setText(dataFile!!.listOfPageData[0])
+        }
     }
 
     fun replaceAll(findText : String,replaceText : String,ignoreCase : Boolean = false){
@@ -489,12 +504,43 @@ class EditorFragment : Fragment {
 
     fun applySynatx(s: String) {
 
-        if(s=="java")
-        {
-            if(editText!=null)
-            {
 
+
+        Log.e(TAG, "applySynatx: $s", )
+        if(editText!=null) {
+            if (s == ".cpp") {
+                mCurrentLanguage = Language.CPP
+            } else if (s == ".c") {
+                mCurrentLanguage = Language.C
+            } else if (s == ".html") {
+                mCurrentLanguage = Language.HTML
+            } else if (s == ".py") {
+                mCurrentLanguage = Language.PYTHON
+            } else if (s == ".css") {
+                mCurrentLanguage = Language.CSS
+            } else if (s == ".js") {
+                mCurrentLanguage = Language.JAVASCRIPT
+            } else if (s == ".php") {
+                mCurrentLanguage = Language.PHP
+            } else if (s == ".kt") {
+                mCurrentLanguage = Language.KOTLIN
+            } else if (s == ".java") {
+                mCurrentLanguage = Language.JAVA
+            } else if (s == ".txt") {
+                mCurrentLanguage = Language.TXT
+            } else if (s == ".go") {
+                mCurrentLanguage = Language.GO_LANG
+            } else if (s == "default") {
+                mCurrentLanguage = Language.DEFAULT
+            } else if (s == ".xml") {
+                mCurrentLanguage = Language.XML
+            } else if (s == "no") {
+                mCurrentLanguage = Language.NO_SYNTAX
             }
+            configLanguageAutoComplete()
+            SyntaxManager.applyMonokaiTheme(context, editText, mCurrentLanguage)
+            invalidateEditText()
+
         }
 
     }

@@ -132,12 +132,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val v:View  = binding.noTabLayout.cl1
         v.setOnClickListener {
             try {
-                val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
-                    addCategory(Intent.CATEGORY_OPENABLE)
-                    type = "*/*"
-                    putExtra(Intent.EXTRA_TITLE, "new.txt")
-                }
-                newFileLauncher.launch(intent)
+//                val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+//                    addCategory(Intent.CATEGORY_OPENABLE)
+//                    type = "*/*"
+//                    putExtra(Intent.EXTRA_TITLE, "new.txt")
+//                }
+//                newFileLauncher.launch(intent)
+
+                makeBlankFragment("untitled")
+
             } catch (e: Exception) {
                 Toast.makeText(applicationContext, "${e.message.toString()}", Toast.LENGTH_SHORT)
                     .show()
@@ -754,6 +757,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
 
+
     fun makeBlankFragment(fileName: String)
     {
 
@@ -881,12 +885,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     //TODO : remaining ....
                     try {
 
-                        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
-                            addCategory(Intent.CATEGORY_OPENABLE)
-                            type = "*/*"
-                            putExtra(Intent.EXTRA_TITLE, "new.txt")
-                        }
-                        newFileLauncher.launch(intent)
+//                        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+//                            addCategory(Intent.CATEGORY_OPENABLE)
+//                            type = "*/*"
+//                            putExtra(Intent.EXTRA_TITLE, "new.txt")
+//                        }
+//                        newFileLauncher.launch(intent)
+                        makeBlankFragment("untitled")
                     }
                     catch (e:Exception)
                     {
@@ -1759,7 +1764,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
                 addCategory(Intent.CATEGORY_OPENABLE)
                 type = "*/*"
-                putExtra(Intent.EXTRA_TITLE, "untitled")
+                putExtra(Intent.EXTRA_TITLE, "untitled.java")
             }
             saveSystemPickerLauncherForUntitled.launch(intent)
         }

@@ -313,6 +313,9 @@ class EditorFragment : Fragment {
 //                Log.e(TAG, "onCreateView: starting index $startingIndexOfCurrentPage")
 //                editText.setStartIndex(startingIndexOfCurrentPage)
             //TODO : if not ....
+
+            undoRedo = TextViewUndoRedo(editText,viewLifecycleOwner)
+
         }
 
 
@@ -337,6 +340,9 @@ class EditorFragment : Fragment {
             val hasChanges = hasUnsavedChanges.value
             editText!!.setText(dataFile!!.listOfPageData.get(currentPageIndex))
             hasUnsavedChanges.value = hasChanges
+
+            undoRedo = TextViewUndoRedo(editText,viewLifecycleOwner)
+
         }
 
 
@@ -410,9 +416,9 @@ class EditorFragment : Fragment {
 
     fun invalidateEditText()
     {
-        saveDataToPage()
         if(editText!=null)
         {
+            saveDataToPage()
             editText!!.setText(dataFile!!.listOfPageData[currentPageIndex])
         }
     }

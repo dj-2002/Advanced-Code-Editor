@@ -18,6 +18,7 @@ public class NoSyntaxUtils {
         //View Background
         codeView.setBackgroundColor(codeView.getResources().getColor(R.color.monokia_pro_black));
         codeView.setLineNumberTextColor(Color.WHITE);
+        codeView.setTextColor(Color.WHITE);
 
         //Syntax Colors
 
@@ -29,6 +30,7 @@ public class NoSyntaxUtils {
         //View Background
         codeView.setBackgroundColor(codeView.getResources().getColor(R.color.noctis_white));
         codeView.setLineNumberTextColor(Color.BLACK);
+        codeView.setTextColor(Color.BLACK);
 
         //Syntax Colors
 
@@ -40,6 +42,7 @@ public class NoSyntaxUtils {
         codeView.setLineNumberTextColor(Color.WHITE);
         //View Background
         codeView.setBackgroundColor(codeView.getResources().getColor(R.color.five_dark_black));
+        codeView.setTextColor(Color.WHITE);
 
         //Syntax Colors
 
@@ -52,6 +55,8 @@ public class NoSyntaxUtils {
         //View Background
         codeView.setBackgroundColor(codeView.getResources().getColor(R.color.orange_box_black));
         codeView.setLineNumberTextColor(Color.WHITE);
+        codeView.setTextColor(Color.WHITE);
+
 
         //Syntax Colors
 

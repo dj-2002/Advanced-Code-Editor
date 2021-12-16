@@ -88,6 +88,11 @@ class MyViewModel(application: Application) : AndroidViewModel(application) {
 
             for(history in historyList) {
                 val uri: Uri = Uri.parse(history.uriString)
+                var path = uri.path!!
+
+                if(uri==Uri.parse(""))
+                    path="note"
+
                 val data = StringBuilder()
                 val mlist:MutableList<StringBuilder> = arrayListOf()
                 var temp = StringBuilder("")
@@ -110,7 +115,7 @@ class MyViewModel(application: Application) : AndroidViewModel(application) {
                 Log.e(TAG, "loadHistory: total pages ${mlist.size}", )
                 val datafile = DataFile(
                     history.realFileName,
-                    uri.path!!,
+                    path,
                     uri,mlist)
                 val frag = EditorFragment(datafile,  history.hasUnsavedData)
                 Log.e(TAG, "loadHistory: hasUnsavedData : ${history.hasUnsavedData}")

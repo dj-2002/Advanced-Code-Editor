@@ -52,7 +52,7 @@
         app:backgroundTint="#FFFFFF"
         app:fabSize="normal"
         android:layout_marginEnd="60dp"
-        android:layout_marginBottom="36dp"
+        android:layout_marginBottom="40dp"
         app:layout_constraintBottom_toBottomOf="@+id/relativeLayout2"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -63,7 +63,7 @@
         android:src="@drawable/ic_right"
         app:backgroundTint="#FFFFFF"
         app:fabSize="normal"
-        android:layout_marginBottom="36dp"
+        android:layout_marginBottom="40dp"
         app:layout_constraintBottom_toBottomOf="@+id/relativeLayout2"
         app:layout_constraintEnd_toEndOf="parent" />
 

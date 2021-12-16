@@ -49,7 +49,8 @@
             android:icon="@drawable/ic_goto_line"
             android:title="Line Number"
             android:defaultValue="true"
-            app:summary="Display Line Number"
+            app:summary="restart app to enable effect"
+
             />
 
     </PreferenceCategory>
@@ -58,7 +59,7 @@
 
         <Preference
             app:title="Version"
-            app:summary="1.3.1" />
+            app:summary="2.1.1" />
 
         <Preference
             app:title="Developer"

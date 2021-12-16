@@ -74,7 +74,7 @@ class SettingActivity : AppCompatActivity() {
         val editor = sharedPreferences.edit()
         val keyIsThemeChanged = "is_theme_changed_setting"
         editor.putBoolean(keyIsThemeChanged,true)
-        editor.commit()
+        editor.apply()
     }
 
 

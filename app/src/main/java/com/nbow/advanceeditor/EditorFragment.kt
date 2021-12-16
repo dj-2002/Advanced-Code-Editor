@@ -499,5 +499,12 @@ class EditorFragment : Fragment {
 
     }
 
+    fun setUri(muri: Uri) {
+        if(dataFile!=null)
+        {
+            dataFile!!.uri = muri;
+        }
+    }
+
 
 }

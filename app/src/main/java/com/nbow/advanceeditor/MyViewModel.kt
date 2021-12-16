@@ -17,12 +17,13 @@ import java.lang.StringBuilder
 import java.util.*
 
 class MyViewModel(application: Application) : AndroidViewModel(application) {
-    private val fragmentList = MutableLiveData<MutableList<Fragment>>(arrayListOf())
+    private val fragmentList = MutableLiveData<MutableList<EditorFragment>>(arrayListOf())
 
     private val repository : Repository = Repository(application)
     private  var recentFileList = MutableLiveData(mutableListOf<RecentFile>())
 
-    var currentTab : Int = -1
+//    var currentTab : Int = -1
+    var currentTabIndex = -1
     var isWrap = false
     var isHistoryLoaded = MutableLiveData(false)
 
@@ -122,11 +123,11 @@ class MyViewModel(application: Application) : AndroidViewModel(application) {
 
 
 
-    fun getFragmentList(): LiveData<MutableList<Fragment>> {
+    fun getFragmentList(): LiveData<MutableList<EditorFragment>> {
         return fragmentList
     }
 
-    fun setFragmentList(fragmentList : MutableList<Fragment>){
+    fun setFragmentList(fragmentList : MutableList<EditorFragment>){
         this.fragmentList.value = fragmentList
     }
 

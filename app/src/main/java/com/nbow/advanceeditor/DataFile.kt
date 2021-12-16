@@ -5,7 +5,7 @@ import android.net.Uri
 data class DataFile (
     val fileName : String,
     val filePath : String,
-    val uri : Uri,
+    var uri : Uri,
     val listOfPageData : MutableList<StringBuilder> = arrayListOf()
     ){
     val fileExtension = when(val index = fileName.lastIndexOf(".")){

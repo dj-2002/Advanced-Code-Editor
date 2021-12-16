@@ -97,7 +97,7 @@ class TextViewUndoRedo {
         mIsUndoOrRedo = true
         text.replace(start, end, edit.mmBefore)
         mIsUndoOrRedo = false
-        Log.e(TAG, "undo: mmbefore undo : ${edit.mmBefore} ${edit.mmAfter}", )
+       // Log.e(TAG, "undo: mmbefore undo : ${edit.mmBefore} ${edit.mmAfter}", )
 
         // This will get rid of underlines inserted when editor tries to come
         // up with a suggestion.
@@ -128,7 +128,7 @@ class TextViewUndoRedo {
         mIsUndoOrRedo = true
         text.replace(start, end, edit.mmAfter)
         mIsUndoOrRedo = false
-        Log.e(TAG, "redo: mmbefore redo : ${edit.mmBefore} ${edit.mmAfter}", )
+       // Log.e(TAG, "redo: mmbefore redo : ${edit.mmBefore} ${edit.mmAfter}", )
 
         // This will get rid of underlines inserted when editor tries to come
         // up with a suggestion.
@@ -349,7 +349,7 @@ class TextViewUndoRedo {
 //                startingBeforeText = mBeforeChange
 //            }
 
-            Log.e(TAG, "beforeTextChanged: $mBeforeChange", )
+           // Log.e(TAG, "beforeTextChanged: $mBeforeChange", )
 
         }
 
@@ -362,8 +362,8 @@ class TextViewUndoRedo {
             }
 
             mAfterChange = s.subSequence(start, start + count)
-            Log.e(TAG, "onTextChanged before value: $mBeforeChange ", )
-            Log.e(TAG, "onTextChanged: $mAfterChange", )
+           // Log.e(TAG, "onTextChanged before value: $mBeforeChange ", )
+            //Log.e(TAG, "onTextChanged: $mAfterChange", )
 
             mEditHistory!!.add(EditItem(start, mBeforeChange, mAfterChange))
 

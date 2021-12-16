@@ -53,9 +53,14 @@ class EditorFragment : Fragment {
         val temp = StringBuilder("")
         saveDataToPage()
         if(dataFile!=null){
-            for((count,page) in dataFile!!.listOfPageData.withIndex()){
-                temp.append("$page")
-                if(count!=dataFile!!.listOfPageData.size-1) temp.append('\n')
+//            for((count,page) in dataFile!!.listOfPageData.withIndex()){
+//                temp.append("$page")
+//
+//                if(count!=dataFile!!.listOfPageData.size-1) temp.append('\n')
+//            }
+            for(page in dataFile!!.listOfPageData){
+                temp.append(page.toString())
+                temp.append('\n')
             }
         }
         return temp
@@ -91,12 +96,16 @@ class EditorFragment : Fragment {
             undoRedo.mIsUndoOrRedo = true
             editText!!.setText(dataFile!!.listOfPageData.get(currentPageIndex))
             undoRedo.mIsUndoOrRedo = false
-            Log.e(TAG, "onViewStateRestored: size : ${dataFile!!.listOfPageData.get(0).length}")
-            Log.e(TAG, "onViewStateRestored: number of page : ${dataFile!!.listOfPageData.size}")
-
-
         }
-        Log.e(TAG, "onViewStateRestored: current index of page : $currentPageIndex")
+
+        if(dataFile!=null) {
+            var i=1;
+            for (page in dataFile!!.listOfPageData) {
+                Log.e(TAG, "onViewStateRestored page $i : size ${page.length}", )
+                i++;
+            }
+        }
+
 
         editText?.setOnLongClickListener(OnLongClickListener {
             hasLongPress.value = true
@@ -404,7 +413,7 @@ class EditorFragment : Fragment {
         saveDataToPage()
         if(editText!=null)
         {
-            editText!!.setText(dataFile!!.listOfPageData[0])
+            editText!!.setText(dataFile!!.listOfPageData[currentPageIndex])
         }
     }
 

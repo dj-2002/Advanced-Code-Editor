@@ -1074,44 +1074,36 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             val fileSize: Int = inputStream!!.available()
             val bufferedReader = BufferedReader(InputStreamReader(inputStream, "UTF-8"))
             val listOfLines: MutableList<String> = arrayListOf()
-            val listOfPageData: MutableList<java.lang.StringBuilder> = arrayListOf()
+            val listOfPageData: MutableList<StringBuilder> = arrayListOf()
 
             bufferedReader.forEachLine {
                 listOfLines.add(it)
             }
 
-            val temp = StringBuilder("")
+            var temp = StringBuilder("")
             var count = 0
-            var index=0
-            while(index<listOfLines.size){
-                temp.append(listOfLines[index])
+            for (line in listOfLines) {
+                temp.append(line)
                 count++
-                if (count >= 500 || temp.length >= 250000) { // 50kb
-//                Log.e(TAG, "readFileUsingUri: temp : at $count : $temp")
+                if (count >= 500 || temp.length >= 500000) {
                     listOfPageData.add(temp)
-                    temp.clear()
                     count = 0
-                } else if(index!=listOfLines.size-1) temp.append("\n")
-
-                index++
+                    temp = StringBuilder()
+                } else temp.append("\n")
             }
-//            for (line in listOfLines) {
-//                temp.append(line)
-//                count++
-//                if (count >= 3000 || temp.length >= 500000) { // 500kb
-////                Log.e(TAG, "readFileUsingUri: temp : at $count : $temp")
-//                    listOfPageData.add(temp)
-//                    temp.clear()
-//                    count = 0
-//                } else temp.append("\n")
-//
-//            }
-            if (temp.length > 0) {
+            if (temp.isNotEmpty()) {
                 listOfPageData.add(temp)
             }
             if (listOfLines.size == 0) {
                 listOfPageData.add(temp)
             }
+                
+            for(page in listOfPageData)
+            {
+                Log.e(TAG, "readFileUsingUri: page ${page.length}", )
+            }
+
+            Log.e(TAG, "readFileUsingUri: listofpages size ${listOfPageData.size}", )
 
             val fileName: String = helper.queryName(contentResolver, uri)
             val dataFile = DataFile(

@@ -90,23 +90,24 @@ class MyViewModel(application: Application) : AndroidViewModel(application) {
                 val uri: Uri = Uri.parse(history.uriString)
                 val data = StringBuilder()
                 val mlist:MutableList<StringBuilder> = arrayListOf()
-                val temp = StringBuilder("")
+                var temp = StringBuilder("")
                 var count = 0
 
 
                 context.openFileInput(history.fileName).bufferedReader().forEachLine { line ->
                     temp.append(line + "\n")
                     count++
-                    if (count >= 500 || temp.length >= 250000) { // 5kb
+                    if (count >= 500 || temp.length >= 500000) { // 5kb
                         mlist.add(temp)
-                        temp.clear()
+                        Log.e(TAG, "loadHistory: making another page prev page lines $count and size is ${temp.length}", )
+                        temp = StringBuilder()
                         count = 0
                     }
                 }
-                if (temp.length > 0) {
+                if (temp.isNotEmpty()) {
                     mlist.add(temp)
                 }
-
+                Log.e(TAG, "loadHistory: total pages ${mlist.size}", )
                 val datafile = DataFile(
                     history.realFileName,
                     uri.path!!,

@@ -5,22 +5,18 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.preference.PreferenceManager
 import kotlinx.coroutines.*
 
-import android.content.ClipData
-import android.content.Context
-
 import android.view.View.OnLongClickListener
 import android.widget.ArrayAdapter
 import androidx.core.widget.doOnTextChanged
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.nbow.advanceeditor.code.AutoCompleteKeywordAdapter
 import com.nbow.advanceeditor.code.CodeView
@@ -32,7 +28,7 @@ class EditorFragment : Fragment {
 
     private val TAG = "EditorFragment"
     private var editText : CodeView? = null
-    private var mNextThemeIndex = 2
+    private var themeIndex = 2
     private var currentPageIndex : Int = 0
     private var mCurrentLanguage: Language = Language.DEFAULT
     lateinit var fabPrev:FloatingActionButton
@@ -122,7 +118,7 @@ class EditorFragment : Fragment {
                 mCurrentLanguage = Language.CPP
             else if (dataFile!!.fileExtension == ".c")
                 mCurrentLanguage = Language.C
-            else if (dataFile!!.fileExtension == ".html")
+            else if (dataFile!!.fileExtension == ".html" || dataFile!!.fileExtension == ".htm")
                 mCurrentLanguage = Language.HTML
             else if (dataFile!!.fileExtension == ".py")
                 mCurrentLanguage = Language.PYTHON
@@ -132,19 +128,23 @@ class EditorFragment : Fragment {
                 mCurrentLanguage = Language.JAVASCRIPT
             else if (dataFile!!.fileExtension == ".php")
                 mCurrentLanguage = Language.PHP
-            else if (dataFile!!.fileExtension == ".kt")
-                mCurrentLanguage = Language.KOTLIN
+//            else if (dataFile!!.fileExtension == ".kt")
+//                mCurrentLanguage = Language.KOTLIN
             else if (dataFile!!.fileExtension == ".java")
                 mCurrentLanguage = Language.JAVA
             else if(dataFile!!.fileExtension==".txt")
                 mCurrentLanguage = Language.TXT
+
         }
         configLanguageAutoComplete()
 
 
 
         Log.e(TAG, "onViewStateRestored: Language ${mCurrentLanguage.name}", )
-        SyntaxManager.applyMonokaiTheme(context, editText, mCurrentLanguage)
+        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+        themeIndex = preferences.getInt("theme_count",1)
+        loadTheme()
+        //SyntaxManager.applyMonokaiTheme(context, editText, mCurrentLanguage)
 
         (editText as CodeView).doOnTextChanged { text, start, before, count ->
             hasUnsavedChanges.value = true
@@ -155,28 +155,36 @@ class EditorFragment : Fragment {
 
 
      fun changeCodeViewTheme() {
-        if (mNextThemeIndex > 4) mNextThemeIndex = 1
-        loadNextTheme()
-         mNextThemeIndex += 1
+        if (themeIndex >= 4)
+            themeIndex = 1
+         else
+            themeIndex += 1
+         loadTheme()
+         lifecycleScope.launch(Dispatchers.IO) {
+             val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+             val editor = preferences.edit()
+             editor.putInt("theme_count", themeIndex)
+             editor.apply()
+         }
     }
 
-     private fun loadNextTheme() {
-        when (mNextThemeIndex) {
+     private fun loadTheme() {
+        when (themeIndex) {
             1 -> {
                 SyntaxManager.applyMonokaiTheme(context, editText, mCurrentLanguage)
-                Toast.makeText(context, "Monokai", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(context, "Monokai", Toast.LENGTH_SHORT).show()
             }
             2 -> {
                 SyntaxManager.applyNoctisWhiteTheme(context, editText, mCurrentLanguage)
-                Toast.makeText(context, "Noctis White", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(context, "Noctis White", Toast.LENGTH_SHORT).show()
             }
             3 -> {
                 SyntaxManager.applyFiveColorsDarkTheme(context, editText, mCurrentLanguage)
-                Toast.makeText(context, "5 Colors Dark", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(context, "5 Colors Dark", Toast.LENGTH_SHORT).show()
             }
             else -> {
                 SyntaxManager.applyOrangeBoxTheme(context, editText, mCurrentLanguage)
-                Toast.makeText(context, "Orange Box", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(context, "Orange Box", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -194,7 +202,7 @@ class EditorFragment : Fragment {
             Language.CPP -> resources.getStringArray(R.array.cpp_keywords)
             Language.JAVASCRIPT -> resources.getStringArray(R.array.javascript_keywords)
             Language.HTML -> resources.getStringArray(R.array.html_keywords)
-            Language.XML -> resources.getStringArray(R.array.html_keywords)
+//            Language.XML -> resources.getStringArray(R.array.html_keywords)
             Language.GO_LANG -> resources.getStringArray(R.array.go_keywords)
             Language.PHP -> resources.getStringArray(R.array.php_keywords)
             else -> resources.getStringArray(R.array.blank)
@@ -222,11 +230,15 @@ class EditorFragment : Fragment {
         val KEY_TEXT_SIZE = "TEXT_SIZE_PREFERENCE"
         val preference= PreferenceManager.getDefaultSharedPreferences(context)
         var myTextSize:Int = preference.getInt(KEY_TEXT_SIZE,16)
-
         editText?.setTextSize(myTextSize.toFloat())
-
-
         val  f=(preference.getString("font_family","DEFAULT"))
+        val  pTheme =preference.getInt("theme_count",1)
+        if(pTheme!=themeIndex)
+        {
+            themeIndex=pTheme
+            loadTheme()
+        }
+
         if(f!="DEFAULT"){
             if(f=="DEFAULT_BOLD")
                 editText?.typeface= Typeface.DEFAULT_BOLD
@@ -237,6 +249,7 @@ class EditorFragment : Fragment {
             else if(f=="SERIF")
                 editText?.typeface= Typeface.SERIF
         }
+        Log.e(TAG, "onResume: ", )
         super.onResume()
     }
 
@@ -347,11 +360,6 @@ class EditorFragment : Fragment {
 
 
     }
-
-
-
-
-
     fun undoChanges()
     {
         if(!undoRedo.canUndo){

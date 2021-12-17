@@ -43,6 +43,8 @@ public class SyntaxManager {
             case NO_SYNTAX:
                 NoSyntaxUtils.applyMonokaiTheme(context,codeView);
                 break;
+            case CSS:
+                CssSyntaxUtils.applyMonokaiTheme(context,codeView);
             default:
                 DefaultSyntaxUtils.applyMonokaiTheme(context,codeView);
         }
@@ -77,6 +79,8 @@ public class SyntaxManager {
             case GO_LANG:
                 GoSyntaxUtils.applyNoctisWhiteTheme(context, codeView);
                 break;
+            case CSS:
+                CssSyntaxUtils.applyNoctisWhiteTheme(context,codeView);
             case TXT:
                 NoSyntaxUtils.applyNoctisWhiteTheme(context,codeView);
                 break;
@@ -117,6 +121,8 @@ public class SyntaxManager {
             case GO_LANG:
                 GoSyntaxUtils.applyFiveColorsDarkTheme(context, codeView);
                 break;
+            case CSS:
+                CssSyntaxUtils.applyFiveColorsDarkTheme(context,codeView);
             case TXT:
                 NoSyntaxUtils.applyFiveColorsDarkTheme(context, codeView);
                 break;
@@ -158,6 +164,8 @@ public class SyntaxManager {
             case GO_LANG:
                 GoSyntaxUtils.applyOrangeBoxTheme(context, codeView);
                 break;
+            case CSS:
+                CssSyntaxUtils.applyOrangeBoxTheme(context,codeView);
             case TXT:
                 NoSyntaxUtils.applyOrangeBoxTheme(context, codeView);
                 break;

@@ -15,7 +15,7 @@ public class PhpSyntaxUtils {
 
     //    private static final Pattern PATTERN_BUILTINS = Pattern.compile("[,:;[->]{}()]");
     private static final Pattern PATTERN_COMMENT = Pattern.compile("//(?!TODO )[^\\n]*" + "|" + "/\\*(.|\\R)*?\\*/" + "|" + "#[^\\n]*");
-    private static final Pattern PATTERN_ATTRIBUTE = Pattern.compile("\\.[a-zA-Z0-9_]+");
+    //    private static final Pattern PATTERN_ATTRIBUTE = Pattern.compile("\\.[a-zA-Z0-9_]+");
     //    private static final Pattern PATTERN_OPERATION =Pattern.compile( ":|==|>|<|!=|>=|<=|->|=|>|<|%|-|-=|%=|\\+|\\-|\\-=|\\+=|\\^|\\&|\\|::|\\?|\\*");
 //    private static final Pattern PATTERN_GENERIC = Pattern.compile("<[a-zA-Z0-9,<>]+>");
     private static final Pattern PATTERN_ANNOTATION = Pattern.compile("@.[a-zA-Z0-9]+");
@@ -23,7 +23,7 @@ public class PhpSyntaxUtils {
     private static final Pattern PATTERN_NUMBERS = Pattern.compile("\\b(\\d*[.]?\\d+)\\b");
     private static final Pattern PATTERN_CHAR = Pattern.compile("'[a-zA-Z0-9]'");
     //    private static final Pattern PATTERN_STRING = Pattern.compile("\".*\"");
-    private static final Pattern PATTERN_STRING = Pattern.compile("\"[^\"]*\"");
+    private static final Pattern PATTERN_STRING = Pattern.compile("\"[^\"\\n]*\"");
 //    private static final Pattern PATTERN_HEX = Pattern.compile("0x[0-9a-fA-F]+");
 
     public static void applyMonokaiTheme(Context context, CodeView codeView) {
@@ -38,7 +38,7 @@ public class PhpSyntaxUtils {
         codeView.addSyntaxPattern(PATTERN_KEYWORDS, context.getResources().getColor(R.color.monokia_pro_pink));
 //        codeView.addSyntaxPattern(PATTERN_BUILTINS, context.getResources().getColor(R.color.monokia_pro_white));
         codeView.addSyntaxPattern(PATTERN_ANNOTATION, context.getResources().getColor(R.color.monokia_pro_green));
-        codeView.addSyntaxPattern(PATTERN_ATTRIBUTE, context.getResources().getColor(R.color.monokia_pro_sky));
+//        codeView.addSyntaxPattern(PATTERN_ATTRIBUTE, context.getResources().getColor(R.color.monokia_pro_sky));
 //        codeView.addSyntaxPattern(PATTERN_GENERIC, context.getResources().getColor(R.color.monokia_pro_pink));
 //        codeView.addSyntaxPattern(PATTERN_OPERATION, context.getResources().getColor(R.color.monokia_pro_pink));
         codeView.addSyntaxPattern(PATTERN_CHAR, context.getResources().getColor(R.color.monokia_pro_green));
@@ -66,7 +66,7 @@ public class PhpSyntaxUtils {
 //        codeView.addSyntaxPattern(PATTERN_BUILTINS, context.getResources().getColor(R.color.noctis_dark_blue));
 
         codeView.addSyntaxPattern(PATTERN_ANNOTATION, context.getResources().getColor(R.color.noctis_white_annotation));
-        codeView.addSyntaxPattern(PATTERN_ATTRIBUTE, context.getResources().getColor(R.color.noctis_blue));
+//        codeView.addSyntaxPattern(PATTERN_ATTRIBUTE, context.getResources().getColor(R.color.noctis_blue));
 //        codeView.addSyntaxPattern(PATTERN_GENERIC, context.getResources().getColor(R.color.noctis_purple));
 //        codeView.addSyntaxPattern(PATTERN_OPERATION, context.getResources().getColor(R.color.monokia_pro_pink));
         codeView.addSyntaxPattern(PATTERN_CHAR, context.getResources().getColor(R.color.noctis_white_string));
@@ -92,7 +92,7 @@ public class PhpSyntaxUtils {
         codeView.addSyntaxPattern(PATTERN_KEYWORDS, context.getResources().getColor(R.color.five_dark_purple));
 //        codeView.addSyntaxPattern(PATTERN_BUILTINS, context.getResources().getColor(R.color.five_dark_white));
         codeView.addSyntaxPattern(PATTERN_ANNOTATION, context.getResources().getColor(R.color.five_dark_green));
-        codeView.addSyntaxPattern(PATTERN_ATTRIBUTE, context.getResources().getColor(R.color.five_dark_blue));
+//        codeView.addSyntaxPattern(PATTERN_ATTRIBUTE, context.getResources().getColor(R.color.five_dark_blue));
 //        codeView.addSyntaxPattern(PATTERN_GENERIC, context.getResources().getColor(R.color.five_dark_purple));
 //        codeView.addSyntaxPattern(PATTERN_OPERATION, context.getResources().getColor(R.color.five_dark_purple));
         codeView.addSyntaxPattern(PATTERN_CHAR, context.getResources().getColor(R.color.five_dark_yellow));
@@ -119,7 +119,7 @@ public class PhpSyntaxUtils {
         codeView.addSyntaxPattern(PATTERN_KEYWORDS, context.getResources().getColor(R.color.orange_box_orange1));
 //        codeView.addSyntaxPattern(PATTERN_BUILTINS, context.getResources().getColor(R.color.orange_box_grey));
         codeView.addSyntaxPattern(PATTERN_ANNOTATION, context.getResources().getColor(R.color.orange_box_annotation));
-        codeView.addSyntaxPattern(PATTERN_ATTRIBUTE, context.getResources().getColor(R.color.orange_box_orange3));
+//        codeView.addSyntaxPattern(PATTERN_ATTRIBUTE, context.getResources().getColor(R.color.orange_box_orange3));
 //        codeView.addSyntaxPattern(PATTERN_GENERIC, context.getResources().getColor(R.color.orange_box_orange1));
 //        codeView.addSyntaxPattern(PATTERN_OPERATION, context.getResources().getColor(R.color.gold));
         codeView.addSyntaxPattern(PATTERN_CHAR, context.getResources().getColor(R.color.orange_box_orange2));

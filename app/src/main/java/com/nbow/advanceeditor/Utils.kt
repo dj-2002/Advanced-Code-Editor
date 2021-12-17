@@ -45,7 +45,6 @@ class Utils {
 
         var isLineNumber: Boolean = true
         var lineNumbeSize = 40F
-        var themeN  = 2;
         val java = "JAVA"
         val kotlin = "KOTLIN"
         val html = "HTML"

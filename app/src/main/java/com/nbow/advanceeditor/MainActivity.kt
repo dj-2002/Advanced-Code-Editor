@@ -43,6 +43,8 @@ import android.content.Intent
 import androidx.core.content.FileProvider
 import android.widget.Toast
 import androidx.lifecycle.LifecycleCoroutineScope
+import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.OnUserEarnedRewardListener
 
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -113,10 +115,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         }
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
-        //MobileAds.initialize(this) {}
+        MobileAds.initialize(this) {}
         lifecycleScope.launch(Dispatchers.IO) {
             firebaseEvent()
         }
+        Admob.loadInterstitialAd(applicationContext)
+        Admob.loadRewardedAd(applicationContext)
 
     }
 
@@ -557,12 +561,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 if (uri != null) readFileUsingUri(uri)
             }
         }
-    val AdViewLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-
-            }
-        }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
@@ -572,11 +570,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 // Handle the camera action
                 var intent: Intent = Intent(this, RecyclerViewActivity::class.java)
                 recyclerViewLauncher.launch(intent)
+                if (Admob.mInterstitialAd != null) {
+                    Admob.mInterstitialAd?.show(this)
+                } else {
+                    Log.d("TAG", "The interstitial ad wasn't ready yet.")
+                }
             }
             R.id.nav_setting -> {
                 Log.e(TAG, "onNavigationItemSelected: clicked")
                 val intent = Intent(this@MainActivity, SettingActivity::class.java)
                 startActivity(intent)
+                if (Admob.mInterstitialAd != null) {
+                    Admob.mInterstitialAd?.show(this)
+                } else {
+                    Log.d("TAG", "The interstitial ad wasn't ready yet.")
+                }
             }
             R.id.nav_storage_manager -> {
                 if (!helper.isStoragePermissionGranted()) helper.takePermission()
@@ -586,21 +594,27 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_feedback -> {
                 feedback()
             }
-//            R.id.nav_ad -> {
-//
-//                if (Admob.rewardedAd != null) {
-//                    Log.e(TAG, "onNavigationItemSelected: admob initialized", )
-//                    Admob.rewardedAd!!.show(
-//                        this,
-//                        OnUserEarnedRewardListener { rewardItem ->
-//                            Toast.makeText(
-//                                this@MainActivity,
-//                                "Rewarded with Thanks", Toast.LENGTH_SHORT
-//                            ).show()
-//                        })
-//                }
-//
-//            }
+           R.id.nav_ad -> {
+
+                if (Admob.rewardedAd != null) {
+                    Log.e(TAG, "onNavigationItemSelected: admob initialized", )
+                    Admob.rewardedAd!!.show(
+                        this,
+                        OnUserEarnedRewardListener { rewardItem ->
+                            Toast.makeText(
+                                this@MainActivity,
+                                "Rewarded with Thanks", Toast.LENGTH_SHORT
+                            ).show()
+                            
+                            Admob.loadRewardedAd(applicationContext)
+                        })
+                }
+               else
+                {
+                    Admob.loadRewardedAd(applicationContext)
+                }
+
+            }
 
         }
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
@@ -962,6 +976,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         intent.putExtra("data", currentFragment.getEditTextData().toString())
                         startActivity(intent)
                     }
+                    if (Admob.mInterstitialAd != null) {
+                        Admob.mInterstitialAd?.show(this)
+                    } else {
+                        Admob.loadInterstitialAd(applicationContext)
+                        Log.d("TAG", "The interstitial ad wasn't ready yet.")
+                    }
 
                 }
                 R.id.change_editor_theme -> {
@@ -1003,6 +1023,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     Log.e(TAG, "onNavigationItemSelected: clicked")
                     val intent: Intent = Intent(this@MainActivity, SettingActivity::class.java)
                     startActivity(intent)
+                    if (Admob.mInterstitialAd != null) {
+                        Admob.mInterstitialAd?.show(this)
+                    } else {
+                        Admob.loadInterstitialAd(applicationContext)
+                        Log.d("TAG", "The interstitial ad wasn't ready yet.")
+                    }
                 }
                 R.id.share -> {
                     if (currentFragment != null ) {
@@ -1105,7 +1131,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             for (line in listOfLines) {
                 temp.append(line)
                 count++
-                if (count >= 500 || temp.length >= 500000) {
+                if (count >= 500 || temp.length >= 100000) {
                     listOfPageData.add(temp)
                     count = 0
                     temp = StringBuilder()
@@ -1296,6 +1322,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 e.printStackTrace()
             }
         }
+        model.saveCount++;
+
+        if(model.saveCount%5==0) {
+                if (Admob.mInterstitialAd != null) {
+                    Admob.mInterstitialAd?.show(this)
+                } else {
+                    Admob.loadInterstitialAd(applicationContext)
+                    Log.d("TAG", "The interstitial ad wasn't ready yet.")
+                }
+        }
+
     }
 
     private fun showSecureSaveAsDialog(fragment: EditorFragment) {

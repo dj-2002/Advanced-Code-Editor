@@ -29,7 +29,7 @@ public class JavaSyntaxUtils {
     private static final Pattern PATTERN_NUMBERS = Pattern.compile("\\b(\\d*[.]?\\d+)\\b");
     private static final Pattern PATTERN_CHAR = Pattern.compile("'[a-zA-Z0-9]'");
     //    private static final Pattern PATTERN_STRING = Pattern.compile("\".*\"");
-    private static final Pattern PATTERN_STRING = Pattern.compile("\"[^\"]*\"");
+    private static final Pattern PATTERN_STRING = Pattern.compile("\"[^\"\\n]*\"");
 //    private static final Pattern PATTERN_HEX = Pattern.compile("0x[0-9a-fA-F]+");
 
     public static void applyMonokaiTheme(Context context, CodeView codeView) {

@@ -21,8 +21,9 @@ class MyViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository : Repository = Repository(application)
     private  var recentFileList = MutableLiveData(mutableListOf<RecentFile>())
+    var saveCount = 0;
 
-//    var currentTab : Int = -1
+    //    var currentTab : Int = -1
     var currentTabIndex = -1
     var isWrap = false
     var isHistoryLoaded = MutableLiveData(false)
@@ -102,7 +103,7 @@ class MyViewModel(application: Application) : AndroidViewModel(application) {
                 context.openFileInput(history.fileName).bufferedReader().forEachLine { line ->
                     temp.append(line + "\n")
                     count++
-                    if (count >= 500 || temp.length >= 500000) { // 5kb
+                    if (count >= 500 || temp.length >= 100000) { // 10kb
                         mlist.add(temp)
                         Log.e(TAG, "loadHistory: making another page prev page lines $count and size is ${temp.length}", )
                         temp = StringBuilder()

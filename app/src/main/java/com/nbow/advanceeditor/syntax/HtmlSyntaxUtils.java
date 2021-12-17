@@ -26,7 +26,7 @@ public class HtmlSyntaxUtils {
     private static final Pattern PATTERN_NUMBERS = Pattern.compile("\\b(\\d*[.]?\\d+)\\b");
     //    private static final Pattern PATTERN_CHAR = Pattern.compile("'[a-zA-Z]'");
 //    private static final Pattern PATTERN_STRING = Pattern.compile("\".*\"");
-    private static final Pattern PATTERN_STRING = Pattern.compile("\"[^<>\"]*\"" + "|" + "\'[^<>\']*\'");
+    private static final Pattern PATTERN_STRING = Pattern.compile("\"[^<>\"\\n]*\"" + "|" + "\'[^<>\'\\n]*\'");
 
     private static final Pattern PATTERN_HEX = Pattern.compile("0x[0-9a-fA-F]+");
 
